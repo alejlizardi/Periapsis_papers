@@ -1,0 +1,1310 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1.1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{eso-pic}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+
+% ----- Periapsis branding (mirrors the house style) -------------------------
+% Bottom-right: the Periapsis mark on every page.
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\fancyfoot[R]{\includegraphics[height=34pt]{assets/mark.png}}
+\fancyfoot[C]{\footnotesize\thepage}
+\fancypagestyle{plain}{% so page 1 (\maketitle uses 'plain') carries the footer too
+  \fancyhf{}\renewcommand{\headrulewidth}{0pt}\renewcommand{\footrulewidth}{0pt}%
+  \fancyfoot[R]{\includegraphics[height=34pt]{assets/mark.png}}%
+  \fancyfoot[C]{\footnotesize\thepage}}
+% Bottom-left: the square-corner glyph flush in the page corner (~1/12 page height).
+\AddToShipoutPictureBG{%
+  \AtPageLowerLeft{\raisebox{0pt}[0pt][0pt]{\includegraphics[height=66pt]{assets/glyph_square.png}}}}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{observation}[theorem]{Observation}
+
+\newcommand{\pmin}{\rho_{\min}}
+\newcommand{\inv}[1]{#1^{-1}}
+\DeclareMathOperator{\pc}{pc}
+
+\title{Properly colored paths in the union of two Hamiltonian paths\\
+can have length $O(\sqrt{n}\,)$}
+\author{Alejandro Lizardi%
+\thanks{Independent researcher. The proofs and computations in this paper were
+AI-assisted by Claude, under the Periapsis research structure. All computational claims
+are reproducible from the ancillary files accompanying this submission; see
+Section~\ref{sec:comp}.}}
+\date{June 2026}
+
+\begin{document}
+\maketitle
+
+\begin{center}
+  \includegraphics[height=20pt]{assets/lockup.png}
+\end{center}
+\vspace{4pt}
+
+\begin{abstract}
+For a permutation $\sigma$ of $\{0,1,\dots,n-1\}$, let $H_\sigma$ be the two-edge-colored
+multigraph on $\{0,\dots,n-1\}$ whose blue edges form the natural-order Hamiltonian path
+and whose red edges form the Hamiltonian path induced by the value order of $\sigma$,
+and let $\rho(\sigma)$ denote the maximum number of vertices on a properly colored path
+of $H_\sigma$ (a simple path whose consecutive edges alternate in color). Every
+two-edge-colored multigraph that is the union of two Hamiltonian paths on a common
+vertex set arises this way. We prove that
+$\pmin(n) := \min_{\sigma} \rho(\sigma) = O(\sqrt{n}\,)$; explicitly,
+$\pmin(n) \le 8\sqrt{n} + 20$ for all $n \ge 100$. Consequently
+$\pmin(n)/n \to 0$: there is no constant $c>0$ such that the union of two Hamiltonian
+paths must contain a properly colored path on $cn$ vertices. This answers, in the
+negative, the main question posed in the author's earlier note \cite{Liz26}, where a
+positive answer was proposed as a route toward improved bounds for Lov\'asz's problem
+on Hamiltonian paths in vertex-transitive graphs; we emphasize that the present result
+closes only that particular route, not the underlying matching-edge question
+(Section~\ref{subsec:scope}).
+
+The proof introduces an inflation (substitution) operation on permutations together
+with a per-permutation invariant, the \emph{transit number} $M(\pi)$, which bounds how
+many vertices a properly colored path can collect while passing through an inflated
+copy of $\pi$. Our main lemma is a complete classification of the constrained
+terminal-to-terminal paths (\emph{admissible visits}) of an explicit gadget family:
+for every even $b \ge 6$, the permutation
+$T_b = (0,\, b{-}1,\, 2,\, 3,\, \dots,\, b{-}2,\, 1)$ admits exactly five admissible
+visits, of sizes $1, 2, 2, 3, 3$; in particular $M(T_b) = 3$, independent of $b$. The
+classification turns on a parity obstruction in a long run of doubled edges.
+For the resulting explicit permutations $\sigma_{a,b}$ on $n = ab$ vertices we prove
+the two-sided bounds $2a + 2b - 7 \le \rho(\sigma_{a,b}) \le 4a + 2b$, so the family
+provably realizes the order $\sqrt n$ when $a \asymp b$. Whether $\pmin(n) = o(n)$ can
+be complemented by any superconstant lower bound remains open: even
+$\pmin(n) \to \infty$ is not known. A second, independent construction with the same
+conclusion is given in an appendix, and all computations are reproducible from the
+ancillary code and logs.
+\end{abstract}
+
+\section{Introduction}\label{sec:intro}
+
+Let $S_n$ denote the set of bijections
+$\sigma\colon \{0,1,\dots,n-1\}\to\{0,1,\dots,n-1\}$.
+Following \cite{Liz26}, associate with $\sigma \in S_n$ the two-edge-colored multigraph
+$H_\sigma$ on vertex set $\{0,1,\dots,n-1\}$ with
+\begin{itemize}
+\item \textbf{P-edges} (``position'', blue): $\{i, i+1\}$ for $0 \le i \le n-2$;
+\item \textbf{V-edges} (``value'', red): $\{\inv\sigma(v), \inv\sigma(v+1)\}$ for
+$0 \le v \le n-2$.
+\end{itemize}
+Each color class is a Hamiltonian path. A vertex pair may carry both a P-edge and a
+V-edge; these are retained as \emph{parallel edges of different colors} (``doubled
+pairs''). Conversely, the union of any two Hamiltonian paths on a common vertex set,
+with one path blue and the other red, is color-isomorphic to $H_\sigma$ for some
+$\sigma$ (identify the vertex set with $\{0,\dots,n-1\}$ along the blue path, and let
+$\sigma$ rank the vertices along the red path).
+
+A \emph{properly colored path} (PC path) is a simple path---all vertices
+distinct---whose consecutive edges have different colors. A single vertex is a PC
+path. Let $\rho(\sigma)$ be the maximum number of vertices on a PC path in $H_\sigma$,
+and
+\[
+\pmin(n) \;=\; \min_{\sigma\in S_n} \rho(\sigma) .
+\]
+
+The note \cite{Liz26}, an earlier study by the present author, developed a local
+calculus for PC paths in $H_\sigma$, determined the extremal value of $\rho$ on a
+family of block-reversal permutations, refuted a half-bound conjecture at $n = 18$,
+and exhibited stacked families with $\rho/n$ tending (conjecturally) to $5/11$ and
+then $10/28$. The main question it left open, stated there in self-contained form,
+was:
+
+\begin{quote}
+\emph{Does there exist $c>0$ such that every two-edge-colored multigraph that is the
+union of two Hamiltonian paths on the same vertex set contains a properly colored
+simple path on at least $cn$ vertices?}
+\end{quote}
+
+The original motivation comes from a relaxation chain described in \cite{Liz26}: a
+linear lower bound on $\pmin(n)$ would transfer, through an exact conversion lemma, to
+a linear lower bound on a matching-edge parameter $f(n)$ for a family of subcubic
+graphs arising in the Norin--Steiner--Thomass\'e--Wollan approach \cite{NSTW25} to
+Lov\'asz's 1969 question \cite{Lov70} on Hamiltonian paths in connected
+vertex-transitive graphs. We stress the scope of that motivation: the relaxation was
+proposed in \cite{Liz26}, not in the broader literature, and the present paper's
+negative answer closes only this relaxation (see Section~\ref{subsec:scope}).
+
+Beyond that specific motivation, the question is a natural extremal problem about
+alternating paths. Properly colored (``alternating'') paths and cycles in edge-colored
+graphs have been studied extensively since the survey of Bang-Jensen and Gutin
+\cite{BJG97}; see also \cite{GK09,ABMMM10}. The positive results in that line are
+sufficient conditions---typically large color degree or dense host graphs---for long
+PC paths or cycles to exist. The graphs $H_\sigma$ sit at the opposite end of the
+spectrum: every vertex has at most two edges of each color, and the question is
+extremal rather than Dirac-type. We are not aware of prior work on the union of two
+Hamiltonian paths besides \cite{Liz26}.
+
+\subsection{Results}
+
+We answer the question in the negative.
+
+\begin{theorem}[Main Theorem]\label{thm:main-intro}
+$\pmin(n) = O(\sqrt n\,)$. Explicitly, $\pmin(n) \le 8\sqrt n + 20$ for all
+$n \ge 100$. Consequently $\pmin(n)/n \to 0$.
+\end{theorem}
+
+The construction is explicit. For even $b\ge 6$ let
+\[
+T_b \;=\; (0,\; b{-}1,\; 2,\; 3,\; \dots,\; b{-}2,\; 1) \in S_b
+\]
+be the identity permutation with the values $1$ and $b-1$ exchanged, and for $a \ge 2$
+define $\sigma_{a,b} \in S_{ab}$ by
+\[
+\sigma_{a,b}(jb + r) \;=\; jb + T_b(r) \qquad (0 \le j < a,\ 0 \le r < b),
+\]
+i.e.\ $a$ consecutive copies of $T_b$ on consecutive value ranges. We prove the
+two-sided estimate
+\begin{equation}\label{eq:twosided}
+2a + 2b - 7 \;\le\; \rho(\sigma_{a,b}) \;\le\; 4a + 2b
+\qquad (a \ge 2,\ b \ge 6 \text{ even}),
+\end{equation}
+the upper bound by the inflation calculus below
+(Theorem~\ref{thm:main}, Proposition~\ref{prop:refined}), the lower bound by an
+explicit path (Proposition~\ref{prop:lower}). Thus $\rho(\sigma_{a,b}) = \Theta(a+b)$:
+with $a \asymp b \asymp \sqrt n$ the family realizes the order $\sqrt n$ exactly, so
+the upper bound is tight for this family and not an artifact of a construction whose
+true value is smaller. (For $a = 2$ both bounds in \eqref{eq:twosided} are weak: indeed
+$\rho(\sigma_{2,b}) \le n = 2b$ trivially. The construction is informative for
+$a \ge 3$, and asymptotically for $a \to \infty$.) Exact machine computation,
+reproducible from the ancillary files, gives $\rho(\sigma_{a,b}) = 2a + 2b - 4$ at
+every tested point up to $n = 720$ (Section~\ref{sec:comp}); we use this exact
+formula nowhere in the proofs and state it only as data.
+
+The proof of the upper bounds has two independent components.
+
+\paragraph{1. An inflation calculus (Sections~\ref{sec:ports}--\ref{sec:inflation}).}
+Call a set $B$ of consecutive positions whose $\sigma$-image is a set of consecutive
+values an \emph{interval block}. A short argument (Lemma~\ref{lem:ports}) shows that
+at most \emph{four} edges of $H_\sigma$ join $B$ to its complement, and that they
+attach at four canonical \emph{terminal} vertices of $B$, with prescribed colors. If
+$\sigma = \tau[\pi_1,\dots,\pi_a]$ is built by inflation (each position block an
+interval block with pattern $\pi_i$, arranged by an outer permutation $\tau$), then
+any PC path decomposes into at most $2a-1$ \emph{visits} to blocks, and each visit
+other than the first and last must enter and leave through terminals subject to color
+constraints. Defining the \emph{transit number} $M(\pi)$ as the largest number of
+vertices such a constrained passage (\emph{admissible visit}) through $H_\pi$ can
+collect, we obtain (Theorem~\ref{thm:inflation})
+\[
+\rho\bigl(\tau[\pi_1,\dots,\pi_a]\bigr) \;\le\; (2a-3)\,\max_i M(\pi_i) \;+\;
+2\,\max_i |\pi_i| .
+\]
+
+\paragraph{2. A classification of the gadget's admissible visits
+(Section~\ref{sec:gadget}).}
+For every even $b \ge 6$ we determine the admissible visits of $H_{T_b}$
+\emph{completely} (Theorem~\ref{thm:classification}): up to reversal there are
+exactly five, of sizes $1, 2, 2, 3, 3$. In particular
+\[
+M(T_b) \;=\; 3 ,
+\]
+independent of $b$. The mechanism is a parity obstruction: $H_{T_b}$ contains a long
+run of doubled edges which any terminal-to-terminal passage must either avoid or
+cross completely, and a full crossing forces the color of the departing edge
+precisely so that, for even $b$, every continuation is blocked. For odd $b$ the
+parity reverses and a transit can collect all $b$ vertices; exact computation
+confirms $M(T_b) = b$ for odd $b$. The even/odd contrast shows that the parity, not
+some feature of the argument, is what bounds the transit number.
+
+Combining the two components and balancing $a$ against $b$ yields
+Theorem~\ref{thm:main-intro}; the crude bound $\rho(\sigma_{a,b}) \le 6a + 2b$,
+which needs only the value $M(T_b) = 3$ and not the full classification, already
+gives $\pmin(n) \le 10\sqrt n + 10$, and the refined constant $8\sqrt n + 20$ uses
+the classification once more (Proposition~\ref{prop:refined}). The proofs are
+elementary and self-contained; the computations reported in Section~\ref{sec:comp}
+are independent verifications, not ingredients of the proofs.
+
+Appendix~\ref{app:trap} contains a \emph{second, independent} construction proving
+$\pmin(n) = O(\sqrt n)$: chains of reversed odd blocks separated by singletons, where
+a different parity trap blocks every crossing, with its own complete proof. The two
+constructions share the parity-trap idea but are different families with different
+edge inventories, and they were found and verified independently, by different
+methods and different solvers. We give both because a redundant proof of the main
+claim seems worth the space.
+
+Section~\ref{sec:disc} isolates what is known about lower bounds, including the
+machine-verified refutation of a natural conjectured inequality
+($\rho \ge$ number of $\pm1$-blocks) that holds exhaustively through $n = 12$ but
+fails at $n = 240$.
+
+\subsection{Scope: what this does and does not say about Lov\'asz's
+problem}\label{subsec:scope}
+
+The conversion lemma of \cite{Liz26} maps PC paths in $H_\sigma$ to
+matching-edge-rich paths in an associated subcubic graph $G(n,\sigma)$
+\emph{one-directionally}. Our construction makes properly colored paths short; it
+says nothing about paths in $G(n,\sigma)$ that are allowed to use runs of
+same-colored edges. The known bound $f(n) = \Omega(n^{4/5})$ for the matching-edge
+parameter, which rests on the circumference theorem for $3$-connected cubic graphs of
+Liu, Yu and Zhang \cite{LYZ18} as used in \cite{NSTW25}, is untouched, and
+$f(n) = \Theta(n)$ remains entirely possible. What dies is only the hope, raised in
+\cite{Liz26}, of proving $f(n) = \Omega(n)$ via the properly-colored relaxation.
+
+On the lower-bound side our knowledge is thin: we prove no superconstant lower bound
+on $\pmin(n)$, and to our knowledge even $\pmin(n) \to \infty$ is open. The
+quantities controlling the natural approaches are discussed in
+Section~\ref{sec:disc}, where we also state the conjecture
+$\pmin(n) = \Theta(\sqrt n)$ --- at present an upper bound plus structural
+circumstantial evidence, no more.
+
+\section{Preliminaries}\label{sec:prelim}
+
+Throughout, $\sigma \in S_n$ and $H_\sigma$ are as in Section~\ref{sec:intro}; colors
+are $\mathrm P$ and $\mathrm V$, and for a color $c$ we write $\bar c$ for the other
+color. Paths are sequences of distinct vertices $u_1,\dots,u_k$ ($k \ge 1$) together
+with, for each consecutive pair, a chosen edge (with its color) joining them; in a
+doubled pair the path commits to one of the two parallel edges. A path is
+\emph{properly colored} (PC) if consecutive edges have different colors. The
+\emph{size} of a path is its number of vertices $k$. Since each vertex pair carries
+at most one edge of each color and paths have distinct vertices, a path uses pairwise
+distinct edges, even in the multigraph sense.
+
+\begin{observation}\label{obs:translate}
+A two-edge-colored multigraph is the union of a blue and a red Hamiltonian path on a
+common vertex set of size $n$ if and only if it is color-isomorphic to $H_\sigma$ for
+some $\sigma \in S_n$. Hence Theorem~\ref{thm:main-intro} is equivalent to its
+abstract formulation.
+\end{observation}
+
+\section{Interval blocks and ports}\label{sec:ports}
+
+\begin{definition}[Interval block, pattern]\label{def:block}
+An \emph{interval block} of $\sigma \in S_n$ is a set of positions
+$B = \{p_\ell, p_\ell + 1, \dots, p_r\}$ whose image is a set of consecutive values
+$\sigma(B) = \{w_\ell, \dots, w_r\}$. Its \emph{pattern} is the permutation
+$\pi \in S_b$, $b = |B|$, defined by $\pi(t) = \sigma(p_\ell + t) - w_\ell$.
+\end{definition}
+
+\begin{lemma}[Port structure]\label{lem:ports}
+Let $B$ be an interval block of $\sigma$ with positions $[p_\ell,p_r]$, values
+$[w_\ell,w_r]$, and pattern $\pi$. Then:
+\begin{enumerate}
+\item[(a)] The sub-multigraph of $H_\sigma$ induced on $B$ is color-isomorphic to
+$H_\pi$ under the map $p \mapsto p - p_\ell$.
+\item[(b)] Every edge of $H_\sigma$ with exactly one endpoint in $B$ is one of at
+most four: the P-edges $\{p_\ell - 1, p_\ell\}$ and $\{p_r, p_r + 1\}$ (when they
+exist), whose endpoints in $B$ are $p_\ell$ and $p_r$; and the V-edges
+$\{\inv\sigma(w_\ell - 1), \inv\sigma(w_\ell)\}$ and
+$\{\inv\sigma(w_r), \inv\sigma(w_r + 1)\}$ (when they exist), whose endpoints in $B$
+are $\inv\sigma(w_\ell)$ and $\inv\sigma(w_r)$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(a) P-edges internal to $B$ are the pairs $\{p, p+1\} \subseteq [p_\ell, p_r]$, which
+correspond exactly to the P-edges of $H_\pi$. A V-edge
+$\{\inv\sigma(v), \inv\sigma(v+1)\}$ has both endpoints in $B$ if and only if both
+$v, v+1 \in [w_\ell, w_r]$ (as $\sigma(B) = [w_\ell, w_r]$ and $\sigma$ is a
+bijection), and these edges correspond exactly to the V-edges of $H_\pi$ under the
+stated map, since $\inv\pi(v - w_\ell) = \inv\sigma(v) - p_\ell$ for
+$v \in [w_\ell, w_r]$. Doubled pairs match doubled pairs, so the isomorphism
+preserves the multigraph structure with colors.
+
+(b) A P-edge $\{p, p+1\}$ with exactly one endpoint in the interval $[p_\ell, p_r]$
+satisfies $p + 1 = p_\ell$ or $p = p_r$. A V-edge
+$\{\inv\sigma(v), \inv\sigma(v+1)\}$ with exactly one endpoint in $B$ has exactly one
+of $v, v+1$ in $[w_\ell, w_r]$, forcing $v + 1 = w_\ell$ or $v = w_r$.
+\end{proof}
+
+\begin{definition}[Terminals, roles, port colors]\label{def:terminals}
+Let $\pi \in S_b$, $b \ge 2$. The \emph{terminals} of $H_\pi$ are the four
+\emph{roles}
+\[
+p_0 = \text{vertex } 0, \quad
+p_1 = \text{vertex } b-1, \quad
+v_0 = \text{vertex } \inv\pi(0), \quad
+v_1 = \text{vertex } \inv\pi(b-1),
+\]
+with \emph{port colors} $\pc(p_0) = \pc(p_1) = \mathrm P$ and
+$\pc(v_0) = \pc(v_1) = \mathrm V$. Distinct roles may occupy the same vertex (a role
+is a label, not a vertex); since $b \ge 2$, two roles with the \emph{same} port color
+always occupy distinct vertices.
+\end{definition}
+
+By Lemma~\ref{lem:ports}, in any interval block with pattern $\pi$ the at most four
+outgoing edges attach (inside the block) precisely at the terminals, and the color of
+an outgoing edge equals the port color of the role at which it attaches.
+
+\begin{definition}[Admissible visit, transit number]\label{def:M}
+Let $\pi \in S_b$, $b \ge 2$. An \emph{admissible visit} of $H_\pi$ is either
+\begin{enumerate}
+\item[(i)] a PC path $u_1, \dots, u_k$ in $H_\pi$ with $k \ge 2$, together with a
+choice of roles $r$ at $u_1$ and $r'$ at $u_k$, such that the first edge has color
+$\ne \pc(r)$ and the last edge has color $\ne \pc(r')$; or
+\item[(ii)] a single vertex carrying two distinct roles $r, r'$ with
+$\pc(r) \ne \pc(r')$.
+\end{enumerate}
+The \emph{transit number} $M(\pi)$ is the maximum size of an admissible visit, and
+$M(\pi) = 0$ if none exists. For $b \le 1$ set $M(\pi) = 1$.
+\end{definition}
+
+Since a classification of admissible visits must account for the role choices, we
+record two trivial but load-bearing facts.
+
+\begin{lemma}[Reversal; endpoint constraint]\label{lem:reversal}
+(a) If $(u_1, \dots, u_k; r, r')$ is an admissible visit, so is the reversed
+$(u_k, \dots, u_1; r', r)$. Hence admissible visits may be classified as undirected
+vertex sequences with unordered role pairs.
+(b) In a type-(i) admissible visit, both $u_1$ and $u_k$ are terminal vertices, the
+roles $r, r'$ are distinct, and with two colors the conditions read: first edge color
+$= \overline{\pc(r)}$, last edge color $= \overline{\pc(r')}$.
+\end{lemma}
+
+\begin{proof}
+(a) Reversal swaps first and last edges and the two endpoint constraints. (b) The
+roles occupy $u_1 \ne u_k$, hence are distinct; the rest is the definition.
+\end{proof}
+
+\section{Inflation and the Inflation Lemma}\label{sec:inflation}
+
+\begin{definition}[Inflation]\label{def:inflation}
+Let $a \ge 2$, let $\tau$ be a permutation of $\{1, \dots, a\}$, and let
+$\pi_1, \dots, \pi_a$ be permutations of sizes $b_1, \dots, b_a \ge 2$,
+$N = \sum_i b_i$. Put $s_i = \sum_{j < i} b_j$ (position offsets) and
+$t_i = \sum_{j:\ \tau(j) < \tau(i)} b_j$ (value offsets). The
+\emph{inflation} $\sigma = \tau[\pi_1, \dots, \pi_a] \in S_N$ is defined by
+\[
+\sigma(s_i + r) = t_i + \pi_i(r), \qquad i = 1, \dots, a,\quad 0 \le r < b_i .
+\]
+\end{definition}
+
+The value intervals $[t_i, t_i + b_i - 1]$ partition $\{0, \dots, N-1\}$, so $\sigma$
+is a bijection. Each position block $B_i = [s_i, s_i + b_i - 1]$ is an interval block
+of $\sigma$ with value interval $[t_i, t_i + b_i - 1]$ and pattern $\pi_i$, so
+Lemma~\ref{lem:ports} applies to all blocks simultaneously. We call edges of
+$H_\sigma$ with endpoints in different blocks \emph{cross edges}.
+
+\begin{lemma}\label{lem:crosscount}
+$H_{\tau[\pi_1,\dots,\pi_a]}$ has exactly $2(a-1)$ cross edges, counted with
+multiplicity: $a-1$ P-colored (one per consecutive pair of position blocks) and
+$a-1$ V-colored (one per consecutive pair of value intervals). Each block is incident
+to at most $4$ cross edges, attaching at its terminals as in
+Lemma~\ref{lem:ports}(b), and each terminal role of each block carries at most one
+cross edge.
+\end{lemma}
+
+\begin{proof}
+A P-edge $\{p, p+1\}$ is a cross edge iff $p+1 \in \{s_2, \dots, s_a\}$: $a-1$ edges.
+A V-edge $\{\inv\sigma(v), \inv\sigma(v+1)\}$ is a cross edge iff $v, v+1$ lie in
+different value intervals, which happens for exactly the $a-1$ values $v$ ending a
+value interval. The attachment statement is Lemma~\ref{lem:ports}(b); per block, each
+of the four port positions (P at each end of the position interval, V at each end of
+the value interval) is met by at most one cross edge.
+\end{proof}
+
+\begin{lemma}[Visit decomposition]\label{lem:visits}
+Let $\sigma = \tau[\pi_1, \dots, \pi_a]$, $a \ge 2$, and let $Q$ be a PC path in
+$H_\sigma$. Partition the vertex sequence of $Q$ into maximal runs of consecutive
+vertices lying in a common block; call these runs \emph{visits}. Then:
+\begin{enumerate}
+\item[(a)] Consecutive visits are joined by exactly one cross edge; distinct
+consecutive pairs use distinct cross edges. Hence if $Q$ has $q$ visits, then
+$q - 1 \le 2(a-1)$, i.e.\ $q \le 2a - 1$.
+\item[(b)] Every visit that is neither the first nor the last is an admissible visit
+of the copy of $H_{\pi_i}$ on its block; in particular it has at most $M(\pi_i)$
+vertices.
+\item[(c)] The first and the last visit have at most $\max_i b_i$ vertices each.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(a) The edge of $Q$ joining the last vertex of one visit to the first vertex of the
+next has endpoints in different blocks (by maximality of runs), so it is a cross
+edge. $Q$ has distinct vertices, hence pairwise distinct edges, so the $q-1$
+connecting edges are distinct cross edges; by Lemma~\ref{lem:crosscount} there are
+$2(a-1)$ of them in all.
+
+(b) Let $W = u_1, \dots, u_k$ be an interior visit in block $B_i$. There is an
+\emph{entry} cross edge $e_{\mathrm{in}}$ of $Q$ arriving at $u_1$ and an \emph{exit}
+cross edge $e_{\mathrm{out}}$ leaving $u_k$. By Lemma~\ref{lem:crosscount},
+$e_{\mathrm{in}}$ attaches at a terminal role $r$ at $u_1$ and has color $\pc(r)$;
+likewise $e_{\mathrm{out}}$ at a role $r'$ at $u_k$ with color $\pc(r')$. All edges
+of $Q$ between vertices of $W$ have both endpoints in $B_i$, so under
+Lemma~\ref{lem:ports}(a) the run $W$ is a PC path in the copy of $H_{\pi_i}$. If
+$k \ge 2$: the PC condition of $Q$ at $u_1$ (between $e_{\mathrm{in}}$ and the first
+edge of $W$) forces the first edge of $W$ to have color $\ne \pc(r)$, and similarly
+at $u_k$; thus $W$, with the roles $r, r'$, is admissible of type (i). If $k = 1$:
+the PC condition at $u_1$ between $e_{\mathrm{in}}$ and $e_{\mathrm{out}}$ forces
+$\pc(r) \ne \pc(r')$, so $u_1$ carries two roles of different port colors:
+admissible of type (ii).
+
+(c) A visit lies in one block, so its size is at most that block's size.
+\end{proof}
+
+\begin{theorem}[Inflation Lemma]\label{thm:inflation}
+For $a \ge 2$,
+\[
+\rho\bigl(\tau[\pi_1, \dots, \pi_a]\bigr)
+\;\le\;
+(2a - 3)\,\max_i M(\pi_i) \;+\; 2\,\max_i b_i .
+\]
+\end{theorem}
+
+\begin{proof}
+Let $Q$ attain $\rho$ and let $q$ be its number of visits. If $q = 1$, then
+$\rho \le \max_i b_i$ and the bound holds. If $q \ge 2$, then by
+Lemma~\ref{lem:visits} the $q - 2 \le 2a - 3$ interior visits have at most
+$\max_i M(\pi_i)$ vertices each and the two end visits at most $\max_i b_i$ each;
+visits partition the vertices of $Q$.
+\end{proof}
+
+Theorem~\ref{thm:inflation} holds for \emph{every} outer permutation $\tau$; no
+property of $\tau$ is used. The problem is thereby reduced to finding patterns with
+small transit number relative to their size.
+
+\section{The gadget: classification of admissible visits of
+$H_{T_b}$}\label{sec:gadget}
+
+\begin{definition}\label{def:Tb}
+For even $b \ge 6$ let $T_b \in S_b$ be given by
+\[
+T_b(0) = 0, \qquad T_b(1) = b-1, \qquad T_b(i) = i \ \ (2 \le i \le b-2), \qquad
+T_b(b-1) = 1 .
+\]
+\end{definition}
+
+Thus $\inv{T_b}$ fixes $0$ and each $v \in [2, b-2]$, and maps $1 \mapsto b-1$,
+$b-1 \mapsto 1$ ($T_b$ is an involution). We first record the complete edge
+inventory; recall $b \ge 6$.
+
+\begin{lemma}[Inventory]\label{lem:inventory}
+The edges of $H_{T_b}$ are exactly:
+\begin{itemize}
+\item \emph{doubled pairs} $\{i, i+1\}$ for $2 \le i \le b-3$ (each carrying one P-
+and one V-edge);
+\item \emph{P-only edges} $\{0,1\}$, $\{1,2\}$, $\{b-2, b-1\}$;
+\item \emph{V-only edges} $\{0, b-1\}$, $\{2, b-1\}$, $\{1, b-2\}$.
+\end{itemize}
+Consequently the full edge lists at the relevant vertices are:
+\[
+\begin{array}{ll}
+\text{vertex } 0: & \mathrm P\,\{0,1\};\ \ \mathrm V\,\{0,b{-}1\} \quad
+(\textit{degree } 2),\\[2pt]
+\text{vertex } 1: & \mathrm P\,\{0,1\},\ \mathrm P\,\{1,2\};\ \ \mathrm V\,\{1,b{-}2\}
+\quad (\textit{unique V-edge}),\\[2pt]
+\text{vertex } b{-}1: & \mathrm P\,\{b{-}2,b{-}1\};\ \ \mathrm V\,\{0,b{-}1\},\
+\mathrm V\,\{2,b{-}1\} \quad (\textit{unique P-edge}),\\[2pt]
+\text{vertex } 2: & \mathrm P\,\{1,2\};\ \text{doubled } \{2,3\};\
+\mathrm V\,\{2,b{-}1\},\\[2pt]
+\text{vertex } b{-}2: & \text{doubled } \{b{-}3,b{-}2\};\ \mathrm P\,\{b{-}2,b{-}1\};\
+\mathrm V\,\{1,b{-}2\},\\[2pt]
+\text{vertex } i,\ 3 \le i \le b-3: & \text{doubled } \{i{-}1,i\} \text{ and }
+\{i,i{+}1\} \text{ only}.
+\end{array}
+\]
+The terminals are $p_0 = v_0 = \textit{vertex } 0$, $v_1 = \textit{vertex } 1$,
+$p_1 = \textit{vertex } b-1$.
+\end{lemma}
+
+\begin{proof}
+P-edges are $\{i, i+1\}$, $0 \le i \le b-2$, by definition. The V-edges, indexed by
+$v = 0, \dots, b-2$, are $\{\inv{T_b}(v), \inv{T_b}(v+1)\}$:
+\[
+v = 0:\ \{0, b{-}1\}; \qquad
+v = 1:\ \{b{-}1, 2\}; \qquad
+2 \le v \le b-3:\ \{v, v{+}1\}; \qquad
+v = b{-}2:\ \{b{-}2, 1\}.
+\]
+A pair $\{i, i+1\}$ is doubled iff it occurs in both lists: this happens exactly for
+$2 \le i \le b-3$. (For $b \ge 6$: $\{0,1\}$ would require
+$|T_b(1) - T_b(0)| = b-1 = 1$, false; $\{1,2\}$ requires $b - 3 = 1$, false;
+$\{b-2,b-1\}$ requires $b-3 = 1$, false. The three long V-edges join non-adjacent
+positions since $b - 1, b - 3 \ge 3$.) The per-vertex lists and the terminals
+($\inv{T_b}(0) = 0$, $\inv{T_b}(b-1) = 1$) follow by inspection.
+\end{proof}
+
+Let $S = \{2, 3, \dots, b-2\}$ (the \emph{segment}), so $|S| = b - 3$. By
+Lemma~\ref{lem:inventory}, the sub-multigraph induced on $S$ is the path
+$2 - 3 - \cdots - (b-2)$ with every pair doubled; the only edges from $S$ to its
+complement are the two at vertex $2$ (P $\{1,2\}$, V $\{2,b-1\}$) and the two at
+vertex $b-2$ (P $\{b-2,b-1\}$, V $\{1,b-2\}$); and no terminal lies in $S$.
+
+\begin{lemma}[Segment behavior]\label{lem:segment}
+Let $Q$ be a PC path in $H_{T_b}$.
+\begin{enumerate}
+\item[(a)] While inside $S$, $Q$ moves monotonically in position (each interior
+vertex of $S$ is adjacent only to its two position-neighbors), and $Q$ can leave $S$
+only from vertex $2$ or vertex $b-2$.
+\item[(b)] Suppose $Q$ enters $S$ at one end ($2$ or $b-2$) by an edge of color $c$,
+at a moment when no vertex of $S$ has yet been visited, and later leaves $S$. Then
+either it leaves immediately from the entry vertex (using the other external edge
+there, which has color $\bar c$), or it traverses all of $S$ to the far end; in the
+latter case its $b-4$ internal edges alternate colors starting with $\bar c$, so
+(since $b$ is even, making $b - 4$ even) the last internal edge has color $c$, and
+any edge by which $Q$ then leaves $S$ has color $\bar c$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(a) is immediate from the inventory: a simple path cannot reverse inside a path
+graph. For (b): leaving from the entry vertex means the run in $S$ is that single
+vertex; the two external edges at $2$ (P $\{1,2\}$, V $\{2,b-1\}$) have different
+colors, likewise at $b-2$, and the PC condition forces the exit edge to differ from
+the entry edge, i.e.\ to be the other one, of color $\bar c$. Otherwise the run
+proceeds monotonically and can only exit at the far end, having covered all of $S$
+with internal edges $g_1, \dots, g_{b-4}$. The PC condition at the entry vertex gives
+$g_1 = \bar c$ (both colors are available on every doubled pair; the PC condition is
+what forces the alternation), alternation gives $g_m = \bar c$ for odd $m$ and
+$g_m = c$ for even $m$, and $b - 4$ is even, so $g_{b-4} = c$; the PC condition at
+the far end forces the exit edge to have color $\ne c$.
+\end{proof}
+
+\subsection{The classification theorem}
+
+\begin{theorem}[Classification of admissible visits]\label{thm:classification}
+Let $b \ge 6$ be even. Up to reversal (Lemma~\ref{lem:reversal}), the admissible
+visits of $H_{T_b}$ are exactly the following five, listed with their (unique) role
+pairs:
+\begin{center}
+\begin{tabular}{clll}
+\toprule
+ & vertices & edges (colors) & role pair \\
+\midrule
+(V1) & $0$ & --- & $\{p_0, v_0\}$ \\
+(V2) & $0,\ b-1$ & $\mathrm V\{0,b{-}1\}$ & $\{p_0, p_1\}$ \\
+(V3) & $0,\ 1$ & $\mathrm P\{0,1\}$ & $\{v_0, v_1\}$ \\
+(V4) & $b-1,\ 0,\ 1$ & $\mathrm V\{0,b{-}1\},\ \mathrm P\{0,1\}$ & $\{p_1, v_1\}$ \\
+(V5) & $b-1,\ 2,\ 1$ & $\mathrm V\{2,b{-}1\},\ \mathrm P\{1,2\}$ & $\{p_1, v_1\}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+In particular: the role pairs $\{p_0, v_1\}$ and $\{v_0, p_1\}$ admit no visit;
+the only visit for $\{p_0, p_1\}$ is (V2); the only visit for $\{v_0, v_1\}$ is
+(V3); and $M(T_b) = 3$.
+\end{theorem}
+
+\begin{proof}
+That each listed visit is admissible is a direct check from
+Lemma~\ref{lem:inventory}. (V1): vertex $0$ carries $p_0$ and $v_0$ with different
+port colors. (V2): first $=$ last edge $\mathrm V \ne \pc(p_0) = \pc(p_1) =
+\mathrm P$. (V3): first $=$ last edge $\mathrm P \ne \pc(v_0) = \pc(v_1) =
+\mathrm V$. (V4) and (V5): first edge $\mathrm V \ne \pc(p_1)$, last edge
+$\mathrm P \ne \pc(v_1)$, and the middle vertex makes the colors alternate. The role
+pairs listed are the only possible ones: e.g.\ in (V2) the first edge is
+$\mathrm V$, so the role at $0$ must have port color $\ne \mathrm V$, i.e.\ $p_0$;
+the same one-line check determines the role pair of each visit.
+
+For completeness we must show no other admissible visit exists. Type-(ii) visits
+need a vertex carrying two roles of different port colors; by
+Lemma~\ref{lem:inventory} the only vertex carrying two roles is $0 = p_0 = v_0$,
+giving (V1). A type-(i) visit starts at a terminal vertex with a constrained first
+color (Lemma~\ref{lem:reversal}(b)). The terminal vertices are $0, 1, b-1$, and the
+roles they carry leave exactly four possible (start vertex, first color)
+\emph{stems}:
+\[
+\text{(A) } (0, \mathrm V) \text{ [role } p_0\text{]}, \quad
+\text{(B) } (0, \mathrm P) \text{ [role } v_0\text{]}, \quad
+\text{(C) } (1, \mathrm P) \text{ [role } v_1\text{]}, \quad
+\text{(D) } (b-1, \mathrm V) \text{ [role } p_1\text{]}.
+\]
+Every admissible visit, read from its own first vertex, extends one of these stems,
+so it suffices to enumerate, for each stem, all PC continuations, and to record those
+moments at which the path stands at a terminal vertex with a last-edge color
+admissible for a role there. Throughout we use the \emph{forcing facts} from
+Lemma~\ref{lem:inventory}:
+(F1) vertex $0$ has exactly one P-edge ($\{0,1\}$) and one V-edge ($\{0,b-1\}$);
+(F2) vertex $1$ has exactly one V-edge ($\{1,b-2\}$);
+(F3) vertex $b-1$ has exactly one P-edge ($\{b-2,b-1\}$);
+and the segment behavior of Lemma~\ref{lem:segment}. Recall that no vertex of $S$ is
+a terminal, so a path currently stranded in $S$ can never end an admissible visit
+there.
+
+\medskip
+\noindent\textbf{Stem (A): start $0$, first edge $\mathrm V$.}
+By (F1) the first edge is $\mathrm V\{0, b-1\}$; the path stands at $b-1$ with last
+color $\mathrm V$. \emph{Record:} role $p_1$ at $b-1$ has $\pc = \mathrm P \ne
+\mathrm V$, so $(0, b-1)$ is admissible: this is (V2). To continue, the next edge
+must be $\ne \mathrm V$, hence by (F3) it is $\mathrm P\{b-2,b-1\}$; the path enters
+$S$ at $b-2$ with entry color $\mathrm P$ and $S$ untouched. By
+Lemma~\ref{lem:segment}(b) there are two ways out of $S$:
+\begin{itemize}
+\item \emph{Immediate exit at $b-2$} by $\mathrm V\{1, b-2\}$: the path stands at
+$1$ with last color $\mathrm V$. The only role at $1$ is $v_1$ with
+$\pc = \mathrm V$: \emph{not} admissible. Continuing from $1$: next $\ne \mathrm V$,
+so a P-edge: $\{0,1\}$ is excluded ($0$ visited), leaving $\mathrm P\{1,2\}$ into
+$S$ at $2$. From $2$, next $\ne \mathrm P$: $\mathrm V\{2,b-1\}$ is excluded ($b-1$
+visited), leaving the V-side of $\{2,3\}$. From $3$ onward the path is inside $S$
+and moves monotonically upward (Lemma~\ref{lem:segment}(a)); it can never exit,
+because the only exit vertices are $2$ (behind it) and $b-2$ (already visited), so
+it strands in $S$. No admissible visit arises.
+\item \emph{Full crossing to $2$}: the path arrives at $2$ by an internal edge of
+color $\mathrm P$ (Lemma~\ref{lem:segment}(b) with $c = \mathrm P$), and any exit
+edge must have color $\mathrm V$. The only V-colored external edge at $2$ is
+$\{2, b-1\}$, whose endpoint $b-1$ is visited. The path strands in $S$ (vertex $2$
+is in $S$); no admissible visit arises.
+\end{itemize}
+\emph{Stem (A) yields exactly (V2).}
+
+\medskip
+\noindent\textbf{Stem (B): start $0$, first edge $\mathrm P$.}
+By (F1) the first edge is $\mathrm P\{0,1\}$; the path stands at $1$ with last color
+$\mathrm P$. \emph{Record:} role $v_1$ at $1$ has $\pc = \mathrm V \ne \mathrm P$:
+admissible: this is (V3). To continue: next $\ne \mathrm P$, so by (F2) it is
+$\mathrm V\{1, b-2\}$; the path enters $S$ at $b-2$ with entry color $\mathrm V$,
+$S$ untouched. By Lemma~\ref{lem:segment}(b):
+\begin{itemize}
+\item \emph{Immediate exit at $b-2$} by $\mathrm P\{b-2, b-1\}$: the path stands at
+$b-1$ with last color $\mathrm P$. The only role at $b-1$ is $p_1$ with
+$\pc = \mathrm P$: not admissible. Continuing from $b-1$: next $\ne \mathrm P$, so a
+V-edge: $\{0,b-1\}$ is excluded ($0$ visited), leaving $\mathrm V\{2,b-1\}$ into $S$
+at $2$. From $2$, next $\ne \mathrm V$: $\mathrm P\{1,2\}$ is excluded ($1$
+visited), leaving the P-side of $\{2,3\}$; the path moves monotonically upward
+inside $S$ and strands ($b-2$ visited). No admissible visit.
+\item \emph{Full crossing to $2$}: arrival color $\mathrm V$, so any exit edge must
+be $\mathrm P$; the only P-colored external edge at $2$ is $\{1,2\}$, and $1$ is
+visited. Strands. No admissible visit.
+\end{itemize}
+\emph{Stem (B) yields exactly (V3).}
+
+\medskip
+\noindent\textbf{Stem (C): start $1$, first edge $\mathrm P$.}
+The P-edges at $1$ are $\{0,1\}$ and $\{1,2\}$ (Lemma~\ref{lem:inventory}); two
+branches.
+\begin{itemize}
+\item \emph{Branch $1 \to 0$.} At $0$, last color $\mathrm P$. \emph{Record:} roles
+at $0$: $p_0$ ($\pc = \mathrm P$, fails), $v_0$ ($\pc = \mathrm V$, admissible):
+this is (V3) reversed. Continue: next $\ne \mathrm P$, by (F1) it is
+$\mathrm V\{0, b-1\}$; at $b-1$, last color $\mathrm V$. \emph{Record:} role $p_1$:
+admissible: this is (V4) reversed. Continue: next $\ne \mathrm V$, by (F3)
+$\mathrm P\{b-2,b-1\}$ into $S$ at $b-2$, entry color $\mathrm P$, $S$ untouched.
+Immediate exit by $\mathrm V\{1,b-2\}$: $1$ visited. Full crossing: arrival at $2$
+with color $\mathrm P$, exit must be $\mathrm V$: only $\{2,b-1\}$, visited.
+Strands; branch closed.
+\item \emph{Branch $1 \to 2$.} The path enters $S$ at $2$ by $\mathrm P\{1,2\}$,
+entry color $\mathrm P$, $S$ untouched. Immediate exit by $\mathrm V\{2, b-1\}$: at
+$b-1$, last color $\mathrm V$. \emph{Record:} role $p_1$: admissible: this is (V5)
+reversed. Continue from $b-1$: next $\ne \mathrm V$, by (F3) $\mathrm P\{b-2,b-1\}$
+into $S$ at $b-2$ --- but now $S$ is touched (vertex $2$): from $b-2$ the
+non-$\mathrm P$ continuations are $\mathrm V\{1,b-2\}$ ($1$ visited) and the V-side
+of $\{b-3,b-2\}$, after which the path moves monotonically down inside $S$ and
+strands at $3$ ($2$ visited). Branch closed. Alternatively, instead of exiting $S$
+immediately at $2$, the path may cross: full crossing $2 \to b-2$ with entry color
+$\mathrm P$ arrives at $b-2$ by color $\mathrm P$; exit must be $\mathrm V$: only
+$\{1, b-2\}$, and $1$ is visited. Strands; branch closed.
+\end{itemize}
+\emph{Stem (C) yields exactly (V3), (V4), (V5) (reversed).}
+
+\medskip
+\noindent\textbf{Stem (D): start $b-1$, first edge $\mathrm V$.}
+The V-edges at $b-1$ are $\{0, b-1\}$ and $\{2, b-1\}$; two branches.
+\begin{itemize}
+\item \emph{Branch $b-1 \to 0$.} At $0$, last color $\mathrm V$. \emph{Record:}
+roles at $0$: $v_0$ fails, $p_0$ admissible: this is (V2) reversed. Continue: next
+$\ne \mathrm V$, by (F1) $\mathrm P\{0,1\}$; at $1$, last color $\mathrm P$.
+\emph{Record:} role $v_1$: admissible: this is (V4). Continue: next $\ne \mathrm P$,
+by (F2) $\mathrm V\{1,b-2\}$ into $S$ at $b-2$, entry color $\mathrm V$, $S$
+untouched. Immediate exit by $\mathrm P\{b-2,b-1\}$: $b-1$ visited. Full crossing:
+arrival at $2$ with color $\mathrm V$, exit must be $\mathrm P$: only $\{1,2\}$, and
+$1$ is visited. Strands; branch closed.
+\item \emph{Branch $b-1 \to 2$.} The path enters $S$ at $2$ by
+$\mathrm V\{2,b-1\}$, entry color $\mathrm V$, $S$ untouched. Immediate exit by
+$\mathrm P\{1,2\}$: at $1$, last color $\mathrm P$. \emph{Record:} role $v_1$:
+admissible: this is (V5). Continue from $1$: next $\ne \mathrm P$, by (F2)
+$\mathrm V\{1,b-2\}$ into $S$ at $b-2$ --- $S$ touched (vertex $2$): from $b-2$ the
+non-$\mathrm V$ continuations are $\mathrm P\{b-2,b-1\}$ ($b-1$ visited) and the
+P-side of $\{b-3,b-2\}$, then monotone descent stranding at $3$ ($2$ visited).
+Branch closed. Alternatively, full crossing $2 \to b-2$ with entry color $\mathrm V$
+arrives by color $\mathrm V$; exit must be $\mathrm P$: only $\{b-2,b-1\}$, and
+$b-1$ is visited. Strands; branch closed.
+\end{itemize}
+\emph{Stem (D) yields exactly (V2), (V4), (V5).}
+
+\medskip
+Collecting the four stems: every admissible visit is one of (V1)--(V5) up to
+reversal, and each is realized only with the listed role pair (checked at each
+\emph{Record} step). In particular no admissible visit realizes $\{p_0, v_1\}$ or
+$\{v_0, p_1\}$, and the maximum size is $3$, attained by (V4) and (V5).
+\end{proof}
+
+\begin{corollary}\label{cor:M3}
+$M(T_b) = 3$ for every even $b \ge 6$, and $c^* := \liminf_n \pmin(n)/n$ satisfies
+$c^* \le 6/b$ for every even $b \ge 6$; hence $c^* = 0$ and the displayed question
+of Section~\ref{sec:intro} has a negative answer.
+\end{corollary}
+
+\begin{proof}
+$M(T_b) = 3$ is part of Theorem~\ref{thm:classification}. For the second claim, take
+$\pi_i = T_b$ for all $i$ in Theorem~\ref{thm:inflation} and let $a \to \infty$:
+$\pmin(ab)/(ab) \le \bigl((2a-3)\cdot 3 + 2b\bigr)/(ab) \to 6/b$.
+\end{proof}
+
+\begin{remark}[The parity is essential]\label{rem:parity}
+For \emph{odd} $b$, $b - 4$ is odd and the last internal edge of a full crossing has
+color $\bar c$, so the exit edge may have color $c$. The route
+$0 \xrightarrow{\mathrm P} 1 \xrightarrow{\mathrm V} b-2 \rightsquigarrow 2
+\xrightarrow{\mathrm V\{2,b-1\}} b-1$ (full crossing in the middle) then becomes
+properly colored and is an admissible visit for $\{v_0, p_1\}$ of size $b$. Exact
+computation (Section~\ref{sec:comp}) confirms $M(T_b) = b$ for odd
+$b \in \{7, 9, 11, 13\}$ and $M(T_b) = 3$ for even $6 \le b \le 100$, and confirms
+the \emph{exact list} of Theorem~\ref{thm:classification} for even
+$6 \le b \le 14$ by independent brute-force enumeration of all admissible visits
+(ancillary file \texttt{verify\_M.py}).
+\end{remark}
+
+\begin{corollary}[Two visits to one $T_b$-block]\label{cor:pairs}
+Let $\sigma = \tau[\pi_1, \dots, \pi_a]$ be an inflation, let $B_i$ be a block whose
+pattern $\pi_i$ equals $T_b$ for some even $b \ge 6$, and let $Q$ be a PC path in
+$H_\sigma$. Then the interior visits of $Q$ to $B_i$ have total size at most $4$.
+\end{corollary}
+
+\begin{proof}
+By Lemma~\ref{lem:crosscount}, the block has at most four incident cross edges, one
+per role; each interior visit uses two of them (its entry and its exit, distinct
+edges), and every cross edge is used by $Q$ at most once. Hence there are at most two
+interior visits; if there is at most one, its size is at most $M(T_b) = 3 \le 4$. If
+there are two, they use all four cross edges, so their role pairs partition
+$\{p_0, p_1, v_0, v_1\}$, and the two visits are vertex-disjoint (disjoint runs of
+the simple path $Q$). By the classification
+(Theorem~\ref{thm:classification}) the three possible partitions give:
+\begin{itemize}
+\item $\{p_0, p_1\} \,/\, \{v_0, v_1\}$: the only visits are (V2) $= (0, b-1)$ and
+(V3) $= (0,1)$, which share vertex $0$ --- impossible;
+\item $\{p_0, v_1\} \,/\, \{v_0, p_1\}$: no visits exist for either pair ---
+impossible;
+\item $\{p_0, v_0\} \,/\, \{p_1, v_1\}$: sizes $1$ (V1) and at most $3$ (V4 or V5):
+total at most $4$.
+\end{itemize}
+\end{proof}
+
+\section{Proof of the Main Theorem}\label{sec:main}
+
+\begin{theorem}\label{thm:main}
+\begin{enumerate}
+\item[(a)] For every even $b \ge 6$ and $a \ge 2$,
+$\ \rho(\sigma_{a,b}) \le 6a + 2b$, where
+$\sigma_{a,b} = \mathrm{id}_a[T_b, \dots, T_b]$, i.e.\
+$\sigma_{a,b}(jb+r) = jb + T_b(r)$.
+\item[(b)] For every $n \ge 100$, $\ \pmin(n) \le 10\sqrt n + 10$.
+\end{enumerate}
+In particular $\pmin(n) = O(\sqrt n)$ and $\pmin(n)/n \to 0$, using only
+$M(T_b) = 3$ and the Inflation Lemma.
+\end{theorem}
+
+\begin{proof}
+(a) Immediate from Theorem~\ref{thm:inflation} with $M(\pi_i) = 3$ and $b_i = b$:
+$\rho \le (2a-3)\cdot 3 + 2b \le 6a + 2b$.
+
+(b) Let $b = 2\lfloor \sqrt n / 2 \rfloor$, so $b$ is even, $\sqrt n - 2 < b \le
+\sqrt n$, and $b \ge 10$ since $n \ge 100$. Let $a = \lfloor n/b \rfloor \ge 2$ and
+$s = n - (a-1)b$, so $b \le s < 2b$. Define $\sigma \in S_n$ as the inflation (any
+outer permutation, say the identity) of the following list of blocks:
+\begin{itemize}
+\item if $s$ is even: $a - 1$ copies of $T_b$ and one copy of $T_s$
+(valid: $s$ even, $s \ge b \ge 10$);
+\item if $s$ is odd: $a - 1$ copies of $T_b$, one copy of $T_{s-3}$, and one block
+of size $3$ with the identity pattern $\iota_3 = (0,1,2)$ (valid: $s - 3$ is even
+and $s - 3 \ge b - 2 \ge 8$, since $s \ge b$ with $s$ odd and $b$ even force
+$s \ge b + 1$).
+\end{itemize}
+Every block has transit number at most $3$: the $T$-blocks by
+Theorem~\ref{thm:classification}, the single $\iota_3$-block trivially (it has only
+$3$ vertices). The number of blocks is $m \le a + 1 \le n/b + 1$ and the largest
+block has size at most $2b - 1$. By Theorem~\ref{thm:inflation},
+\[
+\pmin(n) \;\le\; (2m - 3)\cdot 3 + 2(2b - 1)
+\;\le\; \frac{6n}{b} + 4b - 5 .
+\]
+Since $b \ge \sqrt n - 2$ and $\sqrt n \ge 10$,
+\[
+\frac{6n}{b} \;\le\; \frac{6n}{\sqrt n - 2}
+\;=\; 6\sqrt n + \frac{12\sqrt n}{\sqrt n - 2}
+\;\le\; 6\sqrt n + 15,
+\]
+using $\sqrt n/(\sqrt n - 2) \le 10/8$ for $\sqrt n \ge 10$. With $4b \le 4\sqrt n$
+we get $\pmin(n) \le 10\sqrt n + 10$.
+\end{proof}
+
+The refined constants use the classification once more, through
+Corollary~\ref{cor:pairs}.
+
+\begin{proposition}[Refined constants]\label{prop:refined}
+For every even $b \ge 6$ and $a \ge 2$, $\ \rho(\sigma_{a,b}) \le 4a + 2b$; and for
+every $n \ge 100$, $\ \pmin(n) \le 8\sqrt n + 20$.
+\end{proposition}
+
+\begin{proof}
+First claim: let $Q$ be a PC path in $H_{\sigma_{a,b}}$ with $q$ visits. If $q = 1$
+then $|Q| \le b$. Otherwise, by Lemma~\ref{lem:visits} the first and last visits have
+at most $b$ vertices each, and by Corollary~\ref{cor:pairs} the interior visits
+contribute at most $4$ per block, i.e.\ at most $4a$ in total. Hence
+$\rho \le 4a + 2b$.
+
+Second claim: take the construction from the proof of Theorem~\ref{thm:main}(b).
+Interior visits contribute at most $4$ per $T$-block (Corollary~\ref{cor:pairs};
+the corollary applies verbatim to $T_b$, $T_s$, and $T_{s-3}$) and at most
+$2 \cdot 3 = 6$ in total for the single $\iota_3$-block (at most two interior
+visits --- Lemma~\ref{lem:crosscount} --- of size at most $3$ each). End visits
+contribute at most $2(2b - 1)$. Hence
+\[
+\pmin(n) \;\le\; 4\Bigl(\frac n b + 1\Bigr) + 6 + 2(2b-1)
+\;=\; \frac{4n}{b} + 4b + 8
+\;\le\; \bigl(4\sqrt n + 10\bigr) + 4\sqrt n + 8
+\;\le\; 8\sqrt n + 20,
+\]
+using $4n/(\sqrt n - 2) = 4\sqrt n + 8\sqrt n/(\sqrt n - 2) \le 4\sqrt n + 10$ for
+$\sqrt n \ge 10$.
+\end{proof}
+
+\begin{proposition}[Explicit long path: the family is $\Theta(a+b)$]
+\label{prop:lower}
+For every even $b \ge 6$ and $a \ge 2$, $\ \rho(\sigma_{a,b}) \ge 2a + 2b - 7$.
+\end{proposition}
+
+\begin{proof}
+Write $(j, \ell)$ for the vertex at position $jb + \ell$ ($0 \le j < a$,
+$0 \le \ell < b$), so block $j$ is a copy of $H_{T_b}$ on $\{(j,0), \dots,
+(j,b-1)\}$, and the values are: $(j,0) \mapsto jb$, $(j,1) \mapsto jb + b - 1$,
+$(j,\ell) \mapsto jb + \ell$ for $2 \le \ell \le b-2$, and
+$(j, b-1) \mapsto jb + 1$. Besides the internal edges (Lemma~\ref{lem:inventory} in
+each block), the cross edges are: the P-edges $\{(j, b-1), (j+1, 0)\}$ (consecutive
+positions) and the V-edges $\{(j, 1), (j+1, 0)\}$ (values $jb + b - 1$ and
+$(j+1)b$). Within block $j$, note the V-edge $\{(j,0), (j,b-1)\}$ (values $jb$ and
+$jb+1$) and the V-edge $\{(j,2), (j,b-1)\}$ (values $jb+2$ and $jb+1$).
+
+The following walk is a PC path; colors are indicated over each arrow, and each edge
+exists by the inventory just listed.
+\begin{itemize}
+\item \emph{Stage 1 (block $0$).} Start at $(0, b-2)$ and descend the segment to
+$(0, 2)$ along the doubled run, choosing colors
+$\mathrm V, \mathrm P, \mathrm V, \dots$ alternately; this uses $b - 4$ edges, and
+since $b - 4$ is even the last of them (into $(0,2)$) has color $\mathrm P$. Then
+take $\mathrm V\,\{(0,2), (0,b-1)\}$, then the P-cross edge to $(1, 0)$. Colors:
+$\dots, \mathrm P, \mathrm V, \mathrm P$ --- properly colored.
+\item \emph{Stage 2 (blocks $1, \dots, a-2$).} From $(j, 0)$ (just entered by a
+P-cross edge) take $\mathrm V\,\{(j,0), (j,b-1)\}$, then the P-cross edge to
+$(j+1, 0)$; repeat. Colors alternate $\mathrm P, \mathrm V, \mathrm P, \dots$
+throughout.
+\item \emph{Stage 3 (block $a-1$).} From $(a-1, 0)$ (entered by a P-cross edge)
+take $\mathrm V\,\{(a-1,0), (a-1,b-1)\}$, then $\mathrm P\,\{(a-1,b-2),
+(a-1,b-1)\}$, then descend the segment from $(a-1, b-2)$ to $(a-1, 2)$ choosing
+colors $\mathrm V, \mathrm P, \dots$ alternately, and stop at $(a-1, 2)$.
+\end{itemize}
+All vertices are distinct (stages use disjoint blocks; within each stage the listed
+vertices are distinct), and consecutive edge colors differ at every junction as
+indicated. The vertex count is $(b - 2)$ in stage 1 ($b-3$ segment vertices plus
+$(0, b-1)$), $2(a-2)$ in stage 2, and $(b - 1)$ in stage 3 ($(a-1,0)$,
+$(a-1,b-1)$, and the $b-3$ segment vertices), for a total of $2a + 2b - 7$. The
+construction is verified mechanically, edge by edge, in the ancillary file
+\texttt{verify\_path.py}.
+\end{proof}
+
+\begin{remark}[Constants; exact values]\label{rem:constants}
+Together, Propositions~\ref{prop:refined} and~\ref{prop:lower} give
+$2(a+b) - 7 \le \rho(\sigma_{a,b}) \le 4a + 2b$: the family is $\Theta(a + b)$, and
+with $a \asymp b$ it realizes $\Theta(\sqrt n)$, so the upper bound of
+Theorem~\ref{thm:main-intro} is achieved by this family up to the constant. Exact
+machine computation (Section~\ref{sec:comp}) gives $\rho(\sigma_{a,b}) = 2a + 2b -
+4$ at every tested point up to $n = 720$; we conjecture this holds for all $a \ge
+3$, even $b \ge 6$, but we neither prove nor use it. Optimizing the proven bounds
+at $n = ab$: the upper bound $4a + 2b$ with $b \asymp \sqrt{2n}$ gives
+$\pmin(n) \le 4\sqrt{2n} + O(1) \approx 5.66\sqrt n$ along such $n$.
+\end{remark}
+
+\section{Computational verification}\label{sec:comp}
+
+None of the proofs above depend on computation. This section specifies the
+computations that independently verify them, and the empirical sharpness of the
+construction. \textbf{All code, command lines, and output logs are provided as
+ancillary files with this submission} (directory \texttt{artifact/}; file
+\texttt{README.md} there maps each claim below to a script and a log; a manifest
+with SHA-256 checksums is included).
+
+\paragraph{Algorithm.} The basic object is the exact longest-PC-path search. Its
+state space is the set of triples (\emph{visited set}, \emph{current vertex},
+\emph{last edge color}); the initial states are all $(\{x, w\}, w, c)$ over edges
+$\{x, w\}$ of color $c$; a transition extends a state by an unvisited neighbor along
+an edge of the other color. Every PC path corresponds to a unique state, so
+$\rho(\sigma)$ is the maximum cardinality of the visited set over all
+\emph{reachable} states, computed by an exhaustive search that visits every
+reachable state exactly once (a memo set of states; no pruning of any kind). The
+method is exact by construction; its cost is the number of reachable states. That
+number is exponential in general --- on unstructured instances we used the method
+only for $n \le 19$ --- but is small on the structured families here, because the
+gadget strands most partial paths quickly: for $\sigma_{a,b}$ we measure
+$57{,}066$ reachable states at $n = 80$, $5{,}012{,}186$ at $n = 600$, and
+$7{,}273{,}586$ at $n = 720$ (the logs report the count for every table row). The constrained variants computing $M(\pi)$
+(fixed start/end terminals and first/last colors) are the same search with the
+initial and accepting states restricted.
+
+\paragraph{Implementations.} Three independent implementations were used: a plain
+recursive enumerator and a memoized iterative one (both Python, in the artifact),
+which agree on $300$ random permutations of sizes $4$--$8$; and a separately
+written C++ solver (also in the artifact) from a parallel verification effort,
+which agrees with the Python solvers on every instance checked by both, including
+exact values of $\rho(\sigma_{a,b})$ at $(a,b) \in \{(6,8), (5,10), (4,12)\}$ and
+the trap-family values of Appendix~\ref{app:trap} at six points. In addition, the
+artifact contains a \emph{minimal independent verifier}
+(\texttt{verify\_M.py}, under $100$ lines, written directly from
+Definition~\ref{def:M} with no shared code), which re-derives $M(T_b)$ and the
+complete list of admissible visits by brute force for $b \le 14$.
+
+\paragraph{Verified statements.} Each item states the claim, its range, and its log.
+\begin{enumerate}
+\item \textbf{Anchors from \cite{Liz26}} (\texttt{validate2.log},
+\texttt{search\_small.log}): $\rho(\sigma_m) = 2m + 3$ for the block-reversal family
+at $m = 1, 2, 3, 4$ ($n = 7, 11, 15, 19$); $\rho(\sigma^*) = 10$ for the $n = 18$
+counterexample of \cite{Liz26}; $\pmin(7) = 5$ and $\pmin(8) = 6$ by full
+enumeration of $S_7, S_8$.
+\item \textbf{Classification} (\texttt{verify\_M.log}): for even
+$b \in \{6, 8, 10, 12, 14\}$, the admissible visits of $H_{T_b}$ are \emph{exactly}
+(V1)--(V5) of Theorem~\ref{thm:classification}; for odd $b \in \{7, 9, 11\}$,
+$M(T_b) = b$.
+\item \textbf{The family at scale} (\texttt{check\_all\_even.log}): $M(T_b) = 3$
+for \emph{every} even $6 \le b \le 100$; $M(T_b) = b$ for odd $b \in \{7,9,11,13\}$
+(\texttt{validate2.log}).
+\item \textbf{Optimality of the gadget at small sizes}
+(\texttt{search\_small.log}): full enumeration of $S_b$ for $4 \le b \le 9$ gives
+$\min_{\pi \in S_b} M(\pi) = 3$ in every case; no gadget of size $\le 9$ beats
+transit number $3$.
+\item \textbf{Explicit lower-bound path} (\texttt{verify\_path.log}): the path of
+Proposition~\ref{prop:lower} is checked edge-by-edge at seven $(a,b)$ points
+including $(20,20)$.
+\item \textbf{Exact values} (\texttt{endtoend.log}, \texttt{bigtable.log}): for
+$\sigma_{a,b}$:
+
+\begin{center}
+\begin{tabular}{rrrrrrr}
+\toprule
+$a$ & $b$ & $n$ & $\rho$ (exact) & $2a{+}2b{-}4$ & $4a{+}2b$ & $\rho/n$ \\
+\midrule
+10 & 8  & 80  & 32 & 32 & 56  & 0.400 \\
+12 & 8  & 96  & 36 & 36 & 64  & 0.375 \\
+12 & 12 & 144 & 44 & 44 & 72  & 0.306 \\
+16 & 12 & 192 & 52 & 52 & 88  & 0.271 \\
+20 & 12 & 240 & 60 & 60 & 104 & 0.250 \\
+16 & 16 & 256 & 60 & 60 & 96  & 0.234 \\
+24 & 16 & 384 & 76 & 76 & 128 & 0.198 \\
+20 & 20 & 400 & 76 & 76 & 120 & 0.190 \\
+30 & 16 & 480 & 88 & 88 & 152 & 0.183 \\
+24 & 20 & 480 & 84 & 84 & 136 & 0.175 \\
+30 & 20 & 600 & 96 & 96 & 160 & 0.160 \\
+36 & 20 & 720 & 108 & 108 & 184 & 0.150 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Every exact value equals $2a + 2b - 4$ and sits inside the proven window
+$[2a{+}2b{-}7,\ 4a{+}2b]$ of \eqref{eq:twosided}; the two rows at $n = 480$
+(differing in $\rho$) illustrate that $\rho(\sigma_{a,b})$ tracks $a$ and $b$
+separately, not merely their product. At $n = 720$ the ratio $0.150$ is far below
+the smallest ratio previously conjectured to be asymptotically attainable,
+$10/28 \approx 0.357$ \cite{Liz26}.
+\item \textbf{Exhaustive small-$n$ statistics} (\texttt{logs/exh7.txt}--%
+\texttt{exh12.txt}, produced by the C++ solver): the joint distribution of
+$(b(\sigma), \rho(\sigma))$ over all of $S_n$ for $7 \le n \le 12$, used in
+Section~\ref{sec:disc}; at $n = 12$ this is an enumeration of all
+$479{,}001{,}600$ permutations.
+\item \textbf{Landscape} (exploratory; \texttt{probe.py}): under adjacent
+transpositions, $\sigma_{4,6}$ ($n = 24$, $\rho = 16$) is a strict local minimum of
+$\rho$, while greedy descent from random starts stalls around $\rho \approx 23$ ---
+consistent with the flat-landscape observations of \cite{Liz26}; extremal
+permutations of this type are found by design, not by local search.
+\end{enumerate}
+
+Items 1--7 are exhaustive within their stated ranges and reproducible by running
+the listed scripts; item 8 is exploratory.
+
+\section{Lower bounds and open problems}\label{sec:disc}
+
+Following \cite{Liz26}, a \emph{$\pm1$-block} of $\sigma$ is a maximal interval of
+positions on which consecutive values differ by a fixed
+$\varepsilon \in \{+1,-1\}$ (singletons allowed); let $b(\sigma)$ be their number
+and $s_{\max}(\sigma)$ the largest block size. Two elementary facts frame the
+lower-bound question. First, the $\pm1$-blocks partition the positions, so
+\[
+s_{\max}(\sigma) \cdot b(\sigma) \;\ge\; n,
+\qquad\text{hence}\qquad
+\max\bigl(s_{\max}(\sigma),\, b(\sigma)\bigr) \;\ge\; \sqrt n .
+\]
+Second, $\rho(\sigma) \ge s_{\max}(\sigma)$ always (traverse a largest block along
+its doubled run; \cite{Liz26}). Consequently, if there were an absolute $c > 0$
+with $\rho(\sigma) \ge c\, b(\sigma)$ for all $\sigma$, then
+$\pmin(n) \ge c\sqrt n$ would follow, and with Theorem~\ref{thm:main}:
+
+\begin{conjecture}\label{conj:sqrt}
+$\pmin(n) = \Theta(\sqrt n)$.
+\end{conjecture}
+
+We emphasize the asymmetry of the evidence: the upper bound is proved, while for
+the lower bound we have only the following partial information about $\rho$ versus
+$b(\sigma)$, which we believe is of independent interest.
+\begin{itemize}
+\item \textbf{Exhaustively for $n \le 12$:} $\rho(\sigma) \ge b(\sigma)$ for every
+$\sigma \in S_n$ (machine-verified over all $479{,}001{,}600$ permutations at
+$n = 12$; artifact logs \texttt{exh7.txt}--\texttt{exh12.txt}; equality occurs).
+\item \textbf{Asymptotically the constant $1$ fails:} each copy of $T_b$
+contributes four $\pm1$-blocks ($\{0\}$, $\{1\}$, $[2, b-2]$, $\{b-1\}$), so
+$b(\sigma_{a,b}) = 4a$, while exact machine computation
+(\texttt{bigtable.log}) gives $\rho(\sigma_{20,12}) = 60 < 80 =
+b(\sigma_{20,12})$ at $n = 240$, and similarly $76 < 96$ at $(24,16)$ and
+$96 < 120$ at $(30,20)$. These are finite, reproducible counterexamples to
+$\rho \ge b(\sigma)$.
+\item \textbf{Proven window:} by \eqref{eq:twosided},
+$\tfrac{\rho(\sigma_{a,b})}{b(\sigma_{a,b})} \in
+\bigl[\tfrac12 + \tfrac{2b-7}{4a},\ 1 + \tfrac{b}{2a}\bigr]$; the conjectured
+exact formula $2a + 2b - 4$ would give limit $\tfrac12$ as $a/b \to \infty$. We
+know of no $\sigma$ with $\rho(\sigma) < \tfrac12 b(\sigma)$.
+\end{itemize}
+Thus the sharp form of the lower-bound question is whether
+$\rho \ge c\,b(\sigma)$ holds for some $c \le \tfrac12$; any such $c$ settles
+Conjecture~\ref{conj:sqrt}. At the opposite extreme, even $\pmin(n) \to \infty$
+appears to be open: the bound $\rho \ge s_{\max} + 1$ of \cite{Liz26} degenerates
+for permutations with all blocks of bounded size, and our methods produce no lower
+bounds at all. (For the special case $b(\sigma) = n$ --- no two consecutive
+positions carrying consecutive values --- exhaustive computation for $n \le 12$
+found every such permutation to be PC-Hamiltonian, $\rho = n$; this extreme case
+is wide open.)
+
+On the gadget side, the exhaustive minimum $\min_{\pi \in S_b} M(\pi) = 3$ for
+$4 \le b \le 9$ hints that transit numbers cannot be made arbitrarily small;
+deciding whether $M(\pi) \ge 3$ for all $|\pi| \ge 4$, or determining the true
+minimum growth of $M$ as a function of $b$, would calibrate how far inflation
+alone can go. (Heuristically it cannot beat $\sqrt n$ in any case: the end-visit
+term ties the bound to the block size, and nesting inflations doubles the
+visit-count bound per level.)
+
+Two further directions. First, the analogous question for the union of two
+Hamiltonian \emph{cycles}: we expect the method to adapt --- the port calculus
+acquires two wraparound cross edges and the visit count rises accordingly --- but
+we have not carried out the analysis and do not claim the result. Second, the
+Lov\'asz-side question (Section~\ref{subsec:scope}): for the graphs $G(n, \sigma)$
+of \cite{Liz26} built from $\sigma_{a,b}$ or from the chains of
+Appendix~\ref{app:trap}, is the maximum number of matching edges on a path still
+$\Theta(n)$? The properly-colored relaxation is now known to be lossy; quantifying
+the loss on these explicit instances may indicate whether the matching-edge
+parameter $f(n)$ is linear after all.
+
+\section*{Acknowledgments}
+
+This paper answers the main question left open in the author's earlier note
+\cite{Liz26}. The proofs and computations were AI-assisted by Claude, under the
+Periapsis research structure. Because of that, I have tried to make the paper
+checkable without trusting either the author or the assistant. The central case
+analysis is stated as a complete classification (Theorem~\ref{thm:classification})
+whose every step is locally verifiable. Every computational claim is reproducible
+from the ancillary artifact, which includes a minimal independent verifier written
+directly from the definitions. And the main theorem has a second, independent proof
+in Appendix~\ref{app:trap}.
+
+\begin{thebibliography}{9}
+
+\bibitem{Liz26}
+A.~Lizardi,
+\emph{Long properly colored paths in the union of two Hamiltonian paths: an
+extremal conjecture and its refutation},
+% TODO: confirm the arXiv identifier below once Liz26 is posted.
+arXiv:2506.XXXXX, 2026.
+
+\bibitem{Lov70}
+L.~Lov\'asz,
+Problem 11, in:
+\emph{Combinatorial Structures and their Applications}
+(Proc.\ Calgary Internat.\ Conf., 1969),
+Gordon and Breach, New York, 1970, p.~497.
+
+\bibitem{NSTW25}
+S.~Norin, R.~Steiner, S.~Thomass\'e, and P.~Wollan,
+\emph{Long cycles in vertex-transitive graphs},
+arXiv:2505.08634, 2025.
+
+\bibitem{LYZ18}
+X.~Liu, X.~Yu, and S.~Zhang,
+\emph{Circumference of 3-connected cubic graphs},
+J.~Combin.\ Theory Ser.~B \textbf{132} (2018), 104--153.
+
+\bibitem{BJG97}
+J.~Bang-Jensen and G.~Gutin,
+\emph{Alternating cycles and paths in edge-coloured multigraphs: a survey},
+Discrete Math.\ \textbf{165--166} (1997), 39--60.
+
+\bibitem{GK09}
+G.~Gutin and E.~J.~Kim,
+\emph{Properly coloured cycles and paths: results and open problems},
+in: Graph Theory, Computational Intelligence and Thought,
+Lecture Notes in Comput.\ Sci.\ 5420, Springer, 2009, 200--208.
+
+\bibitem{ABMMM10}
+A.~Abouelaoualim, V.~Borozan, Y.~Manoussakis, C.~Martinhon, and R.~Muthu,
+\emph{Properly colored paths in edge-colored graphs},
+Discrete Math.\ \textbf{310} (2010), 1610--1620.
+
+\end{thebibliography}
+
+\appendix
+
+\section{A second construction: trap chains}\label{app:trap}
+
+This appendix gives an independent proof of $\pmin(n) = O(\sqrt n)$ by a different
+family, found in a parallel verification effort. It does not use
+Sections~\ref{sec:ports}--\ref{sec:gadget}; conversely, the main text does not use
+this appendix. The mechanism is again a parity obstruction, but localized
+differently: here \emph{large reversed blocks of odd size, flanked by singletons},
+are traps that no properly colored path can cross.
+
+\begin{definition}\label{def:chain}
+Let $C = (c_0, c_1, \dots, c_r)$ be a composition of $n$ with $c_t \ge 1$ and
+\emph{no two consecutive entries equal to $1$}. Put $P_t = c_0 + \dots + c_{t-1}$,
+and let block $t$ occupy positions and values $[P_t, P_t + c_t - 1]$, reversed:
+\[
+\sigma_C(P_t + i) \;=\; P_t + c_t - 1 - i, \qquad 0 \le i < c_t .
+\]
+Write $L_t = P_t$ and $R_t = P_t + c_t - 1$ (the \emph{ports} of block $t$).
+\end{definition}
+
+\begin{lemma}\label{lem:chain-inv}
+$H_{\sigma_C}$ consists exactly of:
+\begin{enumerate}
+\item[(a)] doubled pairs $\{p, p+1\}$ for all consecutive positions inside each
+block;
+\item[(b)] for each $0 \le t < r$, one P-only cross edge $\{R_t, L_{t+1}\}$;
+\item[(c)] for each $0 \le t < r$, one V-only cross edge $\{L_t, R_{t+1}\}$;
+\item[(d)] nothing else.
+\end{enumerate}
+In particular, the cross edges incident to block $t$ attach as follows
+(\emph{port--color crossover}): at $L_t$, a P-edge toward block $t-1$ and a V-edge
+toward block $t+1$; at $R_t$, a V-edge toward block $t-1$ and a P-edge toward
+block $t+1$ (omitting nonexistent neighbors). Non-port vertices carry no cross
+edges.
+\end{lemma}
+
+\begin{proof}
+(a) Inside a block, consecutive positions hold consecutive (descending) values:
+both a P-edge and a V-edge. (b) The positions $R_t, L_{t+1}$ are consecutive;
+their values are $P_t$ (block minimum) and $P_{t+1} + c_{t+1} - 1$ (block
+maximum), which differ by $c_t + c_{t+1} - 1 \ge 2$ since not both $c_t, c_{t+1}$
+equal $1$: P-only. (c) The values $P_t + c_t - 1$ (maximum of block $t$, held at
+position $L_t$ because the block descends) and $P_t + c_t = P_{t+1}$ (minimum of
+block $t+1$, held at $R_{t+1}$) are consecutive; the positions $L_t, R_{t+1}$
+differ by $c_t + c_{t+1} - 1 \ge 2$: V-only. (d) Positions in non-consecutive
+blocks are never adjacent; values in non-consecutive blocks never differ by $1$
+(value ranges are contiguous in block order); and within consecutive blocks,
+(b)/(c) list the only position-adjacent (resp.\ value-adjacent) pairs not internal
+to a block. The crossover statement reads off (b) and (c) at blocks $t-1, t, t+1$.
+\end{proof}
+
+\begin{lemma}\label{lem:chain-visit}
+Let $Q$ be a PC path in $H_{\sigma_C}$ and let $t$ be a block containing no
+endpoint of $Q$. Then every maximal run of consecutive $Q$-vertices inside block
+$t$ is either (i) a single port vertex, or (ii) a \emph{full traversal} of all
+$c_t$ vertices from one port to the other. In case (ii), if the entering cross
+edge has color $\chi$, the exiting cross edge has color $\ne \chi$ if and only if
+$c_t$ is odd.
+\end{lemma}
+
+\begin{proof}
+A run with no endpoint of $Q$ has an entering and an exiting cross edge, which by
+Lemma~\ref{lem:chain-inv} attach only at ports; the run's internal edges lie in
+the block, whose internal graph is a path (with doubled pairs). If the run enters
+and leaves at the same port it is that single vertex (re-reaching the entry port
+would repeat it); the two cross edges at one port have different colors
+(Lemma~\ref{lem:chain-inv}), as the PC condition requires. Otherwise it goes from
+one port to the other through the entire internal path: a full traversal, with
+$c_t - 1$ internal edges. The PC condition forces the internal colors to alternate
+starting with $\bar\chi$, so the last internal edge has color $\chi$ iff
+$c_t - 1$ is even; the exit edge differs from the last internal edge, so it has
+color $\bar\chi$ iff $c_t$ is odd.
+\end{proof}
+
+\begin{lemma}[Trap Lemma]\label{lem:trap}
+Let block $t$ of $\sigma_C$ have odd size $c_t \ge 3$ and suppose its neighbors
+are singleton blocks: $c_{t-1} = c_{t+1} = 1$ (with $1 \le t \le r-1$). Let $Q$ be
+a PC path with no endpoint in block $t$. Then $Q$ uses at most $2$ vertices of
+block $t$ (at most one visit per port, and no full traversal).
+\end{lemma}
+
+\begin{proof}
+Write $A$ for block $t$ and let $s^-, s^+$ be the (single) vertices of blocks
+$t-1$, $t+1$. By Lemma~\ref{lem:chain-inv} the four cross edges at $A$ are
+\[
+\text{at } L_A:\ \{s^-, L_A\} \text{ (P)}, \quad \{L_A, s^+\} \text{ (V)};
+\qquad
+\text{at } R_A:\ \{s^-, R_A\} \text{ (V)}, \quad \{R_A, s^+\} \text{ (P)}.
+\]
+Suppose $Q$ makes a full traversal of $A$, entering by a cross edge of color
+$\chi$; since $c_t$ is odd, it exits by a cross edge of color $\bar\chi$
+(Lemma~\ref{lem:chain-visit}). Four cases:
+\begin{enumerate}
+\item enter at $L_A$ by $\{s^-, L_A\}$ ($\chi = \mathrm P$): the exit is the
+V-colored cross edge at $R_A$, namely $\{s^-, R_A\}$ --- but $s^-$ was the vertex
+visited immediately before entering, a repetition;
+\item enter at $L_A$ by $\{L_A, s^+\}$ ($\chi = \mathrm V$): the exit is the
+P-edge $\{R_A, s^+\}$ --- repeats $s^+$;
+\item enter at $R_A$ by $\{s^-, R_A\}$ ($\chi = \mathrm V$): the exit is the
+P-edge $\{s^-, L_A\}$ --- repeats $s^-$;
+\item enter at $R_A$ by $\{R_A, s^+\}$ ($\chi = \mathrm P$): the exit is the
+V-edge $\{L_A, s^+\}$ --- repeats $s^+$.
+\end{enumerate}
+Each case contradicts simplicity of $Q$. So every visit is a single port vertex;
+there are two ports.
+\end{proof}
+
+\begin{theorem}\label{thm:trap-main}
+Let $L \ge 3$ be odd, $k \ge 1$, $0 \le p \le L+1$, and
+$C = (2, (L, 1)^k, 3+p, 2)$, a composition of $n = (L+1)k + p + 7$ with no two
+consecutive $1$'s. Then
+\[
+\rho(\sigma_C) \;\le\; 3k + 3L + p + 1 .
+\]
+Consequently $\pmin(n) \le 7\sqrt n + O(1)$ for all sufficiently large $n$, by
+choosing $L$ the largest odd integer $\le \sqrt n$ and
+$k = \lfloor (n-7)/(L+1) \rfloor$, $p = n - 7 - (L+1)k$.
+\end{theorem}
+
+\begin{proof}
+The blocks, in order, are: a $2$-block; $A_1, s_1, A_2, s_2, \dots, A_k, s_k$
+where each $A_t$ has size $L$ and each $s_t$ is a singleton; a $(3+p)$-block; a
+$2$-block. For $2 \le t \le k$ the block $A_t$ is flanked by the singletons
+$s_{t-1}$ and $s_t$, so Lemma~\ref{lem:trap} applies to it; $A_1$ is flanked on
+the left by the initial $2$-block and is not trapped.
+
+Fix a PC path $Q$ and charge each block with the number of $Q$-vertices it
+contains; $\rho(Q)$ is the sum of the charges. We bound the charges by category:
+\begin{itemize}
+\item each singleton $s_t$: charge $\le 1$ (its size); total $\le k$;
+\item each trapped block $A_t$ ($2 \le t \le k$) containing no endpoint of $Q$:
+charge $\le 2$ (Lemma~\ref{lem:trap}); there are at least $(k-1) - 2$ such blocks,
+and at most $2$ trapped blocks may contain an endpoint of $Q$, each with charge
+$\le L$ (its size). Hence the trapped blocks contribute at most
+$2(k-1) + 2(L - 2)$ in total (each endpoint block exceeds the trap bound $2$ by at
+most $L - 2$);
+\item $A_1$: charge $\le L$ (its size);
+\item the three remaining blocks: charges $\le 2$, $\le 3+p$, $\le 2$ (their
+sizes); total $\le 7 + p$.
+\end{itemize}
+Summing: $\rho(Q) \le k + 2(k-1) + 2(L-2) + L + (7+p) = 3k + 3L + p + 1$.
+(If an endpoint of $Q$ lies in a non-trapped block, the corresponding excess term
+is simply not needed; the bound only improves.)
+
+For the corollary: with $L \le \sqrt n$ odd and maximal,
+$k \le n/(L+1) \le n/L$ and $p \le L + 1$, so
+$\rho \le 3n/L + 4L + 4 = 7\sqrt n + O(1)$ using $L = \sqrt n - O(1)$.
+\end{proof}
+
+\begin{remark}\label{rem:trap-data}
+The parity hypothesis is again essential: for even $L$,
+Lemma~\ref{lem:chain-visit} makes a full traversal \emph{preserve} the boundary
+color, the four cases of Lemma~\ref{lem:trap} become consistent, and computation
+shows the analogous even-$L$ chains are fully traversable ($\rho$ grows with
+slope $1$). Exact computation (artifact log \texttt{check\_trap.log}, plus the
+parallel C++ solver) gives the exact values $\rho(\sigma_C) = 2k + 2(L-1)$ for
+$C = (2,(L,1)^k,3,2)$, odd $L \in \{5,7,9,13,15,21\}$ and all $k \ge 2$ within
+reach ($n \le 57$): the same per-period slope $2$ as the family of
+Section~\ref{sec:main}. We do not know whether the two families are related beyond
+sharing this slope.
+\end{remark}
+
+\end{document}
