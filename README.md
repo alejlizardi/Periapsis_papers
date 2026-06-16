@@ -10,8 +10,9 @@ verification script a reviewer can run.
 
 | Directory | Result | Verify |
 |-----------|--------|--------|
-| [`a216940-hardin-hexagon/`](a216940-hardin-hexagon/) | Proof of the Kauers–Koutschan conjecture (Conjecture 12) for OEIS [A216940](https://oeis.org/A216940); upgrades its status from D to P. | `python a216940-hardin-hexagon/code/verify.py` |
-| [`cstar-properly-colored-paths/`](cstar-properly-colored-paths/) | Properly colored paths in the union of two Hamiltonian paths can have length O(√n) — $\rho_{\min}(n)/n \to 0$, answering the author's earlier question in the negative. | `python cstar-properly-colored-paths/code/verify_M.py` |
+| [`hexagonal-hardin-family/`](hexagonal-hardin-family/) | Unified order-polynomial proof for the side-2/3/4 hexagonal Hardin arrays: OEIS [A216938](https://oeis.org/A216938), [A216939](https://oeis.org/A216939), and [A216940](https://oeis.org/A216940); includes Kauers-Koutschan Conjecture 12 as the side-4 case. Supersedes the side-4-only draft below. | `python hexagonal-hardin-family/code/verify_family.py` |
+| [`a216940-hardin-hexagon/`](a216940-hardin-hexagon/) | Earlier side-4-only draft for OEIS [A216940](https://oeis.org/A216940), now superseded by `hexagonal-hardin-family/`. | `python a216940-hardin-hexagon/code/verify.py` |
+| [`cstar-properly-colored-paths/`](cstar-properly-colored-paths/) | Properly colored paths in the union of two Hamiltonian paths can have length O(sqrt(n)); rho_min(n)/n -> 0, answering the author's earlier question in the negative. | `python cstar-properly-colored-paths/code/verify_M.py` |
 
 ## Philosophy
 

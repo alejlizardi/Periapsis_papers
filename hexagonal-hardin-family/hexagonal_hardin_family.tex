@@ -1,0 +1,553 @@
+% =============================================================================
+%  Closed forms for the hexagonal Hardin arrays via order polynomials
+%  Periapsis working paper -- DRAFT for external adversarial review.
+%
+%  Proven instances: OEIS A216938 (side 2), A216939 (side 3), A216940 (side 4).
+%
+%  COMPILE: pdfLaTeX, two passes. Assets in assets/ (lockup.png, mark.png).
+%  Reproducibility: code/verify_family.py  (one command, Python stdlib only).
+% =============================================================================
+\documentclass[11pt]{article}
+
+\usepackage[letterpaper,margin=1in,top=1in,bottom=1.1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{mathtools}
+\usepackage{microtype}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{eso-pic}
+\usepackage{listings}
+\usepackage[hidelinks]{hyperref}
+
+\definecolor{periapsisInk}{HTML}{111418}
+\definecolor{periapsisOrange}{HTML}{FF4F00}
+\definecolor{periapsisMuted}{HTML}{5A6068}
+
+% ----- page mark: Periapsis glyph flush to the bottom-right physical corner --
+\AddToShipoutPictureBG{%
+  \AtPageLowerLeft{%
+    \put(\dimexpr\paperwidth-46pt\relax,18pt){%
+      \raisebox{0pt}{\includegraphics[height=22pt]{assets/mark.png}}}}}
+
+% ----- theorem environments -------------------------------------------------
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\OEIS}[1]{\texttt{#1}}
+\newcommand{\Eseq}{\mathrm{E}}
+\newcommand{\SW}{\mathrm{SW}}
+\newcommand{\SE}{\mathrm{SE}}
+\newcommand{\Om}{\Omega}
+\newcommand{\des}{\operatorname{des}}
+
+\newenvironment{callout}
+  {\par\smallskip\noindent\begin{center}\begin{minipage}{0.95\linewidth}%
+   \color{periapsisInk}\small\itshape\rule{0pt}{1ex}}
+  {\end{minipage}\end{center}\smallskip}
+
+\lstset{basicstyle=\ttfamily\footnotesize,breaklines=true,frame=single,
+        framesep=6pt,rulecolor=\color{black!15},backgroundcolor=\color{black!2},
+        columns=fullflexible,keepspaces=true,xleftmargin=2pt}
+
+% =============================================================================
+\begin{document}
+
+% ----------------------------- TITLE BLOCK ----------------------------------
+\begin{center}
+  \includegraphics[height=34pt]{assets/lockup.png}\\[26pt]
+  {\color{periapsisOrange}\footnotesize\bfseries\MakeUppercase{Working paper\,$\cdot$\,Draft for review}}\\[10pt]
+  {\LARGE\bfseries Closed forms for the hexagonal Hardin arrays\\[2pt]
+   via order polynomials\par}
+  \vspace{6pt}
+  {\large\color{periapsisMuted} A uniform a priori degree bound, with the sides $2,3,4$
+   (\OEIS{A216938}, \OEIS{A216939}, \OEIS{A216940}) proved\par}
+  \vspace{16pt}
+  {\large \textsc{Alejandro Lizardi}%
+   \footnote{The author recently completed a B.S.\ at the Georgia Institute of Technology.}}\\[2pt]
+  {\footnotesize\color{periapsisMuted}Independent researcher \quad$\cdot$\quad
+   Correspondence: \href{mailto:alejlizardi05@gmail.com}{alejlizardi05@gmail.com}}
+\end{center}
+
+\vspace{8pt}
+\begin{abstract}
+\noindent For each side $s\ge 1$ let $a_s(n)$ count the fillings of the side-$s$ hexagonal array
+with entries in $\{0,1,\dots,n\}$ that are nondecreasing along the three lattice directions east,
+south-west and south-east. These are the ``hexagonal Hardin arrays'' contributed to the On-Line
+Encyclopedia of Integer Sequences (OEIS) by R.~H. Hardin; the sides $2,3,4$ are \OEIS{A216938},
+\OEIS{A216939} and \OEIS{A216940}. Hardin (sides $2,3$) and Kauers--Koutschan (side $4$, their
+Conjecture~12) recorded explicit closed forms for these sequences as \emph{empirical}, unproven
+guesses---Kauers and Koutschan being unable to derive theirs because the underlying
+partition-analysis computation did not terminate. We give a uniform, elementary proof of all three.
+The observation is that $a_s(n)$ is exactly the order polynomial $\Om_{P_s}(n+1)$ of an explicit
+finite poset $P_s$ (the hexagon under the three monotonicity directions), so a classical theorem of
+Stanley gives, \emph{a priori} and with no reference to any guessed formula, that $a_s$ is a
+polynomial of degree exactly $\lvert P_s\rvert = 3s^2-3s+1$. Computing $\lvert P_s\rvert+1$ values
+of $a_s$ directly from $P_s$, via the descent statistic of its linear extensions, and matching them
+against the empirical form then forces equality. We emphasise that this is \emph{not} a match
+against the OEIS data alone (for side $4$ the published b-file is one value short of even
+interpolating the polynomial): the certificate rests on the a priori degree bound together with
+independently-computed values. The method is the standard order-polynomial / $P$-partition
+machinery; our contribution is to identify the right poset and carry the computation out, completing
+this small hexagonal family. All computations are reproducible from a single self-contained script.
+\end{abstract}
+
+\begin{center}\small\color{periapsisMuted}
+\textbf{MSC 2020:} 05A15 (primary); 06A07, 52B20 (secondary).\quad
+\textbf{Keywords:} order polynomial; $P$-partition; Hardin array; D-finite sequence;
+OEIS A216938, A216939, A216940; Ehrhart theory.
+\end{center}
+
+\vspace{4pt}
+\noindent\colorbox{black!3}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\small
+\textbf{Status \& provenance.} Draft prepared for external review prior to circulation;
+\emph{unrefereed and not yet reviewed by a specialist in the area}. The proof is computer-assisted
+(Section~\ref{sec:repro}, Appendix~\ref{app:alg}). The two order-polynomial theorems it rests on are
+cited from Stanley (and checked against the cited 2nd edition, \S3.15.2 and Theorem~3.15.8), not
+re-derived here. The order-polynomial / order-polytope method is standard and
+has recently been applied to other OEIS sequences (see~\cite{EOP24}); we are not aware of it having
+been recorded for this hexagonal family, but make no priority claim and would welcome pointers to
+prior appearances. AI-assisted by Claude under the Periapsis Architecture (acknowledgements).}}
+
+% ------------------------------- BODY ---------------------------------------
+\section{Introduction}
+
+In an automated study of sequences in the OEIS, Kauers and Koutschan~\cite{KK23} singled out a
+family of sequences that are provably $D$-finite but whose guessed recurrences or closed forms they
+could not establish rigorously. One is \OEIS{A216940}; it sits in a small family of hexagonal arrays
+contributed to the OEIS by R.~H. Hardin~\cite{OEIS} in 2012, of which the sides $2,3,4$ are
+\OEIS{A216938}, \OEIS{A216939}, \OEIS{A216940}:
+
+\begin{callout}
+\OEIS{A2169}$\,(36{+}s)$: ``Number of side-$s$ hexagonal $0\dots n$ arrays with values nondecreasing
+E, SW and SE'' \quad($s=2,3,4$).
+\end{callout}
+
+Concretely, write $H_s$ for the hexagonal patch of side $s$ on the triangular grid: a centrally
+symmetric hexagon whose $2s-1$ rows have lengths $s,s{+}1,\dots,2s{-}1,\dots,s{+}1,s$, for a total of
+$3s^2-3s+1$ cells. A \emph{filling} assigns to each cell a value in $\{0,1,\dots,n\}$; it is
+\emph{admissible} if the values are weakly increasing along each of the three lattice directions
+east ($\Eseq$), south-west ($\SW$) and south-east ($\SE$). Let $a_s(n)$ be the number of admissible
+fillings. For instance
+\[
+  a_2(1)=10,\quad a_3(1)=52,\quad a_4(1)=260,\qquad
+  a_2(2)=53,\quad a_3(2)=1211,\quad a_4(2)=27768 .
+\]
+
+Kauers and Koutschan proved (their Theorem~13) that $a_4$ is a quasipolynomial in $n$, hence
+$D$-finite, by translating admissibility into a system of linear inequalities and invoking partition
+analysis. They observed empirically that it appears to be an honest polynomial, and their LLL-based
+guesser produced an explicit degree-$37$ candidate (their Conjecture~12). The sides $2,3$ carry,
+on their OEIS entries, analogous empirical closed forms of degrees $7$ and $19$ contributed by
+Hardin. In each case the entry marks the formula \emph{Empirical} or \emph{conjectured}: the closed
+form was fit to the data, not derived. Kauers and Koutschan are explicit about the
+obstruction~\cite[\S5.1]{KK23}:
+
+\begin{callout}
+``Again, we were not able to derive an expression by a rigorous computation based on partition
+analysis, but we had no trouble to find a solution from our guessed recurrence. In fact, it appears
+that the result is not only a quasipolynomial but a polynomial.''
+\end{callout}
+
+\paragraph{Result.} We prove all three empirical closed forms, upgrading \OEIS{A216940} from
+status \textbf{D} to \textbf{P} in the classification of~\cite{KK23} and likewise settling the
+Hardin formulas for \OEIS{A216938} and \OEIS{A216939}. The mechanism is uniform and elementary.
+
+\begin{theorem}\label{main}
+For every side $s\ge 1$, the number $a_s(n)$ of admissible fillings of $H_s$ is a polynomial in $n$
+of degree exactly $3s^2-3s+1$. For $s=2,3,4$ this polynomial equals the empirical closed form
+recorded in the OEIS for \OEIS{A216938}, \OEIS{A216939} and \OEIS{A216940} respectively; in
+particular Conjecture~12 of Kauers--Koutschan holds.
+\end{theorem}
+
+\subsection{A caveat about the data, and the shape of the proof}\label{sub:caveat}
+
+It is tempting to argue that, since each $a_s$ is ``known'' to be a polynomial, it suffices to match
+the empirical form against enough OEIS terms. This is a trap, and most sharply so for side $4$: the
+published b-file~\cite{OEIS} for \OEIS{A216940} lists exactly $37$ terms, $a_4(1),\dots,a_4(37)$,
+while a polynomial of degree $37$ has $38$ coefficients and is pinned only by $38$ values. \emph{The
+$37$ published values do not even determine it uniquely}, let alone prove a guessed form. Moreover
+the only route in the literature to an a priori degree bound was the partition-analysis computation
+that Kauers--Koutschan report did not terminate. So a term-match against the published side-$4$ data
+is not a proof, with zero margin to spare. (Sides $2,3$ are over-determined by their data---$210$ and
+$50$ published terms against degrees $7$ and $19$---but, absent an a priori degree bound, even an
+over-determined fit is consistency, not proof.)
+
+Our proof escapes this uniformly in two moves.
+\begin{enumerate}[leftmargin=1.4em]
+  \item \textbf{An a priori degree bound (Section~\ref{sec:degree}).} We exhibit $a_s$ as the order
+  polynomial of an explicit finite poset $P_s$. A classical theorem of Stanley then gives, with no
+  reference to any conjecture, that $a_s$ is a polynomial of degree \emph{exactly} $3s^2-3s+1$.
+  \item \textbf{Independent values (Sections~\ref{sec:compute}--\ref{sec:proof}).} We compute
+  $a_s(0),a_s(1),\dots$ \emph{directly from $P_s$}, never using the empirical form, via the descent
+  statistic of the linear extensions of $P_s$. Matching $\lvert P_s\rvert+1$ such values against the
+  empirical form, and invoking the degree bound, forces equality. The value $a_s(0)=1$ is genuinely
+  new (not in any b-file), giving the decisive extra datum for side $4$.
+\end{enumerate}
+
+\section{The hexagon as a poset}\label{sec:poset}
+
+We use cube coordinates for the triangular grid: a cell is a triple $(x,y,z)\in\mathbb Z^3$ with
+$x+y+z=0$. The side-$s$ hexagon is
+\[
+  C_s \;=\;\{(x,y,z)\in\mathbb Z^3 : x+y+z=0,\ |x|,|y|,|z|\le s-1\},
+  \qquad |C_s|=3s^2-3s+1,
+\]
+giving $1,7,19,37$ cells for $s=1,2,3,4$. The three monotonicity directions are the unit steps
+\[
+  \Eseq=(1,-1,0),\qquad \SW=(0,-1,1),\qquad \SE=(-1,0,1).
+\]
+
+\begin{definition}\label{def:poset}
+Let $P_s=(C_s,\le)$ be the partial order generated by $u\le u+\mathbf d$ for
+$\mathbf d\in\{\Eseq,\SW,\SE\}$ whenever both $u$ and $u+\mathbf d$ lie in $C_s$; that is, $\le$ is
+the reflexive--transitive closure of these steps.
+\end{definition}
+
+\begin{proposition}\label{prop:order}
+$P_s$ is a partial order, and an admissible filling of $H_s$ is exactly an order-preserving map
+$P_s\to\{0,1,\dots,n\}$. Consequently
+\[
+  a_s(n)\;=\;\#\{\text{order-preserving } f:P_s\to\{0,\dots,n\}\}\;=\;\Om_{P_s}(n+1),
+\]
+where $\Om_P(m)$ is the order polynomial of $P$, the number of order-preserving maps from $P$ into
+the $m$-element chain $\{1,\dots,m\}$.
+\end{proposition}
+
+\begin{proof}
+\emph{Acyclicity.} Along every generating step the coordinate $z$ is nondecreasing (it increases by
+$1$ on $\SW$ and $\SE$ and is unchanged on $\Eseq$), and on an $\Eseq$-step within a fixed row ($z$
+constant) the coordinate $x$ strictly increases. Hence $(x,y,z)\mapsto(z,x)$ increases strictly
+lexicographically along every step, so no nontrivial cycle of steps exists and the transitive
+closure is a genuine partial order.
+
+\emph{Identification.} Weak monotonicity along the three generating steps is, by transitivity,
+exactly weak monotonicity along $\le$; so an admissible filling is the same as an order-preserving
+map $P_s\to\{0,\dots,n\}$. Such a map is the same as an order-preserving map into the
+$(n+1)$-element chain $\{1,\dots,n+1\}$ after the shift $f\mapsto f+1$, which is by definition
+counted by $\Om_{P_s}(n+1)$.
+\end{proof}
+
+\noindent This identification is the one modeling step on which the entire certificate rests: the
+degree bound and the descent computation are then routine consequences. It is the step most worth an
+independent check, and we corroborate it below (Section~\ref{sec:repro}) by reconstructing $P_s$ from
+the verbal array definition without the coordinates used here and recovering the same counts.
+
+\begin{remark}[covers versus generating steps]\label{rem:covers}
+Not every generating step is a covering relation of $P_s$. Since $\SW=\Eseq+\SE$ (indeed
+$(0,-1,1)=(1,-1,0)+(-1,0,1)$), each $\SW$-step that admits the intermediate cell coincides with the
+composite $\Eseq$-then-$\SE$ (equivalently $\SE$-then-$\Eseq$) and is therefore a transitive,
+non-covering edge. The order---and hence $\Om_{P_s}$---depends only on the transitive closure, so
+this does not affect the count; we note it only so the Hasse diagram is drawn correctly. The
+generating-step / genuine-cover / transitive-edge counts are $12/8/4$, $42/28/14$, $90/60/30$ for
+$s=2,3,4$, the transitive edges being the redundant $\SW$-steps.
+\end{remark}
+
+\begin{figure}[h]
+\centering
+\setlength{\tabcolsep}{3pt}
+\ttfamily
+\begin{tabular}{ccccccc}
+ & & & $\bullet$ & $\bullet$ & $\bullet$ & $\bullet$\\[-1pt]
+ & & $\bullet$ & $\bullet$ & $\bullet$ & $\bullet$ & $\bullet$\\[-1pt]
+ & $\bullet$ & $\bullet$ & $\bullet$ & $\bullet$ & $\bullet$ & $\bullet$\\[-1pt]
+$\bullet$ & $\bullet$ & $\bullet$ & $\bullet$ & $\bullet$ & $\bullet$ & $\bullet$\\[-1pt]
+ & $\bullet$ & $\bullet$ & $\bullet$ & $\bullet$ & $\bullet$ & $\bullet$\\[-1pt]
+ & & $\bullet$ & $\bullet$ & $\bullet$ & $\bullet$ & $\bullet$\\[-1pt]
+ & & & $\bullet$ & $\bullet$ & $\bullet$ & $\bullet$
+\end{tabular}
+\rmfamily
+\caption{The side-$4$ hexagon $H_4$: rows of lengths $4,5,6,7,6,5,4$, $37$ cells in all. Values
+increase rightward ($\Eseq$), down-left ($\SW$) and down-right ($\SE$). The sides $2$ and $3$ are the
+central $3\times3$-ish and $5$-row sub-hexagons, with $7$ and $19$ cells.}
+\end{figure}
+
+\section{The a priori degree bound}\label{sec:degree}
+
+The decisive structural input is classical and requires no computation.
+
+\begin{theorem}[Stanley {\cite[\S3.15.2, p.~344]{EC1}}]\label{thm:stanley-deg}
+For any finite poset $P$ with $p$ elements, the order polynomial $\Om_P(m)$ is a polynomial in $m$
+of degree exactly $p$, with leading coefficient $e(P)/p!$, where $e(P)$ is the number of linear
+extensions of $P$.
+\end{theorem}
+
+Combining Theorem~\ref{thm:stanley-deg} with Proposition~\ref{prop:order} yields the bound the data
+alone cannot supply.
+
+\begin{corollary}\label{cor:deg}
+$a_s(n)=\Om_{P_s}(n+1)$ is a polynomial in $n$ of degree exactly $\lvert P_s\rvert=3s^2-3s+1$, with
+positive leading coefficient $e(P_s)/\lvert P_s\rvert!$. In particular $a_s$ is a genuine polynomial
+(not merely a quasipolynomial), confirming the empirical observation of~\cite{KK23}, and any
+polynomial of degree $\le\lvert P_s\rvert$ agreeing with $a_s$ at $\lvert P_s\rvert+1$ points equals
+$a_s$.
+\end{corollary}
+
+We stress that Corollary~\ref{cor:deg} is independent of any guessed formula: it is a statement
+about the order polynomial of $P_s$, proved before the conjectured coefficients are consulted. This
+is the hinge on which the side-$4$ ``$37$ versus $38$'' difficulty turns.
+
+\section{Computing the order polynomial from the poset}\label{sec:compute}
+
+It remains to compute enough values of $a_s$ directly from $P_s$. A na\"ive enumeration of
+order-preserving maps is hopeless near $n=\lvert P_s\rvert$, so we use the descent statistic of the
+linear extensions, which is independent of $n$.
+
+Fix a \emph{natural labelling} $\ell:P_s\to\{0,1,\dots,p-1\}$ ($p=\lvert P_s\rvert$), i.e. an
+order-preserving bijection (any linear extension serves; we use Kahn's algorithm with smallest-index
+tie-break). A linear extension is a permutation $w=w_1\cdots w_p$ of the elements refining $\le$;
+its descent number is $\des(w)=\#\{i:\ell(w_i)>\ell(w_{i+1})\}$, and we set
+$A_d=\#\{\text{linear extensions } w:\des(w)=d\}$.
+
+\begin{theorem}[order polynomial via descents; Stanley {\cite[Thm.~3.15.8]{EC1}}]\label{thm:descent}
+With $p=\lvert P\rvert$ and $\{A_d\}$ as above,
+\[
+  \Om_P(m)=\sum_{d\ge 0} A_d\binom{m+p-1-d}{p},
+  \qquad\text{hence}\qquad
+  a_s(n)=\Om_{P_s}(n+1)=\sum_{d\ge 0} A_d\binom{n+p-d}{p}.
+\]
+\end{theorem}
+
+The distribution $\{A_d\}$ is computed exactly, without enumerating the individual linear extensions,
+by a transfer-matrix dynamic program over the order ideals (down-sets) of $P_s$: build a linear
+extension by repeatedly appending a currently-minimal unplaced element; the only state needed to
+score the next descent is the current ideal together with the label of the last placed element.
+Algorithm~\ref{alg:desc} (Appendix~\ref{app:alg}) gives the procedure; it is $n$-independent and runs
+in well under a second for all of $s\le 4$.
+
+\begin{callout}
+\upshape
+The computation returns, for $s=2,3,4$, the linear-extension counts $e(P_s)=\sum_d A_d$ equal to
+$4$, $20672$ and $4{,}623{,}718{,}515{,}360$, and descent distributions supported on
+$d=0,\dots,d_{\max}$ with $d_{\max}=3s^2-7s+4$ (giving $0$--$2$, $0$--$10$, $0$--$24$ for $s=2,3,4$).
+Each distribution is
+\emph{palindromic}, $A_d=A_{d_{\max}-d}$ (the Ehrhart--reciprocity symmetry of the order polytope
+$\mathcal O(P_s)$, an internal consistency check). The full tables are in Appendix~\ref{app:cert}.
+\end{callout}
+
+\section{Proof of Theorem~\ref{main}}\label{sec:proof}
+
+\begin{proof}
+By Proposition~\ref{prop:order}, $a_s(n)=\Om_{P_s}(n+1)$, and by Corollary~\ref{cor:deg} this is a
+polynomial of degree exactly $p=\lvert P_s\rvert$. The empirical closed form for $s\in\{2,3,4\}$ is,
+by inspection, also a polynomial of degree $p$ ($7,19,37$). Two polynomials of degree $\le p$ that
+agree at $p+1$ distinct points are identical.
+
+Using the descent distribution $\{A_d\}$ of Section~\ref{sec:compute} and Theorem~\ref{thm:descent},
+we evaluate
+\[
+  a_s(N)=\sum_{d} A_d\binom{N+p-d}{p},\qquad N=0,1,\dots,p,
+\]
+giving $p+1$ values computed solely from $P_s$---no coefficient of the empirical form enters. We then
+evaluate the empirical form at the same arguments. For $s=2$ and $s=3$ the two lists of $p+1$
+integers coincide exactly (and, beyond the $p+1$ required, agree with additional published b-file
+anchors; Appendix~\ref{app:cert}). For $s=4$ the poset-derived $a_4(0),\dots,a_4(37)$ are $38$
+values; they coincide with Kauers--Koutschan's Conjecture~12 evaluated at $N=0,\dots,37$, the value
+$a_4(0)=1$ (the unique constant filling) being a genuine $38$th datum beyond the $37$-term b-file. In
+each case the agreement at $p+1$ points together with the degree bound forces $a_s$ and the empirical
+form to be the same polynomial.
+\end{proof}
+
+\begin{remark}\label{rem:leadcoef}
+As an independent cross-check, the leading coefficient $e(P_s)/p!$ from Corollary~\ref{cor:deg}
+matches the leading coefficient of the empirical form computed symbolically: $4/7!=1/1260$ for
+$s=2$, $20672/19!=1/5884534656000$ for $s=3$, and $4{,}623{,}718{,}515{,}360/37!$ for $s=4$. Here
+$e(P_s)$ comes from $\{A_d\}$ while the leading coefficient of the empirical form comes from its
+stated factored shape, so the agreement checks both the degree bound and the descent computation.
+\end{remark}
+
+\section{Validation and reproducibility}\label{sec:repro}
+
+The proof is computer-assisted: the posets $P_s$, the degree bound and descent identity (two cited
+theorems) and the $(p{+}1)$-point match are the mathematical content, while the descent distributions
+$\{A_d\}$ and the value comparisons are produced by a short program. Every load-bearing computation
+was performed in exact integer/rational arithmetic and independently re-executed. A single
+self-contained script, \texttt{code/verify\_family.py}, rebuilds each $P_s$ from first principles and
+re-checks every claim below in about a second, using only the Python~3 standard library (it requires
+\texttt{math.comb}, i.e.\ Python~$\ge 3.8$) and no external data files. The script and this manuscript
+are available at \url{https://github.com/alejlizardi/Periapsis_papers} (directory
+\texttt{hexagonal-hardin-family}). We record the controls that rule out a modelling or programming
+error.
+
+\begin{itemize}[leftmargin=1.4em]
+  \item \textbf{One parametric rule, three sequences.} The same poset construction reproduces the
+  three independent OEIS sequences \OEIS{A216938}, \OEIS{A216939}, \OEIS{A216940} exactly on the
+  published anchors embedded in the verifier, and the side-$s$ cell counts
+  $3s^2-3s+1=7,19,37$ match the empirical degrees $7,19,37$.
+  \item \textbf{Independent re-derivation of the geometry.} An adversarial check reconstructed the
+  side-$2$ hexagon adjacency from the verbal OEIS definition using a row-geometry nearest-neighbour
+  packing, without reference to the cube-coordinate code, and obtained a poset structurally identical
+  to $P_2$ (same $7$ cells, same $12$ generating edges, same descent distribution). The independent
+  model reproduces the \OEIS{A216938} oracle $10,53,200,606,1572,3630,7656,15015$ at $n=1,\dots,8$.
+  \item \textbf{Three independent counting engines agree.} (i) the descent transfer matrix of
+  Section~\ref{sec:compute}; (ii) a frontier dynamic program counting order-preserving maps directly,
+  with no descent statistic; (iii) direct brute force for small $n$. All agree on every value tested,
+  including $a_4(3)=1664244$, $a_4(8)=8196058134921$ and $a_4(12)=57726306147546982$.
+  \item \textbf{Convention check on the descent identity.} The identity of Theorem~\ref{thm:descent}
+  was verified end-to-end at $s=3$ by enumerating the descent distribution of an independently
+  constructed poset and recovering the \OEIS{A216939} data, confirming the binomial convention is
+  applied correctly and not merely self-consistently.
+  \item \textbf{Over-determination.} Beyond the $p+1$ values required, the poset-derived $a_s$ and the
+  empirical forms were compared at further arguments beyond those needed for interpolation
+  (including additional b-file anchors for $s=2,3$ and the side-$4$ values $N=38,39,40,45$).
+  All agree; a coincidental or
+  buggy match would be expected to diverge, and does not.
+  \item \textbf{Labelling invariance.} Distinct natural labellings give identical $\{A_d\}$ and
+  identical values, as they must, ruling out a labelling artefact.
+\end{itemize}
+
+\section{Remarks and further work}
+
+\paragraph{On the method and its novelty.} The argument is the standard order-polynomial /
+$P$-partition machinery of Stanley~\cite{EC1}: once $a_s$ is recognised as the order polynomial of
+$P_s$, the degree bound and the descent computation are textbook. The same order-polytope viewpoint
+has recently been used systematically to interpret and prove closed forms for OEIS
+sequences~\cite{EOP24}. We are not aware of this family having been treated, but the technique is
+folklore and we claim novelty only for the specific identification and computation, not for the
+method; we would welcome pointers to any prior appearance. The value of the present note is that it
+\emph{completes} the small hexagonal Hardin family with a uniform, terminating argument in place of
+the partition-analysis route that stalled.
+
+\paragraph{On a non-numeric proof.} The monotone hexagon fillings are plane-partition-like, and the
+row transfer of Section~\ref{sec:compute} has the shape of a non-intersecting lattice-path
+(Lindstr\"om--Gessel--Viennot) configuration. It is plausible that an LGV determinant evaluates each
+$a_s$ to a product formula directly, giving a proof with no numerical step and an explicit closed
+form for all $s$ at once. We did not need this and leave it as a natural next question.
+
+\paragraph{On the sibling A195806.} The companion sequence \OEIS{A195806} (Conjecture~11
+of~\cite{KK23}, a period-$6$ quasipolynomial for a triangular array with summation constraints) is a
+genuine quasipolynomial, so the present polynomial-degree-bound argument does not transfer verbatim.
+The order-polytope / Ehrhart framework applies in principle---the period is governed by the relevant
+polytope's denominators---and we expect an analogous certificate, but we have not carried it out and
+do not claim it here.
+
+% ------------------------------- ACKNOWLEDGEMENTS ---------------------------
+\section*{Acknowledgements}
+We thank R.~H. Hardin for contributing these sequences to the OEIS, M.~Kauers and C.~Koutschan for
+isolating \OEIS{A216940} and stating the precise conjecture we settle, and the OEIS Foundation and
+its contributors for the b-files used as numerical oracles. The computations and a first draft were
+AI-assisted by Claude under the Periapsis Architecture; all mathematical claims were independently
+re-executed in exact arithmetic and are reproducible from the accompanying script. This draft has not
+yet been refereed or reviewed by a specialist in the area; correspondence and corrections are welcome.
+
+% ------------------------------- REFERENCES ---------------------------------
+\begin{thebibliography}{9}
+\bibitem{KK23} M. Kauers and C. Koutschan.
+\emph{Some D-finite and some possibly D-finite sequences in the OEIS.}
+Journal of Integer Sequences \textbf{26} (2023), Article 23.4.5.
+Preprint: arXiv:2303.02793. (Conjecture~12, Theorem~13, \S5.1.)
+\bibitem{OEIS} OEIS Foundation Inc.
+\emph{Sequences \OEIS{A216938}, \OEIS{A216939}, \OEIS{A216940}} (side-$2,3,4$ hexagonal arrays), and
+the table \OEIS{A216937}. The On-Line Encyclopedia of Integer Sequences,
+\texttt{https://oeis.org/}. Sequences contributed by R.~H. Hardin, 2012; with b-files
+($210$, $50$, $37$ terms respectively).
+\bibitem{EC1} R. P. Stanley.
+\emph{Enumerative Combinatorics, Volume~1}, 2nd ed., Cambridge University Press, 2012.
+Order polynomials and $(P,\omega)$-partitions, \S3.15: the order polynomial $\Om_P(m)$ is the number
+of order-preserving maps $P\to\{1,\dots,m\}$ (\S3.12, \S3.15.2); it has degree $=\lvert P\rvert$ with
+leading coefficient $e(P)/\lvert P\rvert!$ (\S3.15.2, p.~344); and the descent generating identity
+$\Om_P(m)=\sum_{w}\binom{m+\lvert P\rvert-1-\des(w)}{\lvert P\rvert}$ over linear extensions $w$ is
+Theorem~3.15.8 (eq.~(3.65)).
+\bibitem{EOP24} F. Liu, G. Xin, and C. Zhang.
+\emph{Ehrhart Polynomials of Order Polytopes: Interpreting Combinatorial Sequences on the OEIS}.
+Preprint: arXiv:2412.18744 (2024). (Closest prior art using the same method on other OEIS
+sequences.)
+\end{thebibliography}
+
+% ------------------------------- APPENDICES ---------------------------------
+\appendix
+
+\section{The descent-distribution algorithm}\label{app:alg}
+
+The procedure below computes the descent distribution $\{A_d\}$ of a finite poset $P$ under a fixed
+natural labelling $\ell$, hence $\Om_P$ via Theorem~\ref{thm:descent}. It is $n$-independent. The
+state is an order ideal $I$ (already-placed elements) together with the label of the last placed
+element; the value carried is the generating polynomial in $q$ whose coefficient of $q^d$ counts the
+partial linear extensions of $I$ with $d$ descents.
+
+\begin{lstlisting}[caption={Descent distribution of a finite poset.},label={alg:desc}]
+Input:  poset P on elements 0..p-1 with predecessor sets pred[.]; natural labels L[.].
+Output: descent distribution A[d] = #{linear extensions with d descents}.
+
+  predmask[i] <- bitmask of pred[i]                    # i placeable iff pred[i] subset of I
+  layer <- { emptyset : { lastLabel=-1 : { 0 : 1 } } } # one partial L.E., 0 descents
+  for popcount = 0 .. p-1:
+      next <- empty
+      for (I, byLast) in layer:
+          for each i not in I with (I superset of predmask[i]):  # i currently minimal
+              I' <- I union {i};  li <- L[i]
+              for (lastLabel, poly) in byLast:
+                  add <- 1 if (lastLabel != -1 and lastLabel > li) else 0
+                  for (d, c) in poly:  next[I'][li][d+add] += c
+      layer <- next
+  A <- sum over lastLabel of layer[full][lastLabel]     # full = {0,...,p-1}
+  return A
+
+  then  Omega_P(m) = sum_d A[d]*C(m+p-1-d, p),   a_s(n) = Omega_{P_s}(n+1).
+\end{lstlisting}
+
+The reachable state count stays small (at most a few hundred ideals even for $s=4$), so the program
+terminates in well under a second in exact integer arithmetic. The reference implementation, the
+three independent counting engines, and the value-comparison driver are the single script
+\texttt{code/verify\_family.py} archived with this paper.
+
+\section{Numerical certificate}\label{app:cert}
+
+\paragraph{Descent distributions.}
+$\sum_d A_d=e(P_s)$; each distribution is palindromic.
+\begin{center}\small
+\begin{tabular}{l l}
+\toprule
+$s$ & descent distribution $\{A_d\}_{d\ge 0}$ \\
+\midrule
+$2$ & $1,\,2,\,1$ \quad($e=4$)\\
+$3$ & $1,\,32,\,361,\,1856,\,4804,\,6564,\,4804,\,1856,\,361,\,32,\,1$ \quad($e=20672$)\\
+$4$ & palindromic on $d=0,\dots,24$, $A_{12}=1{,}048{,}272{,}112{,}322$, $e=4{,}623{,}718{,}515{,}360$
+(full table below)\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent The side-$4$ distribution ($A_d=A_{24-d}$):
+\begin{center}\small
+\begin{tabular}{r r @{\hskip 2em} r r @{\hskip 2em} r r}
+\toprule
+$d$ & $A_d$ & $d$ & $A_d$ & $d$ & $A_d$\\
+\midrule
+0 & 1                 & 9  & 245{,}184{,}671{,}458   & 18 & 2{,}691{,}384{,}551\\
+1 & 222               & 10 & 551{,}210{,}288{,}548   & 19 & 279{,}732{,}802\\
+2 & 18{,}591          & 11 & 893{,}045{,}633{,}554   & 20 & 18{,}857{,}713\\
+3 & 783{,}404         & 12 & 1{,}048{,}272{,}112{,}322 & 21 & 783{,}404\\
+4 & 18{,}857{,}713    & 13 & 893{,}045{,}633{,}554   & 22 & 18{,}591\\
+5 & 279{,}732{,}802   & 14 & 551{,}210{,}288{,}548   & 23 & 222\\
+6 & 2{,}691{,}384{,}551 & 15 & 245{,}184{,}671{,}458 & 24 & 1\\
+7 & 17{,}418{,}677{,}384 & 16 & 77{,}873{,}153{,}291 &    & \\
+8 & 77{,}873{,}153{,}291 & 17 & 17{,}418{,}677{,}384 &    & \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\paragraph{The values.}
+Each $a_s(N)$ is computed from $\{A_d\}$ via Theorem~\ref{thm:descent} (poset-derived, independent of
+any empirical form) and verified, in exact arithmetic, to equal the OEIS empirical form at $N$. For
+$s=2,3$ the first values are
+\[
+  a_2:\ 1,10,53,200,606,1572,3630,7656,15015,\dots,\qquad
+  a_3:\ 1,52,1211,17336,175869,1374208,\dots,
+\]
+with $a_2(0)=a_3(0)=1$. The full side-$4$ list $a_4(0),\dots,a_4(37)$ (the $38$ values that, with the
+degree bound, prove Conjecture~12) is reproduced from the poset by the accompanying script; the
+sole anchor beyond the published b-file is $a_4(0)=1$.
+\end{document}
