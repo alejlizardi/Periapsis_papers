@@ -242,6 +242,19 @@ transitive closure, so this distinction does not affect the count. We record it 
 the Hasse diagram of $P$ is drawn correctly ($60$ edges, not $90$).
 \end{remark}
 
+\begin{remark}[robustness of the reading]\label{rem:symmetry}
+The verbal phrase ``nondecreasing E, SW and SE'' fixes the three monotonicity directions only up
+to the symmetries of the hexagon, and one might worry that an alternative-but-plausible reading
+would give a different count. It does not. Any choice of three pairwise non-opposite directions
+spanning a half-plane yields a poset isomorphic to $P$ under a rotation or reflection of the
+hexagon (these are automorphisms of $C_s$), and replacing all three directions by their opposites
+yields the dual poset $P^{*}$; since $\Om_P=\Om_{P^{*}}$ (order-reversal is a bijection on
+order-preserving maps into a self-dual chain, equivalently value-complementation
+$f\mapsto n-f$), every such reading gives the same $a(n)$. Thus the count is invariant under the
+ambiguity in the directional labels, and the validation on the independent sequences \OEIS{A216938}
+and \OEIS{A216939} (Section~\ref{sec:repro}) pins the orientation class itself.
+\end{remark}
+
 \begin{figure}[ht]
 \centering
 \begin{tikzpicture}[scale=0.92,every node/.style={font=\footnotesize}]
@@ -414,6 +427,15 @@ modelling or programming error.
   or buggy match would be expected to diverge here, and does not.
   \item \textbf{Labelling invariance.} Five distinct natural labellings give identical
   $\{A_d\}$ and identical $a(0),\dots,a(37)$, as they must, ruling out a labelling artefact.
+  \item \textbf{Independent reconstruction of the model and the convention.} As a further check,
+  the array poset was rebuilt from the row coordinates of the figure in~\cite[\S5.1]{KK23}---an
+  $(i,j)$ row-nesting model rather than the cube-coordinate construction of
+  Section~\ref{sec:poset}---and reproduces $\OEIS{A216938}$, $\OEIS{A216939}$ and $\OEIS{A216940}$
+  on every tested term, with matching cell/edge/cover counts $7/12/8$, $19/42/28$, $37/90/60$.
+  The order-polynomial shift $a(N)=\Om_P(N+1)$ was confirmed against a direct brute-force map
+  count for $s=3$, $N=1,\dots,6$, where the nearest off-by-one convention $\Om_P(N)$ is visibly
+  wrong (it returns $a(N-1)$). The transcription of the $21$ coefficients and the denominator of
+  Conjecture~\ref{conj12} was checked against the primary text.
 \end{itemize}
 
 \begin{remark}[on the computer-assisted nature of the proof]\label{rem:assist}
