@@ -101,4 +101,4 @@ pdflatex a216940.tex && pdflatex a216940.tex
 
 > A. Lizardi. *A proof of the Kauers–Koutschan conjecture for the hexagonal Hardin array
 > A216940.* Working paper, Periapsis, 2026.
-> https://github.com/PeriapsisResearch/Periapsis_papers
+> https://github.com/alejlizardi/Periapsis_papers
