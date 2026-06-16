@@ -32,6 +32,7 @@
 \usetikzlibrary{positioning}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
+\usepackage{eso-pic}
 \usepackage[hidelinks]{hyperref}
 
 % ---- To use the vector SVG mark instead of the PNG, comment the \includegraphics
@@ -47,6 +48,12 @@
 \renewcommand{\footrulewidth}{0pt}
 \fancyfoot[R]{\includegraphics[height=34pt]{assets/mark.png}}
 \fancyfoot[C]{\color{periapsisMuted}\footnotesize\thepage}
+
+% ----- square-corner glyph flush in the bottom-left corner of every page -----
+% Placed at the physical page corner (outside the text margins) via eso-pic.
+% Letter page height = 11in; 1/12 of that ~= 66pt tall.
+\AddToShipoutPictureBG{%
+  \AtPageLowerLeft{\raisebox{0pt}[0pt][0pt]{\includegraphics[height=66pt]{assets/glyph_square.png}}}}
 
 % ----- theorem environments -------------------------------------------------
 \theoremstyle{plain}
