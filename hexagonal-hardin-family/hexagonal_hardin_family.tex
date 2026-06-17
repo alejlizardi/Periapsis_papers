@@ -4,7 +4,8 @@
 %
 %  Proven instances: OEIS A216938 (side 2), A216939 (side 3), A216940 (side 4).
 %
-%  COMPILE: pdfLaTeX, two passes. Assets in assets/ (lockup.png, mark.png).
+%  COMPILE: pdfLaTeX, two passes. Assets in assets/ (lockup.png title block;
+%  glyph_square.png bottom-left page corner).
 %  Reproducibility: code/verify_family.py  (one command, Python stdlib only).
 % =============================================================================
 \documentclass[11pt]{article}
@@ -28,11 +29,11 @@
 \definecolor{periapsisOrange}{HTML}{FF4F00}
 \definecolor{periapsisMuted}{HTML}{5A6068}
 
-% ----- page mark: Periapsis glyph flush to the bottom-right physical corner --
+% ----- square-corner glyph flush in the bottom-left corner of every page -----
+% Placed at the physical page corner (outside the text margins) via eso-pic,
+% matching the other Periapsis working papers (~1/12 page height).
 \AddToShipoutPictureBG{%
-  \AtPageLowerLeft{%
-    \put(\dimexpr\paperwidth-46pt\relax,18pt){%
-      \raisebox{0pt}{\includegraphics[height=22pt]{assets/mark.png}}}}}
+  \AtPageLowerLeft{\raisebox{0pt}[0pt][0pt]{\includegraphics[height=66pt]{assets/glyph_square.png}}}}
 
 % ----- theorem environments -------------------------------------------------
 \theoremstyle{plain}
