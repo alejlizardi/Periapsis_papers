@@ -1,0 +1,3 @@
+# No third-party dependencies. The verifiers use only the Python standard library.
+# Tested with CPython 3.14 (any Python >= 3.8 should work).
+# The optional C++ solver in code/cpp/ needs a C++17 compiler with OpenMP (g++ -O2 -fopenmp).

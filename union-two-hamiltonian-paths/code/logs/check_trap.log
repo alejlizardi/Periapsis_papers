@@ -1,0 +1,7 @@
+L=5 k=2 n=19: rho=12 predicted=12 OK
+L=5 k=3 n=25: rho=14 predicted=14 OK
+L=5 k=4 n=31: rho=16 predicted=16 OK
+L=7 k=2 n=23: rho=16 predicted=16 OK
+L=7 k=3 n=31: rho=18 predicted=18 OK
+L=7 k=4 n=39: rho=20 predicted=20 OK
+sigma(20,12): n=240 rho=60 (b(sigma)=80; rho<b: True)

@@ -1,0 +1,9 @@
+dedup cross-validation: OK
+odd b=7: M(T_b) = 7 (expect ~b)
+odd b=9: M(T_b) = 9 (expect ~b)
+odd b=11: M(T_b) = 11 (expect ~b)
+odd b=13: M(T_b) = 13 (expect ~b)
+even b=6: M=3, M2=3 (expect 3, 4)
+even b=8: M=3, M2=3 (expect 3, 4)
+even b=10: M=3, M2=3 (expect 3, 4)
+even b=12: M=3, M2=3 (expect 3, 4)

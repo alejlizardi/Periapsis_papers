@@ -1,0 +1,41 @@
+n=11 joint (b,rho) table; rows=b, min rho per b, count at min, exemplar
+b= 1 total=           2 minrho=11 count@min=         2 ex=[0,1,2,3,4,5,6,7,8,9,10]
+b= 2 total=          52 minrho=11 count@min=        52 ex=[0,1,2,3,4,5,6,7,8,10,9]
+b= 3 total=         990 minrho= 9 count@min=        32 ex=[0,1,2,3,4,5,8,7,6,10,9]
+b= 4 total=       12816 minrho= 9 count@min=       340 ex=[1,0,2,3,4,5,8,7,6,10,9]
+b= 5 total=      114180 minrho= 7 count@min=         4 ex=[1,0,4,3,2,5,8,7,6,10,9]
+b= 6 total=      685368 minrho= 9 count@min=      1624 ex=[0,3,1,2,4,5,8,7,6,10,9]
+b= 7 total=     2732268 minrho= 9 count@min=      1126 ex=[0,3,1,2,4,7,6,5,8,10,9]
+b= 8 total=     7165200 minrho= 9 count@min=       164 ex=[1,3,0,2,4,7,6,5,8,10,9]
+b= 9 total=    12032154 minrho= 9 count@min=        10 ex=[1,0,3,5,7,4,6,8,2,10,9]
+b=10 total=    11876980 minrho=11 count@min=  11876980 ex=[0,3,1,2,4,6,8,5,9,7,10]
+b=11 total=     5296790 minrho=11 count@min=   5296790 ex=[1,3,0,2,4,6,8,5,9,7,10]
+rho_min(11) = 7
+HIST b rho count
+H 1 11 2
+H 2 11 52
+H 3 9 32
+H 3 10 22
+H 3 11 936
+H 4 9 340
+H 4 10 912
+H 4 11 11564
+H 5 7 4
+H 5 8 6
+H 5 9 1312
+H 5 10 9398
+H 5 11 103460
+H 6 9 1624
+H 6 10 34616
+H 6 11 649128
+H 7 9 1126
+H 7 10 56044
+H 7 11 2675098
+H 8 9 164
+H 8 10 26872
+H 8 11 7138164
+H 9 9 10
+H 9 10 3230
+H 9 11 12028914
+H 10 11 11876980
+H 11 11 5296790

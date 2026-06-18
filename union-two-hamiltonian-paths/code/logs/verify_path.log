@@ -1,0 +1,8 @@
+a=2 b=6: path size 9 (claim 9) VALID PC PATH
+a=3 b=6: path size 11 (claim 11) VALID PC PATH
+a=4 b=8: path size 17 (claim 17) VALID PC PATH
+a=5 b=10: path size 23 (claim 23) VALID PC PATH
+a=10 b=8: path size 29 (claim 29) VALID PC PATH
+a=7 b=12: path size 31 (claim 31) VALID PC PATH
+a=20 b=20: path size 73 (claim 73) VALID PC PATH
+ALL CHECKS PASSED

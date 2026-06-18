@@ -1,0 +1,9 @@
+b=6: M(T_b)=3 (expect 3); classification EXACTLY the 5 listed visits
+b=8: M(T_b)=3 (expect 3); classification EXACTLY the 5 listed visits
+b=10: M(T_b)=3 (expect 3); classification EXACTLY the 5 listed visits
+b=12: M(T_b)=3 (expect 3); classification EXACTLY the 5 listed visits
+b=14: M(T_b)=3 (expect 3); classification EXACTLY the 5 listed visits
+b=7 (odd): M(T_b)=7 (expect 7)
+b=9 (odd): M(T_b)=9 (expect 9)
+b=11 (odd): M(T_b)=11 (expect 11)
+ALL CHECKS PASSED

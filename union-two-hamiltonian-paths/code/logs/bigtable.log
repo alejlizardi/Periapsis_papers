@@ -1,0 +1,17 @@
+M(T_50) = 3
+M(T_60) = 3
+M(T_80) = 3
+M(T_100) = 3
+
+a= 10 b=  8 n=  80: rho=  32  pred(2a+2b-4)=  32  bound6a2b=  76  rho/n=0.400  rho/sqrt(n)=3.58  [57066 states 0.0s]
+a= 12 b=  8 n=  96: rho=  36  pred(2a+2b-4)=  36  bound6a2b=  88  rho/n=0.375  rho/sqrt(n)=3.67  [83954 states 0.1s]
+a= 12 b= 12 n= 144: rho=  44  pred(2a+2b-4)=  44  bound6a2b=  96  rho/n=0.306  rho/sqrt(n)=3.67  [231762 states 0.2s]
+a= 16 b= 12 n= 192: rho=  52  pred(2a+2b-4)=  52  bound6a2b= 120  rho/n=0.271  rho/sqrt(n)=3.75  [423842 states 0.5s]
+a= 20 b= 12 n= 240: rho=  60  pred(2a+2b-4)=  60  bound6a2b= 144  rho/n=0.250  rho/sqrt(n)=3.87  [673522 states 0.8s]
+a= 16 b= 16 n= 256: rho=  60  pred(2a+2b-4)=  60  bound6a2b= 128  rho/n=0.234  rho/sqrt(n)=3.75  [828930 states 1.1s]
+a= 24 b= 16 n= 384: rho=  76  pred(2a+2b-4)=  76  bound6a2b= 176  rho/n=0.198  rho/sqrt(n)=3.88  [1919650 states 3.8s]
+a= 20 b= 20 n= 400: rho=  76  pred(2a+2b-4)=  76  bound6a2b= 160  rho/n=0.190  rho/sqrt(n)=3.80  [2176306 states 4.5s]
+a= 30 b= 16 n= 480: rho=  88  pred(2a+2b-4)=  88  bound6a2b= 212  rho/n=0.183  rho/sqrt(n)=4.02  [3034042 states 6.3s]
+a= 24 b= 20 n= 480: rho=  84  pred(2a+2b-4)=  84  bound6a2b= 184  rho/n=0.175  rho/sqrt(n)=3.83  [3170690 states 5.7s]
+a= 30 b= 20 n= 600: rho=  96  pred(2a+2b-4)=  96  bound6a2b= 220  rho/n=0.160  rho/sqrt(n)=3.92  [5012186 states 10.3s]
+a= 36 b= 20 n= 720: rho= 108  pred(2a+2b-4)= 108  bound6a2b= 256  rho/n=0.150  rho/sqrt(n)=4.02  [7273586 states 13.8s]
