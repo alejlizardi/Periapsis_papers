@@ -7,18 +7,22 @@
 \usepackage{fancyhdr}
 \usepackage{eso-pic}
 \usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\hypersetup{
+  pdftitle={Properly colored paths in the union of two Hamiltonian paths: from a refuted half-bound to an O(sqrt n) collapse},
+  pdfauthor={Alejandro Lizardi},
+  pdfsubject={Combinatorics; properly colored paths in edge-colored multigraphs},
+  pdfkeywords={properly colored path; alternating path; edge-colored multigraph; union of Hamiltonian paths; permutation; inflation; transit number; Lovasz problem; vertex-transitive graphs}
+}
 
-% ----- Periapsis branding (house style; matches the sibling papers byte-for-byte) ----
-% Bottom-right: the Periapsis mark on every page.
+% ----- Periapsis branding (house style) -------------------------------------
+% Plain page numbers in the footer; no footer mark.
 \pagestyle{fancy}
 \fancyhf{}
 \renewcommand{\headrulewidth}{0pt}
 \renewcommand{\footrulewidth}{0pt}
-\fancyfoot[R]{\includegraphics[height=34pt]{assets/mark.png}}
 \fancyfoot[C]{\footnotesize\thepage}
 \fancypagestyle{plain}{% so page 1 (\maketitle uses 'plain') carries the footer too
   \fancyhf{}\renewcommand{\headrulewidth}{0pt}\renewcommand{\footrulewidth}{0pt}%
-  \fancyfoot[R]{\includegraphics[height=34pt]{assets/mark.png}}%
   \fancyfoot[C]{\footnotesize\thepage}}
 % Bottom-left: the square-corner glyph flush in the page corner (~1/12 page height).
 \AddToShipoutPictureBG{%
@@ -73,7 +77,7 @@ a linear lower bound on that parameter.
 
 We first show the natural guess is wrong. A block-reversal family supplies properly
 colored paths on $(n+3)/2$ vertices and, together with exhaustive computation through
-$n=14$, suggested the half-bound $\rho(\sigma)\ge\lceil(n+3)/2\rceil$; we exhibit an
+$n=12$, suggested the half-bound $\rho(\sigma)\ge\lceil(n+3)/2\rceil$; we exhibit an
 explicit permutation at $n=18$ with $\rho=10<11$ that refutes it. We then prove the
 much stronger statement that the half-bound fails by a polynomial factor:
 \[
@@ -100,8 +104,10 @@ realizes the order $\sqrt n$ when $a \asymp b$. Whether $\pmin(n) = o(n)$ can be
 complemented by any superconstant lower bound remains open: even
 $\pmin(n) \to \infty$ is not known. A second, independent construction with the same
 conclusion is given in an appendix, and all computations are reproducible from the
-ancillary code and logs. The proofs are elementary and self-contained; the
-computations are independent verifications, not ingredients of the proofs.
+ancillary code and logs. The asymptotic bound and its constants are proved by elementary,
+self-contained arguments that use no computation; the computations independently confirm
+them and supply the exact small-case values (the $n=18$ counterexample below is
+computer-assisted: its longest properly colored path is found by exhaustive search).
 \end{abstract}
 
 \medskip
@@ -147,7 +153,7 @@ $\{(i,\sigma(i)) : 0\le i\le n-1\}$ in the plane. A P-edge joins horizontally ad
 columns; a V-edge joins vertically adjacent rows. A PC path traces an alternating
 horizontal/vertical staircase through this grid. Both color classes have maximum
 degree $2$, so $H_\sigma$ has maximum degree $4$; this places the problem outside the
-regimes of standard properly-colored-path results, which typically require minimum
+regimes of standard properly colored path results, which typically require minimum
 degree linear in $n$ \cite{ABMMM10}.
 
 \subsection{Motivation: a relaxation of a matching-edge parameter}\label{subsec:motiv}
@@ -209,7 +215,7 @@ $\ \rho(\sigma) \ge \lceil (n+3)/2 \rceil$.
 \end{quote}
 
 This holds on a block-reversal family $\sigma_m$ (which attains it exactly) and through
-exhaustive enumeration of $S_n$ for $n\le 14$, but it is false: at $n=18$ an explicit
+exhaustive enumeration of $S_n$ for $n\le 12$, but it is false: at $n=18$ an explicit
 permutation $\sigma^*$ has $\rho(\sigma^*)=10<11$ (Theorem~\ref{thm:n18}). The
 construction of $\sigma^*$ -- deleting one singleton from $\sigma_4$ to fuse two
 $3$-blocks -- is the seed of the gadget idea, and the main theorem shows that the
@@ -231,7 +237,7 @@ two-sided estimate
 \qquad (a \ge 2,\ b \ge 6 \text{ even}),
 \end{equation}
 the upper bound by the inflation calculus below
-(Theorem~\ref{thm:main}, Proposition~\ref{prop:refined}), the lower bound by an
+(Theorem~\ref{thm:main}), the lower bound by an
 explicit path (Proposition~\ref{prop:lower}). Thus $\rho(\sigma_{a,b}) = \Theta(a+b)$:
 with $a \asymp b \asymp \sqrt n$ the family realizes the order $\sqrt n$ exactly, so
 the upper bound is tight for this family and not an artifact of a construction whose
@@ -274,10 +280,10 @@ contrast shows that the parity, not some feature of the argument, is what bounds
 transit number.
 
 Combining the two components and balancing $a$ against $b$ yields
-Theorem~\ref{thm:main-intro}; the crude bound $\rho(\sigma_{a,b}) \le 6a + 2b$, which
-needs only the value $M(T_b) = 3$ and not the full classification, already gives
-$\pmin(n) \le 10\sqrt n + 10$, and the refined constant $8\sqrt n + 20$ uses the
-classification once more (Proposition~\ref{prop:refined}).
+Theorem~\ref{thm:main-intro} (proved as Theorem~\ref{thm:main}). The two-visit
+refinement of the classification (Corollary~\ref{cor:pairs}) gives the stated constant
+$8\sqrt n + 20$; the value $M(T_b) = 3$ alone, without the full classification, already
+suffices for the weaker $\pmin(n) \le 10\sqrt n + 10$ (Remark~\ref{rem:crude}).
 
 Appendix~\ref{app:trap} contains a \emph{second, independent} construction proving
 $\pmin(n) = O(\sqrt n)$: chains of reversed odd blocks separated by singletons, where a
@@ -301,8 +307,8 @@ makes properly colored paths short; it says nothing about paths in $G(n,\sigma)$
 are allowed to use runs of same-colored edges. The known bound
 $f(n) = \Omega(n^{4/5})$, which rests on the circumference theorem of \cite{LYZ18} as
 used in \cite{NSTW25}, is untouched, and $f(n) = \Theta(n)$ remains entirely possible.
-What dies is only the hope of proving $f(n) = \Omega(n)$ via the properly-colored
-relaxation introduced here.
+Thus the construction rules out only the approach of proving $f(n) = \Omega(n)$ via the
+properly colored relaxation introduced here.
 
 On the lower-bound side our knowledge is thin: we prove no superconstant lower bound on
 $\pmin(n)$, and to our knowledge even $\pmin(n) \to \infty$ is open. The quantities
@@ -340,7 +346,7 @@ partition the positions, and are the unit of the lower-bound discussion
 (Section~\ref{sec:disc}). Every $\pm1$-block is an interval block; the converse fails.
 \end{remark}
 
-\section{The Conversion Lemma}\label{sec:conversion}
+\section{The conversion lemma}\label{sec:conversion}
 
 This section makes precise the link to the matching-edge parameter of
 Section~\ref{subsec:motiv}. It is logically independent of the rest of the paper and
@@ -433,8 +439,8 @@ $b\ge2$, a largest block $B$ has a $\pm1$-block neighbor, hence an external edge
 some color $c$ at a port $p\in\{p_\ell,p_r\}$ (Lemma~\ref{lem:ports} below gives the
 port structure for interval blocks, of which $B$ is one). Traverse $B$ from the port
 opposite $p$ toward $p$, choosing the starting color so that the last internal edge has
-color $\ne\bar c$; then $e$, of color $c$, may be appended at $p$, yielding a PC path on
-$\smax+1$ vertices.
+color $\ne c$ (the doubled internal edges allow either parity); then $e$, of color $c$,
+may be appended at $p$, yielding a PC path on $\smax+1$ vertices.
 \end{proof}
 
 These are weak in absolute terms -- the gadget family below has $\smax=b$ fixed while
@@ -494,9 +500,10 @@ $2m+2$ edges, the doubled internal edges taking whichever color the alternation
 requires. All vertices are distinct, so $\Gamma_m$ is a PC path on $2m+3$ vertices.
 \end{proof}
 
-Exhaustive computation through $n\le14$ found $\pmin(n)=\lceil(n+3)/2\rceil$ tight at
-$n=7,8,11,12$ and slack by $1$ elsewhere, with $\sigma_m$ realizing the bound at
-$n=4m+3$. Together with Proposition~\ref{prop:sigmam-lower} this suggested:
+Exhaustive computation through $n\le12$ (the range documented in the ancillary
+artifact) found $\pmin(n)=\lceil(n+3)/2\rceil$ tight at $n=7,8,11,12$ and slack by $1$
+elsewhere, with $\sigma_m$ realizing the bound at $n=4m+3$. Together with
+Proposition~\ref{prop:sigmam-lower} this suggested:
 
 \begin{conjecture}[Half-bound; \emph{false}]\label{conj:half}
 For every $n\ge2$ and every $\sigma\in S_n$, $\ \rho(\sigma)\ge\lceil(n+3)/2\rceil$.
@@ -514,7 +521,7 @@ sharper argument would expand the paper without serving the main theorem, which 
 the family entirely obsolete in Section~\ref{sec:gadget}. The role of $\sigma_m$ here
 is only to motivate Conjecture~\ref{conj:half} -- and to be refuted.
 
-\subsection{An $n=18$ counterexample}\label{subsec:n18}
+\subsection{An \texorpdfstring{$n=18$}{n=18} counterexample}\label{subsec:n18}
 
 \begin{theorem}\label{thm:n18}
 Let $\sigma^\ast=(1,0,4,3,2,5,8,7,6,11,10,9,12,15,14,13,17,16)\in S_{18}$. Then
@@ -529,23 +536,29 @@ The $\pm1$-block structure of $\sigma^\ast$ has composition $(2,3,1,3,3,1,3,2)$,
 \end{gather*}
 
 \begin{proof}
-\emph{Lower bound ($\rho\ge10$), proved by exhibiting a path.} The sequence
+\emph{Lower bound.} The sequence
 \[
   \Pi^\ast=(13,14,15,12,11,6,5,2,1,0)
 \]
-is a PC path on $10$ vertices in $H_{\sigma^\ast}$. We verify each edge from the
+is a PC path on $10$ vertices in $H_{\sigma^\ast}$. Reading the edges from the
 definition of $\sigma^\ast$:
-$\{13,14\},\{14,15\}$ are doubled (internal to $B_7$);
-$\{12,15\}$ is V-only ($\sigma^{\ast-1}$ sends the consecutive values
-$\sigma^\ast(12),\sigma^\ast(15)$ to adjacent ranks, while the positions differ by
-$3$); $\{11,12\}$ is P-only; $\{6,11\}$ is V-only (here $\sigma^{\ast-1}(8)=6$ and
-$\sigma^{\ast-1}(9)=11$); $\{5,6\}$ is P-only; $\{2,5\}$ is V-only;
-$\{1,2\}$ is P-only; $\{0,1\}$ is doubled. Assigning the colors
+\[
+\begin{array}{llll}
+\{13,14\}\ \text{doubled} & \{14,15\}\ \text{doubled} & \{12,15\}\ \text{V-only} &
+\{11,12\}\ \text{P-only} \\
+\{6,11\}\ \text{V-only} & \{5,6\}\ \text{P-only} & \{2,5\}\ \text{V-only} &
+\{1,2\}\ \text{P-only} \\
+\{0,1\}\ \text{doubled}
+\end{array}
+\]
+(the V-only edges join positions whose $\sigma^\ast$-values are consecutive but whose
+positions are not, e.g.\ $\sigma^{\ast-1}(8)=6$, $\sigma^{\ast-1}(9)=11$ for
+$\{6,11\}$). Assigning the colors
 $\mathrm V,\mathrm P,\mathrm V,\mathrm P,\mathrm V,\mathrm P,\mathrm V,\mathrm P,
-\mathrm V$ to the nine edges (the two doubled edges take the colors the alternation
+\mathrm V$ to the nine edges (the doubled edges take the colors the alternation
 requires) gives a valid PC traversal, so $\rho(\sigma^\ast)\ge10$.
 
-\emph{Upper bound ($\rho\le10$), by exhaustive search.} An exact longest-PC-path search
+\emph{Upper bound.} An exact longest-PC-path search
 (state space: triples of visited set, current vertex, last color; every reachable state
 visited once, no pruning -- Section~\ref{sec:comp}) returns $\rho(\sigma^\ast)=10$. Two
 independently written solvers (Python and C++) agree on the value, and the search at
@@ -554,7 +567,7 @@ half-bound fails.
 \end{proof}
 
 \begin{remark}[How $\sigma^\ast$ was found, and why it matters]\label{rem:howfound}
-$\sigma^\ast$ is a single-position deletion from $\sigma_4\in S_{19}$: delete the centre
+$\sigma^\ast$ is a single-position deletion from $\sigma_4\in S_{19}$: delete the center
 singleton (position $9$, value $9$) and relabel the values above it down by $1$.
 Removing the singleton fuses the two flanking $3$-blocks across a non-$\pm1$ gap,
 changing the composition from $(2,3,1,3,1,3,1,3,2)$ to $(2,3,1,3,3,1,3,2)$ and dropping
@@ -580,15 +593,26 @@ odd size, then $\rho(\sigma)\ge\rho(\tau_\sigma)$.
 \end{proposition}
 
 \begin{proof}
-Take a maximum PC path $Q$ in $H_{\tau_\sigma}$ and lift it to $H_\sigma$ by replacing
-each block-vertex visit by a traversal of the corresponding block. A block visited as a
+Take a maximum PC path $Q$ in $H_{\tau_\sigma}$ and lift it to $H_\sigma$, replacing
+each block-vertex visit by a visit to the corresponding block. A block visited as a
 through-vertex of $Q$ is entered and left by edges of different colors (the PC condition
-at the block-vertex); lifting it to a full traversal of an interval block of size $s$
-preserves a color difference between entry and exit if and only if $s$ is odd (the
-$s-1$ internal edges alternate, so entry and exit colors differ iff $s-1$ is even).
-By hypothesis every internal block has odd size, so every such lift is consistent; the
-end blocks carry only one external edge and impose no parity constraint. The lifted
-path is a PC path of size $\ge\rho(\tau_\sigma)$.
+at the block-vertex). The entry and exit cross edges attach at terminals of the block,
+whose port colors equal the entry and exit colors; two cases arise.
+
+If those two terminals are the \emph{same} physical vertex of the block (a $\pm1$-block
+can have a P-terminal and a V-terminal coinciding), lift the quotient vertex to that
+single vertex: it carries two roles of different port colors, so it forms an admissible
+visit of type (ii) and the two cross edges meet the PC condition there.
+
+If the two terminals are \emph{distinct} vertices, lift to a full traversal of the
+interval block, which has size $s$. The $s-1$ internal edges alternate, so the entry and
+exit colors differ if and only if $s-1$ is even, i.e.\ $s$ is odd. By hypothesis every
+internal block has odd size, so each such full traversal meets the PC condition at both
+ports. (End blocks carry only one external edge and impose no parity constraint; lift
+them by any traversal reaching their single port.)
+
+Either way the lift uses at least one vertex per block-vertex of $Q$ and respects the PC
+condition at every junction, so it is a PC path on at least $\rho(\tau_\sigma)$ vertices.
 \end{proof}
 
 The hypothesis is met by $\sigma_m$ (internal blocks of sizes $3$ and $1$). The naive
@@ -670,8 +694,8 @@ The \emph{transit number} $M(\pi)$ is the maximum size of an admissible visit, a
 $M(\pi) = 0$ if none exists. For $b \le 1$ set $M(\pi) = 1$.
 \end{definition}
 
-The colour constraints encode that a visit is entered and left by external edges of the
-roles' port colours (which differ from the first and last internal edges by the PC
+The color constraints encode that a visit is entered and left by external edges of the
+roles' port colors (which differ from the first and last internal edges by the PC
 condition). Two trivial but load-bearing facts:
 
 \begin{lemma}[Reversal; endpoint constraint]\label{lem:reversal}
@@ -689,7 +713,7 @@ occupy $u_1 \ne u_k$, hence are distinct; the rest is the definition together wi
 fact that with two colors ``$\ne\pc(r)$'' means ``$=\overline{\pc(r)}$''.
 \end{proof}
 
-\section{Inflation and the Inflation Lemma}\label{sec:inflation}
+\section{Inflation and the inflation lemma}\label{sec:inflation}
 
 \begin{definition}[Inflation]\label{def:inflation}
 Let $a \ge 2$, let $\tau$ be a permutation of $\{1, \dots, a\}$, and let
@@ -779,7 +803,8 @@ Theorem~\ref{thm:inflation} holds for \emph{every} outer permutation $\tau$. The
 problem is thereby reduced to finding patterns with small transit number relative to
 their size.
 
-\section{The gadget: classification of admissible visits of $H_{T_b}$}\label{sec:gadget}
+\section{The gadget: classification of admissible visits of
+\texorpdfstring{$H_{T_b}$}{H\_\{T\_b\}}}\label{sec:gadget}
 
 \begin{definition}\label{def:Tb}
 For even $b \ge 6$ let $T_b \in S_b$ be given by
@@ -875,8 +900,8 @@ end forces the exit edge to have color $\ne c$.
 \subsection{The classification theorem}
 
 \begin{theorem}[Classification of admissible visits]\label{thm:classification}
-Let $b \ge 6$ be even. Up to reversal (Lemma~\ref{lem:reversal}), the admissible visits
-of $H_{T_b}$ are exactly the following five, with their (unique) role pairs:
+Let $b \ge 6$ be even. Up to reversal (Lemma~\ref{lem:reversal}), the graph $H_{T_b}$ has
+exactly five admissible visits. They are the following, each with the role pair shown:
 \begin{center}
 \begin{tabular}{clll}
 \toprule
@@ -1068,27 +1093,30 @@ $3$: total $4$. (In every case the total is at most $4$.)
 \end{itemize}
 \end{proof}
 
-\section{Proof of the Main Theorem}\label{sec:main}
+\section{Proof of the main theorem}\label{sec:main}
 
-\begin{theorem}\label{thm:main}
-\begin{enumerate}
-\item[(a)] For every even $b \ge 6$ and $a \ge 2$, $\ \rho(\sigma_{a,b}) \le 6a + 2b$,
-where $\sigma_{a,b} = \mathrm{id}_a[T_b, \dots, T_b]$, i.e.\
-$\sigma_{a,b}(jb+r) = jb + T_b(r)$.
-\item[(b)] For every $n \ge 100$, $\ \pmin(n) \le 10\sqrt n + 10$.
-\end{enumerate}
-In particular $\pmin(n) = O(\sqrt n)$ and $\pmin(n)/n \to 0$, using only $M(T_b) = 3$
-and the Inflation Lemma.
+We prove the bound advertised in Theorem~\ref{thm:main-intro}. The family is
+$\sigma_{a,b} = \mathrm{id}_a[T_b, \dots, T_b]$, i.e.\ $\sigma_{a,b}(jb+r) = jb + T_b(r)$,
+and the proof combines the two-visit bound for one $T_b$-block
+(Corollary~\ref{cor:pairs}) with the inflation count of Section~\ref{sec:inflation}.
+
+\begin{theorem}[Main bound]\label{thm:main}
+For every even $b \ge 6$ and $a \ge 2$, $\ \rho(\sigma_{a,b}) \le 4a + 2b$. Consequently
+$\pmin(n) \le 8\sqrt n + 20$ for every $n \ge 100$, so $\pmin(n) = O(\sqrt n)$ and
+$\pmin(n)/n \to 0$.
 \end{theorem}
 
 \begin{proof}
-(a) Immediate from Theorem~\ref{thm:inflation} with $M(\pi_i) = 3$ and $b_i = b$:
-$\rho \le (2a-3)\cdot 3 + 2b \le 6a + 2b$.
+\emph{The family bound.} Let $Q$ be a PC path in $H_{\sigma_{a,b}}$ with $q$ visits. If
+$q = 1$ then $|Q| \le b$. Otherwise, by Lemma~\ref{lem:visits} the first and last visits
+have at most $b$ vertices each, and by Corollary~\ref{cor:pairs} the interior visits
+contribute at most $4$ per block, i.e.\ at most $4a$ in total. Hence
+$\rho(\sigma_{a,b}) \le 4a + 2b$.
 
-(b) Let $b = 2\lfloor \sqrt n / 2 \rfloor$, so $b$ is even, $\sqrt n - 2 < b \le
-\sqrt n$, and $b \ge 10$ since $n \ge 100$. Let $a = \lfloor n/b \rfloor \ge 2$ and
-$s = n - (a-1)b$, so $b \le s < 2b$. Define $\sigma \in S_n$ as the inflation (identity
-outer permutation) of:
+\emph{The bound on $\pmin(n)$.} Let $b = 2\lfloor \sqrt n / 2 \rfloor$, so $b$ is even,
+$\sqrt n - 2 < b \le \sqrt n$, and $b \ge 10$ since $n \ge 100$. Let
+$a = \lfloor n/b \rfloor \ge 2$ and $s = n - (a-1)b$, so $b \le s < 2b$. Define
+$\sigma \in S_n$ as the inflation (identity outer permutation) of:
 \begin{itemize}
 \item if $s$ even: $a - 1$ copies of $T_b$ and one copy of $T_s$ ($s$ even,
 $s \ge b \ge 10$);
@@ -1096,40 +1124,12 @@ $s \ge b \ge 10$);
 $3$ with identity pattern $\iota_3 = (0,1,2)$ ($s-3$ even, $s-3 \ge b-2 \ge 8$, since
 $s$ odd and $b$ even force $s \ge b+1$).
 \end{itemize}
-Every block has transit number at most $3$: the $T$-blocks by
-Theorem~\ref{thm:classification}, the $\iota_3$-block trivially. The number of blocks
-is $m \le a + 1 \le n/b + 1$ and the largest block has size at most $2b - 1$. By
-Theorem~\ref{thm:inflation},
-\[
-\pmin(n) \;\le\; (2m - 3)\cdot 3 + 2(2b - 1) \;\le\; \frac{6n}{b} + 4b - 5 .
-\]
-Since $b \ge \sqrt n - 2$ and $\sqrt n \ge 10$,
-\[
-\frac{6n}{b} \;\le\; \frac{6n}{\sqrt n - 2} \;=\; 6\sqrt n + \frac{12\sqrt n}{\sqrt n -
-2} \;\le\; 6\sqrt n + 15,
-\]
-using $\sqrt n/(\sqrt n - 2) \le 10/8$ for $\sqrt n \ge 10$. With $4b \le 4\sqrt n$ we
-get $\pmin(n) \le 10\sqrt n + 10$.
-\end{proof}
-
-The refined constants use the classification once more, through Corollary~\ref{cor:pairs}.
-
-\begin{proposition}[Refined constants]\label{prop:refined}
-For every even $b \ge 6$ and $a \ge 2$, $\ \rho(\sigma_{a,b}) \le 4a + 2b$; and for
-every $n \ge 100$, $\ \pmin(n) \le 8\sqrt n + 20$.
-\end{proposition}
-
-\begin{proof}
-First claim: let $Q$ be a PC path in $H_{\sigma_{a,b}}$ with $q$ visits. If $q = 1$ then
-$|Q| \le b$. Otherwise, by Lemma~\ref{lem:visits} the first and last visits have at most
-$b$ vertices each, and by Corollary~\ref{cor:pairs} the interior visits contribute at
-most $4$ per block, i.e.\ at most $4a$ in total. Hence $\rho \le 4a + 2b$.
-
-Second claim: take the construction from Theorem~\ref{thm:main}(b). Interior visits
-contribute at most $4$ per $T$-block (Corollary~\ref{cor:pairs}; it applies verbatim to
-$T_b$, $T_s$, $T_{s-3}$) and at most $2 \cdot 3 = 6$ for the single $\iota_3$-block (at
-most two interior visits -- Lemma~\ref{lem:crosscount} -- of size at most $3$ each). End
-visits contribute at most $2(2b - 1)$. Hence
+The number of blocks is at most $a+1 \le n/b + 1$, and each block is one of $T_b$, $T_s$,
+$T_{s-3}$, or $\iota_3$. Interior visits contribute at most $4$ per $T$-block
+(Corollary~\ref{cor:pairs}, which applies verbatim to $T_b$, $T_s$, $T_{s-3}$) and at
+most $2 \cdot 3 = 6$ for the single $\iota_3$-block (at most two interior visits, by
+Lemma~\ref{lem:crosscount}, of size at most $3$ each). The two end visits contribute at
+most $2(2b-1)$, since the largest block has size at most $2b-1$. Hence
 \[
 \pmin(n) \;\le\; 4\Bigl(\frac n b + 1\Bigr) + 6 + 2(2b-1) \;=\; \frac{4n}{b} + 4b + 8
 \;\le\; \bigl(4\sqrt n + 10\bigr) + 4\sqrt n + 8 \;\le\; 8\sqrt n + 20,
@@ -1137,6 +1137,14 @@ visits contribute at most $2(2b - 1)$. Hence
 using $4n/(\sqrt n - 2) = 4\sqrt n + 8\sqrt n/(\sqrt n - 2) \le 4\sqrt n + 10$ for
 $\sqrt n \ge 10$.
 \end{proof}
+
+\begin{remark}[A weaker bound without the full classification]\label{rem:crude}
+If one uses only the value $M(T_b) = 3$ and not the two-visit refinement, the Inflation
+Lemma (Theorem~\ref{thm:inflation}) already gives $\rho(\sigma_{a,b}) \le 6a + 2b$ and,
+by the same choice of blocks (each of transit number at most $3$),
+$\pmin(n) \le (2m-3)\cdot 3 + 2(2b-1) \le 6n/b + 4b - 5 \le 10\sqrt n + 10$ for
+$n \ge 100$. The refinement to $8\sqrt n + 20$ is what the two-visit corollary buys.
+\end{remark}
 
 \begin{proposition}[Explicit long path: the family is $\Theta(a+b)$]\label{prop:lower}
 For every even $b \ge 6$ and $a \ge 2$, $\ \rho(\sigma_{a,b}) \ge 2a + 2b - 7$.
@@ -1175,7 +1183,7 @@ the ancillary file \texttt{verify\_path.py}.
 \end{proof}
 
 \begin{remark}[Constants; exact values]\label{rem:constants}
-Together, Propositions~\ref{prop:refined} and~\ref{prop:lower} give
+Together, Theorem~\ref{thm:main} and Proposition~\ref{prop:lower} give
 $2(a+b) - 7 \le \rho(\sigma_{a,b}) \le 4a + 2b$: the family is $\Theta(a + b)$, and with
 $a \asymp b$ realizes $\Theta(\sqrt n)$, so the upper bound of
 Theorem~\ref{thm:main-intro} is achieved by this family up to the constant. Exact
@@ -1188,8 +1196,12 @@ at $n = ab$ with $b \asymp \sqrt{2n}$ gives $\pmin(n) \le 4\sqrt{2n} + O(1) \app
 
 \section{Computational verification}\label{sec:comp}
 
-None of the proofs above depend on computation. This section specifies the computations
-that independently verify them and the empirical sharpness of the construction.
+The asymptotic main theorem and its constants are proved without computation; the one
+proof that is computer-assisted is the exact value $\rho(\sigma^\ast)=10$ in the $n=18$
+counterexample (Theorem~\ref{thm:n18}), whose upper bound is obtained by exhaustive
+search. This section specifies the computations that independently verify the
+constructions and supply the exact small-case values, and records the empirical
+sharpness of the family.
 \textbf{All code, command lines, and output logs are provided as ancillary files with
 this submission} (directory \texttt{code/} in the repository, shipped as the standard
 ancillary directory \texttt{anc/} on arXiv; \texttt{code/README.md} maps each claim
@@ -1199,13 +1211,15 @@ below to a script and a log, and \texttt{code/MANIFEST.sha256} lists SHA-256 che
 space is the set of triples (\emph{visited set}, \emph{current vertex}, \emph{last edge
 color}); the initial states are all $(\{x, w\}, w, c)$ over edges $\{x, w\}$ of color
 $c$; a transition extends a state by an unvisited neighbor along an edge of the other
-color. Every PC path corresponds to a unique state, so $\rho(\sigma)$ is the maximum
-cardinality of the visited set over all \emph{reachable} states, computed by an
-exhaustive search visiting every reachable state once (a memo set of states; no
-pruning). The method is exact by construction; its cost is the number of reachable
-states. That number is exponential in general -- on unstructured instances we used the
-method only for $n \le 19$ -- but is small on the structured families here, because the
-gadget strands most partial paths quickly: for $\sigma_{a,b}$ we measure $57{,}066$
+color. The legal future extensions of a partial PC path depend only on its state, so
+distinct PC paths reaching the same state may be identified without loss; $\rho(\sigma)$
+is then the maximum cardinality of the visited set over all \emph{reachable} states,
+computed by an exhaustive search that visits every reachable state once (a memo set of
+states; no pruning). The method is exact by construction; its cost is the number of
+reachable states. That number is exponential in general -- on unstructured instances we
+used the method only for $n \le 19$ -- but is small on the structured families here,
+because the gadget admits relatively few reachable states: for $\sigma_{a,b}$ we measure
+$57{,}066$
 reachable states at $n = 80$, $5{,}012{,}186$ at $n = 600$, and $7{,}273{,}586$ at
 $n = 720$ (the logs report the count for every table row). The constrained variants
 computing $M(\pi)$ (fixed start/end terminals and first/last colors) are the same search
@@ -1340,64 +1354,12 @@ wraparound cross edges and the visit count rises accordingly -- but we have not 
 out the analysis and do not claim the result. Second, the Lov\'asz-side question
 (Section~\ref{subsec:scope}): for the graphs $G(n, \sigma)$ built from $\sigma_{a,b}$ or
 from the chains of Appendix~\ref{app:trap}, is the maximum number of matching edges on a
-path still $\Theta(n)$? The properly-colored relaxation is now known to be lossy;
+path still $\Theta(n)$? The properly colored relaxation is now known to be lossy;
 quantifying the loss on these explicit instances may indicate whether $f(n)$ is linear
 after all. (An explicit snake path through $G(ab,\sigma_{a,b})$ using $\ge a(b-3) = n -
 3a$ matching edges, checked edge-by-edge at six points up to $n=600$ in
 \texttt{verify\_f\_linear.py}, already shows the loss is large on this family: the
 matching-edge content stays linear while $\rho$ drops to $\sqrt n$.)
-
-\section*{Acknowledgments}
-
-This paper merges and supersedes the author's two earlier notes on this problem -- an
-extremal-conjecture note containing the conversion lemma, the block-reversal family, and
-the $n=18$ refutation, and a second note proving the $O(\sqrt n)$ bound -- into one
-self-contained account. The proofs and computations were AI-assisted by Claude, under
-the Periapsis research structure. Because of that, I have tried to make the paper
-checkable without trusting either the author or the assistant. The central case analysis
-is stated as a complete classification (Theorem~\ref{thm:classification}) whose every
-step is locally verifiable; every computational claim is reproducible from the ancillary
-artifact, which includes a minimal independent verifier written directly from the
-definitions; and the main theorem has a second, independent proof in
-Appendix~\ref{app:trap}. This is an unrefereed preprint; no journal referee has yet
-checked it.
-
-\begin{thebibliography}{9}
-
-\bibitem{Lov70}
-L.~Lov\'asz,
-Problem 11, in:
-\emph{Combinatorial Structures and their Applications}
-(Proc.\ Calgary Internat.\ Conf., 1969),
-Gordon and Breach, New York, 1970, p.~497.
-
-\bibitem{NSTW25}
-S.~Norin, R.~Steiner, S.~Thomass\'e, and P.~Wollan,
-\emph{Long cycles in vertex-transitive graphs},
-arXiv:2505.08634, 2025.
-
-\bibitem{LYZ18}
-X.~Liu, X.~Yu, and S.~Zhang,
-\emph{Circumference of 3-connected cubic graphs},
-J.~Combin.\ Theory Ser.~B \textbf{132} (2018), 104--153.
-
-\bibitem{BJG97}
-J.~Bang-Jensen and G.~Gutin,
-\emph{Alternating cycles and paths in edge-coloured multigraphs: a survey},
-Discrete Math.\ \textbf{165--166} (1997), 39--60.
-
-\bibitem{GK09}
-G.~Gutin and E.~J.~Kim,
-\emph{Properly coloured cycles and paths: results and open problems},
-in: Graph Theory, Computational Intelligence and Thought,
-Lecture Notes in Comput.\ Sci.\ 5420, Springer, 2009, 200--208.
-
-\bibitem{ABMMM10}
-A.~Abouelaoualim, V.~Borozan, Y.~Manoussakis, C.~Martinhon, and R.~Muthu,
-\emph{Properly colored paths in edge-colored graphs},
-Discrete Math.\ \textbf{310} (2010), 1610--1620.
-
-\end{thebibliography}
 
 \appendix
 
@@ -1553,5 +1515,56 @@ and all $k \ge 2$ within reach ($n \le 57$): the same per-period slope $2$ as th
 of Section~\ref{sec:main}. We do not know whether the two families are related beyond
 sharing this slope.
 \end{remark}
+
+\section*{Acknowledgments}
+
+This paper merges and supersedes the author's two earlier notes on this problem -- an
+extremal-conjecture note containing the conversion lemma, the block-reversal family, and
+the $n=18$ refutation, and a second note proving the $O(\sqrt n)$ bound -- into one
+self-contained account. The proofs and computations were AI-assisted by Claude, under
+the Periapsis research structure. Because of that, I have tried to make the paper
+checkable without trusting either the author or the assistant: the central case analysis
+is a classification (Theorem~\ref{thm:classification}) whose every step is locally
+verifiable; every computational claim is reproducible from the ancillary artifact, which
+includes an independent verifier written directly from the definitions; and the main
+theorem has a second proof in Appendix~\ref{app:trap}. This is an unrefereed preprint;
+no journal referee has yet checked it.
+
+\begin{thebibliography}{9}
+
+\bibitem{Lov70}
+L.~Lov\'asz,
+Problem 11, in:
+\emph{Combinatorial Structures and their Applications}
+(Proc.\ Calgary Internat.\ Conf., 1969),
+Gordon and Breach, New York, 1970, p.~497.
+
+\bibitem{NSTW25}
+S.~Norin, R.~Steiner, S.~Thomass\'e, and P.~Wollan,
+\emph{Long cycles in vertex-transitive graphs},
+arXiv:2505.08634, 2025.
+
+\bibitem{LYZ18}
+X.~Liu, X.~Yu, and S.~Zhang,
+\emph{Circumference of 3-connected cubic graphs},
+J.~Combin.\ Theory Ser.~B \textbf{132} (2018), 104--153.
+
+\bibitem{BJG97}
+J.~Bang-Jensen and G.~Gutin,
+\emph{Alternating cycles and paths in edge-coloured multigraphs: a survey},
+Discrete Math.\ \textbf{165--166} (1997), 39--60.
+
+\bibitem{GK09}
+G.~Gutin and E.~J.~Kim,
+\emph{Properly coloured cycles and paths: results and open problems},
+in: Graph Theory, Computational Intelligence and Thought,
+Lecture Notes in Comput.\ Sci.\ 5420, Springer, 2009, 200--208.
+
+\bibitem{ABMMM10}
+A.~Abouelaoualim, V.~Borozan, Y.~Manoussakis, C.~Martinhon, and R.~Muthu,
+\emph{Properly colored paths in edge-colored graphs},
+Discrete Math.\ \textbf{310} (2010), 1610--1620.
+
+\end{thebibliography}
 
 \end{document}

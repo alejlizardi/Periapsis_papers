@@ -66,7 +66,7 @@ The exhaustive-search and table logs used in the paper are in `code/logs/`. On a
 |------|------------|
 | `union_two_hamiltonian_paths.tex` | The paper (LaTeX source; compile with pdfLaTeX). |
 | `union_two_hamiltonian_paths.pdf` | The rendered paper (22 pp). |
-| `assets/` | Periapsis logos (title-page lockup; footer mark; bottom-left corner glyph). |
+| `assets/` | Periapsis logos: title-page lockup and bottom-left corner glyph (`mark.png` is retained but no longer used in the footer). |
 | `code/` | The reproducibility artifact: Python verifiers + C++ solver + logs + manifest. |
 | `requirements.txt` | Python dependencies for the verifiers (empty — standard library only). |
 
