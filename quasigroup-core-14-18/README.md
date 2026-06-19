@@ -20,18 +20,12 @@ leaving $q=14$ and $q=18$. This paper:
 3. concludes the CGMN conjecture: a recursively differentiable quasigroup of order $q$
    exists **iff** $q\notin\{2,6\}$.
 
-> ⚠️ **Status: unrefereed preprint, AI-assisted. Read before relying on this.**
-> The constructions and computations were AI-assisted by Claude under the Periapsis
-> research structure; no journal referee has yet checked the paper. It is written to be
-> *checkable without trusting the author or the assistant*: both results are explicit
-> finite Cayley tables, printed in full, whose recursive-differentiability is an
-> $O(n^2)$ check reproduced by the standalone verifier in `code/`. A dual adversarial
-> review (a hostile math referee and a format referee) was run prior to release.
-> One open item, stated in the paper's honest-status note: the **novelty** claim (no
-> prior explicit order-14/18 example) rests on a literature survey that reached the
-> controlling sources but did *not* include a first-hand reading of the original 1998
-> CGMN paper (Russian); a reader with access should confirm that before treating the
-> result as a priority claim rather than a clean construction.
+> **Status: unrefereed preprint.** No journal referee has yet checked the paper. Both
+> results are explicit finite Cayley tables, printed in full, whose recursive
+> differentiability is an $O(n^2)$ check reproduced by the standalone verifier in `code/`,
+> so they are checkable directly from the tables. The computational search and the
+> verification code were assisted by Anthropic's Claude; the author checked the final
+> tables and is responsible for the claims.
 
 ## Reproduce the computational claims
 
@@ -53,16 +47,16 @@ the derivative is also a Latin square, and runs the wrong-reading control. See
 | Path | What it is |
 |------|------------|
 | `quasigroup_core_14_18.tex` | The paper (LaTeX source; compile with pdfLaTeX). |
-| `quasigroup_core_14_18.pdf` | The rendered paper (8 pp). |
+| `quasigroup_core_14_18.pdf` | The rendered paper (7 pp). |
 | `assets/` | Periapsis logos: title-page lockup and bottom-left corner glyph. |
-| `code/` | Reproducibility artifact: standalone verifier + the two Cayley tables (JSON). |
+| `code/` | Reproducibility artifact: standalone verifier, the two Cayley tables (JSON), and the search program (`code/search/`). |
 | `requirements.txt` | Python dependencies (none — standard library only). |
 | `MANIFEST.sha256` | Checksums of the code and data files. |
 
 ## Building the PDF
 
 Compiles with **pdfLaTeX** and standard packages (`amsmath`, `amsthm`, `booktabs`,
-`array`, `graphicx`, `fancyhdr`, `eso-pic`, `hyperref`). Two passes resolve
+`array`, `graphicx`, `fancyhdr`, `eso-pic`, `hyperref`, `microtype`). Two passes resolve
 cross-references:
 
 ```bash

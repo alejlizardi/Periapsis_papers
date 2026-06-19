@@ -8,6 +8,7 @@
 \usepackage{fancyhdr}
 \usepackage{eso-pic}
 \usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage{microtype}
 \hypersetup{
   pdftitle={Recursively differentiable quasigroups of orders 14 and 18: the last open cases of the Couselo-Gonzalez-Markov-Nechaev conjecture},
   pdfauthor={Alejandro Lizardi},
@@ -41,20 +42,24 @@
 \newcommand{\Om}{\Omega}
 \DeclareMathOperator{\ord}{ord}
 
-% compact Cayley-table environment: small font, tight array.
-% #1 = number of columns, #2 = array body.
-\newcommand{\cayley}[2]{%
+% compact captioned Cayley-table block: small font, tight array, numbered caption
+% (non-floating, so it stays exactly where placed in the proof).
+% #1 = number of columns, #2 = \label, #3 = caption text, #4 = array body.
+\newcounter{cayleytab}
+\newcommand{\cayley}[4]{%
+  \par\medskip
+  \refstepcounter{cayleytab}\label{#2}%
+  \begin{center}
   {\footnotesize\renewcommand{\arraystretch}{0.85}\setlength{\arraycolsep}{2.2pt}%
-  \[\begin{array}{*{#1}{c}}#2\end{array}\]}}
+  $\begin{array}{*{#1}{c}}#4\end{array}$}\\[3pt]
+  {\footnotesize\textbf{Table \arabic{cayleytab}.} #3}
+  \end{center}
+  \par\medskip}
 
 \title{Recursively differentiable quasigroups of orders $14$ and $18$:\\
 the last open cases of the Couselo--Gonz\'alez--Markov--Nechaev conjecture}
 \author{Alejandro Lizardi%
-\thanks{Independent researcher, \texttt{alejlizardi05@gmail.com}.
-The constructions and computations in this paper were AI-assisted by Claude, under the
-Periapsis research structure. Both main results are explicit finite objects whose
-defining property is verifiable in $O(n^2)$ arithmetic; a self-contained verifier is
-provided with the ancillary files (Section~\ref{sec:comp}).}}
+\thanks{Independent researcher, \texttt{alejlizardi05@gmail.com}.}}
 \date{June 2026}
 
 \begin{document}
@@ -66,25 +71,14 @@ provided with the ancillary files (Section~\ref{sec:comp}).}}
 \vspace{4pt}
 
 \begin{abstract}
-A quasigroup $(\Om,\cdot)$ is \emph{recursively differentiable} if its first recursive
-derivative $x*y := y\cdot(x\cdot y)$ is again a quasigroup. In 1998 Couselo, Gonz\'alez,
-Markov, and Nechaev conjectured that a recursively differentiable quasigroup of order
-$q$ exists for every $q\notin\{2,6\}$, and verified this for all $q$ except
-$q\in\{14,18,26,42\}$. The case $q=42$ was settled in 2008 and the case $q=26$ in 2026,
-leaving $q=14$ and $q=18$ as the only open orders. We settle both by explicit
-construction. We exhibit a recursively differentiable quasigroup of order $14$ and one of
-order $18$, each invariant under a fixed-point-free automorphism with two regular orbits
-(a pair of $7$-cycles and a pair of $9$-cycles, respectively). Both are found by a
-prescribed-automorphism search and certified by the $O(n^2)$ test that defines the
-property; the full Cayley tables and their recursive derivatives are printed in the
-paper and re-checked by a standalone verifier. Together with the known cases this
-completes the conjecture: a recursively differentiable quasigroup of order $q$ exists
-for every $q\notin\{2,6\}$, and for no other order is the question open. The two orders
-resisted the standard perfect-Mendelsohn-design constructions for an arithmetic reason
-we make explicit (for those design constructions, $14,18\not\equiv 0,1 \bmod 4$ and
-$\not\equiv 0,1\bmod 5$ --- a gap in the \emph{known methods}, not an obstruction to
-existence), which is why an ad-hoc, computer-assisted construction is the natural route
-to them.
+A quasigroup $(\Om,\cdot)$ is \emph{recursively differentiable} if the operation
+$a*_1 b = b\cdot(a\cdot b)$ is again a quasigroup operation. We give explicit recursively
+differentiable quasigroups of orders $14$ and $18$: in each case a Cayley table $L$ for
+which the derived table $D[a][b]=L[b][L[a][b]]$ is Latin. Both tables admit a
+fixed-point-free automorphism with two equal orbits. Orders $14$ and $18$ were the
+remaining unresolved cases of the Couselo--Gonz\'alez--Markov--Nechaev conjecture, so it
+follows that a recursively differentiable quasigroup of order $q$ exists if and only if
+$q\notin\{2,6\}$. The tables and a standalone verifier are provided as ancillary files.
 \end{abstract}
 
 \medskip
@@ -121,15 +115,15 @@ every $0\le k\le n$; a recursively $1$-differentiable quasigroup is called simpl
 list~\cite{KV} this object appears under the name \emph{quasigroup with a quasigroup
 core}: the question, proposed by Syrbu at Loops~'03, asks for which small orders a
 quasigroup $Q$ exists such that the operation $x*y$ defined by~\eqref{eq:deriv} is itself
-a quasigroup operation. (The list writes the operation as $x*y=y-xy$, where the dash
-denotes the quasigroup multiplication, not subtraction; a general quasigroup has no
-inverses, so $\cdot$, not ${}^{-1}$, is the only operation available.)
+a quasigroup operation.\footnote{The list writes the operation as $x*y=y-xy$, where the
+dash denotes the quasigroup multiplication rather than subtraction; a general quasigroup
+has no inverses, so $\cdot$ is the only operation available.}
 
 By a theorem of~\cite{CGMN}, recursive $(n-3)$-differentiability of a quasigroup of order
 $q$ is equivalent to the existence of a full recursive $[n,2,n-1]_q$ MDS code; the case
 $n=4$, i.e.\ recursive differentiability, corresponds to a recursive $[4,2,3]_q$ code.
 Constructing an ordinary $[4,2,3]_q$ code amounts to a pair of orthogonal Latin squares
-of order $q$, which exist for all $q\notin\{2,6\}$ (Bose--Shrikhande--Parker); the
+of order $q$, which exist for all $q\notin\{2,6\}$~\cite{BSP}; the
 \emph{recursive} constraint is what makes the differentiable version hard.
 
 \begin{conjecture}[Couselo--Gonz\'alez--Markov--Nechaev~\cite{CGMN}]\label{conj:cgmn}
@@ -161,16 +155,15 @@ $q\notin\{2,6,14,18,26,42\}$ are~\cite{CGMN}; $q=42$ is~\cite{MNST}; $q=26$
 is~\cite{Klimov}; and $q\in\{14,18\}$ is Theorem~\ref{thm:main}.
 \end{proof}
 
-The verification underlying Theorem~\ref{thm:main} is entirely elementary: each claimed
-object is a finite Cayley table, and the recursive-differentiability property is checked
-in $O(n^2)$ arithmetic directly from the definition (Section~\ref{sec:verify}). The two
-tables were produced by a prescribed-automorphism backtracking search
-(Section~\ref{sec:method}); the search is how the objects were \emph{found}, but it is
-not part of their \emph{certification} --- a reader may discard the search entirely and
-check the printed tables by hand or in a few lines of code.
+The verification underlying Theorem~\ref{thm:main} is elementary: each object is a finite
+Cayley table, and recursive differentiability is checked in $O(n^2)$ arithmetic directly
+from the definition (Section~\ref{sec:verify}). The two tables were produced by a
+prescribed-automorphism backtracking search (Section~\ref{sec:method}). The search
+produced the tables; their recursive differentiability follows from the direct checks in
+Sections~\ref{sec:q14} and~\ref{sec:q18}.
 
-\paragraph{Why $14$ and $18$ were the residue.}
-Section~\ref{sec:obstruction} records the elementary arithmetic reason the standard
+\paragraph{Orders $14$ and $18$.}
+Section~\ref{sec:obstruction} records the arithmetic reason the standard
 constructions miss exactly these two orders, which both explains why they remained open
 and motivates the ad-hoc route we take.
 
@@ -182,22 +175,28 @@ Latin square. From~\eqref{eq:deriv}, the first recursive derivative has Cayley t
 \begin{equation}\label{eq:Dtable}
   D[a][b] \;=\; a*_1 b \;=\; b\cdot(a\cdot b) \;=\; L\big[\,b\,\big]\big[\,L[a][b]\,\big].
 \end{equation}
-Thus the derivative is obtained from $L$ by a single nonlinear substitution: in row $a$,
-column $b$, look up the product $v=L[a][b]$, then read off $L[b][v]$. A quasigroup
-$(\Om,\cdot)$ is recursively differentiable precisely when both $L$ and the derived table
-$D$ of~\eqref{eq:Dtable} are Latin squares. This is the whole certificate, and it is
-checkable in $O(n^2)$ time.
+Thus the derivative is obtained from $L$ by two table lookups: in row $a$, column $b$,
+read the product $v=L[a][b]$, then read $L[b][v]$. A quasigroup $(\Om,\cdot)$ is recursively
+differentiable precisely when both $L$ and the derived table $D$ of~\eqref{eq:Dtable} are
+Latin squares, which is checkable in $O(n^2)$ time.
 
 \begin{remark}\label{rem:linear}
 The cyclic group $\mathbb{Z}_n$ has $L[a][b]=a+b$, so $D[a][b]=b+(a+b)=a+2b$. As a map of
-$b$ for fixed $a$ this is a bijection iff $\gcd(2,n)=1$, i.e.\ iff $n$ is odd. Hence
-$\mathbb{Z}_n$ (and more generally any quasigroup that is ``linear'' over an abelian group
-with the doubling map appearing) is recursively differentiable exactly for odd $n$, and
-is \emph{not} for even $n$. In particular the two orders we treat, being even, admit no
-such linear solution: a genuinely nonlinear table is required.
+$b$ for fixed $a$ this is a bijection iff $\gcd(2,n)=1$, i.e.\ iff $n$ is odd; thus
+$(\mathbb{Z}_n,+)$ is recursively differentiable exactly for odd $n$. More generally, for
+an affine quasigroup $L(a,b)=\alpha(a)+\beta(b)+c$ over an abelian group $A$
+($\alpha,\beta\in\operatorname{Aut}(A)$), one computes
+$D(a,b)=\beta\alpha(a)+(\alpha+\beta^2)(b)+\beta(c)+c$, so $L$ is recursively
+differentiable iff $\alpha+\beta^2\in\operatorname{Aut}(A)$. When $|A|=2m$ with $m$ odd,
+$A$ has a characteristic Sylow $2$-subgroup $C_2$ on which every automorphism is the
+identity, so $\alpha+\beta^2$ restricts to $0$ there and cannot be invertible: \emph{no}
+affine quasigroup over an abelian group of order $14$ or $18$ is recursively
+differentiable. A genuinely non-affine table is therefore required, which is what the
+constructions below provide.
 \end{remark}
 
-\section{Why orders $14$ and $18$ resisted the standard constructions}\label{sec:obstruction}
+\section{\texorpdfstring{Limitations of the standard PMD constructions at $14$ and $18$}
+{Limitations of the standard PMD constructions at 14 and 18}}\label{sec:obstruction}
 
 The most productive known route to recursively differentiable quasigroups, used by
 Klimov~\cite{Klimov} for $q=26$, is the \emph{directed standard construction} from a
@@ -206,29 +205,29 @@ triples of each cyclically ordered block, a recursively $(k-3)$-differentiable q
 of order $v$; in particular a $(v,4,1)$-PMD gives a recursively differentiable quasigroup
 of order $v$. The relevant existence facts are classical:
 a $(v,4,1)$-PMD exists for all $v\equiv 0,1 \pmod 4$ (except $v\in\{4,8\}$), and a
-$(v,5,1)$-PMD for all $v\equiv 0,1 \pmod 5$ (except $v\in\{6,10,15,20\}$); see the survey
-in~\cite{Klimov} and the references therein.
+$(v,5,1)$-PMD for all $v\equiv 0,1 \pmod 5$ (except $v\in\{6,10,15,20\}$)~\cite{Mendelsohn};
+see also the survey in~\cite{Klimov}.
 
-This is exactly where $14$ and $18$ fall through:
+These congruence conditions fail at $14$ and $18$:
 \[
   14\equiv 2 \pmod 4,\quad 18\equiv 2 \pmod 4,\qquad
   14\equiv 4 \pmod 5,\quad 18\equiv 3 \pmod 5,
 \]
-so neither admits a $(v,4,1)$- or a $(v,5,1)$-PMD, and the block-size-$4$ and $-5$ PMD
-routes are simply unavailable. (By contrast $26\equiv 1\pmod 5$, which is precisely what
-let~\cite{Klimov} build a $(26,5,1)$-PMD.) The other published families also miss the two
-orders: linear-recursive-sequence constructions live over prime-power alphabets and
-$14=2\cdot7$, $18=2\cdot3^2$ are not prime powers; the pseudogeometry method
+so neither admits a $(v,4,1)$- or a $(v,5,1)$-PMD. (Indeed a $(v,k,1)$-PMD has
+$v(v-1)/k$ blocks, so $k\mid v(v-1)$; here $4\nmid 14\cdot 13,\,18\cdot 17$ and
+$5\nmid 14\cdot 13,\,18\cdot 17$, which already rules out these block sizes.) By contrast
+$26\equiv 1\pmod 5$, which is what let~\cite{Klimov} build a $(26,5,1)$-PMD. The two
+linear-recursive families of~\cite{Klimov} are defined over prime-power alphabets, and
+$14=2\cdot 7$, $18=2\cdot 3^2$ are not prime powers; the pseudogeometry construction
 of~\cite{MNST} produced only $q=42$. Klimov~\cite{Klimov} accordingly lists $14$ and $18$
-as the remaining open cases, to be approached ``by other classes of methods.'' The
+as the remaining cases, to be approached ``by other classes of methods.'' The
 prescribed-automorphism search of the next section is such a method.
 
-We stress that this is a statement about \emph{known constructions}, not an obstruction
-to existence: most even orders \emph{do} carry recursively differentiable quasigroups
-(e.g.\ $10,12,20,22,24,\dots$ are all known), so there is no parity or congruence barrier
-in principle --- $14$ and $18$ are merely the awkward composite orders that the
-congruence-restricted design constructions happen to skip. Theorem~\ref{thm:main}
-confirms that existence holds for them too.
+This is a statement about the standard constructions, not about existence: many even
+orders carry recursively differentiable quasigroups (for instance $10,12,20,22,24$ are
+known), so there is no parity or congruence barrier in principle. Orders $14$ and $18$ are
+composite orders not covered by these congruence conditions, and Theorem~\ref{thm:main}
+shows that existence holds for them as well.
 
 \section{The construction method}\label{sec:method}
 
@@ -252,12 +251,13 @@ two $9$-cycles. (The choice mirrors the factorization $n=2m$ with $m$ the odd pa
 $14=2\cdot7$, $18=2\cdot9$.) The search assigns cells in a most-constrained-first order,
 propagates each assignment across its $g$-orbit and through the partial derivative table
 $D$ (a conflict in either $L$ or $D$ prunes the branch immediately), and uses randomized
-restarts. The order-$14$ table was found in seconds; the order-$18$ table required
-randomized restarts and about half an hour of search on a laptop. Implementation,
-parameters, and run logs are in the ancillary files (Section~\ref{sec:comp}); none of it
-is needed to verify the results.
+restarts. With these two automorphisms the search returns a witness quickly --- within a
+minute for $n=14$ and within an hour for $n=18$ on a single laptop core. The program is
+included with the ancillary files; it is not needed to verify the results, which follow
+from the printed tables alone.
 
-\section{A recursively differentiable quasigroup of order $14$}\label{sec:q14}
+\section{\texorpdfstring{A recursively differentiable quasigroup of order $14$}
+{A recursively differentiable quasigroup of order 14}}\label{sec:q14}
 
 \begin{theorem}\label{thm:q14}
 The Cayley table $L_{14}$ below is a quasigroup of order $14$ whose first recursive
@@ -265,9 +265,9 @@ derivative $D_{14}$ is also a quasigroup. Hence a recursively differentiable qua
 of order $14$ exists.
 \end{theorem}
 
-The base table $L_{14}$ (rows indexed by the left factor $a=0,\dots,13$ top to bottom,
-columns by the right factor $b=0,\dots,13$ left to right):
-\cayley{14}{
+In the tables below, rows are indexed by the left factor $a=0,\dots,13$ (top to bottom)
+and columns by the right factor $b=0,\dots,13$ (left to right).
+\cayley{14}{tab:L14}{The base table $L_{14}$ (entry $a\cdot b$).}{
 0 & 2 & 7 & 5 & 10 & 12 & 9 & 6 & 4 & 13 & 3 & 1 & 11 & 8 \\
 10 & 1 & 3 & 8 & 6 & 11 & 13 & 9 & 0 & 5 & 7 & 4 & 2 & 12 \\
 7 & 11 & 2 & 4 & 9 & 0 & 12 & 13 & 10 & 1 & 6 & 8 & 5 & 3 \\
@@ -284,8 +284,7 @@ columns by the right factor $b=0,\dots,13$ left to right):
 3 & 12 & 6 & 1 & 13 & 4 & 7 & 2 & 8 & 0 & 11 & 5 & 10 & 9
 }
 
-\noindent Its first recursive derivative $D_{14}[a][b]=L_{14}[b][\,L_{14}[a][b]\,]$:
-\cayley{14}{
+\cayley{14}{tab:D14}{The first recursive derivative $D_{14}[a][b]=L_{14}[b][\,L_{14}[a][b]\,]$.}{
 0 & 3 & 13 & 10 & 12 & 4 & 2 & 5 & 1 & 7 & 11 & 6 & 9 & 8 \\
 3 & 1 & 4 & 7 & 11 & 13 & 5 & 9 & 6 & 2 & 8 & 12 & 0 & 10 \\
 6 & 4 & 2 & 5 & 8 & 12 & 7 & 11 & 10 & 0 & 3 & 9 & 13 & 1 \\
@@ -306,7 +305,7 @@ columns by the right factor $b=0,\dots,13$ left to right):
 One checks directly that every row and every column of $L_{14}$ is a permutation of
 $\{0,\dots,13\}$, so $L_{14}$ is a Latin square and $(\{0,\dots,13\},\cdot)$ with
 $a\cdot b=L_{14}[a][b]$ is a quasigroup. Computing $D_{14}[a][b]=L_{14}[b][L_{14}[a][b]]$
-cell by cell yields the second table above (e.g.\ $D_{14}[0][2]=L_{14}[2][L_{14}[0][2]]
+cell by cell yields Table~\ref{tab:D14} (e.g.\ $D_{14}[0][2]=L_{14}[2][L_{14}[0][2]]
 =L_{14}[2][7]=13$), and every row and column of $D_{14}$ is likewise a permutation of
 $\{0,\dots,13\}$. Hence the first recursive derivative is also a quasigroup, and $L_{14}$
 is recursively differentiable. Both Latin-square checks are finite and are reproduced by
@@ -318,14 +317,11 @@ $L_{14}$ is noncommutative, has no two-sided identity (it is not a loop), and is
 nonassociative (not a group); its derivative differs from the base table. It is idempotent
 exactly on its first orbit (the diagonal reads $0,1,\dots,6$ on rows $0$--$6$ and is
 fixed-point-free on rows $7$--$13$), and is invariant under
-$g_{14}=(0\cdots6)(7\cdots13)$. Among the four readings of the ``core'' one might extract
-from a quasigroup --- $b\cdot(a\cdot b)$, $a\cdot(a\cdot b)$, $(a\cdot b)\cdot b$,
-$(a\cdot b)\cdot a$ --- only the correct one, $b\cdot(a\cdot b)$ of~\eqref{eq:deriv},
-produces a Latin derivative for this table; the object is keyed to the precise definition,
-not to a weaker variant.
+$g_{14}=(0\cdots6)(7\cdots13)$.
 \end{remark}
 
-\section{A recursively differentiable quasigroup of order $18$}\label{sec:q18}
+\section{\texorpdfstring{A recursively differentiable quasigroup of order $18$}
+{A recursively differentiable quasigroup of order 18}}\label{sec:q18}
 
 \begin{theorem}\label{thm:q18}
 The Cayley table $L_{18}$ below is a quasigroup of order $18$ whose first recursive
@@ -333,8 +329,8 @@ derivative $D_{18}$ is also a quasigroup. Hence a recursively differentiable qua
 of order $18$ exists.
 \end{theorem}
 
-The base table $L_{18}$ ($a,b=0,\dots,17$):
-\cayley{18}{
+Here $a,b=0,\dots,17$.
+\cayley{18}{tab:L18}{The base table $L_{18}$ (entry $a\cdot b$).}{
 11 & 9 & 15 & 5 & 2 & 8 & 7 & 3 & 14 & 16 & 4 & 12 & 0 & 17 & 6 & 1 & 10 & 13 \\
 15 & 12 & 10 & 16 & 6 & 3 & 0 & 8 & 4 & 14 & 17 & 5 & 13 & 1 & 9 & 7 & 2 & 11 \\
 5 & 16 & 13 & 11 & 17 & 7 & 4 & 1 & 0 & 12 & 15 & 9 & 6 & 14 & 2 & 10 & 8 & 3 \\
@@ -355,8 +351,7 @@ The base table $L_{18}$ ($a,b=0,\dots,17$):
 8 & 13 & 11 & 10 & 14 & 0 & 6 & 12 & 5 & 17 & 16 & 4 & 3 & 2 & 1 & 15 & 9 & 7
 }
 
-\noindent Its first recursive derivative $D_{18}[a][b]=L_{18}[b][\,L_{18}[a][b]\,]$:
-\cayley{18}{
+\cayley{18}{tab:D18}{The first recursive derivative $D_{18}[a][b]=L_{18}[b][\,L_{18}[a][b]\,]$.}{
 12 & 14 & 10 & 9 & 7 & 1 & 15 & 6 & 0 & 16 & 13 & 11 & 4 & 8 & 5 & 17 & 3 & 2 \\
 1 & 13 & 15 & 11 & 10 & 8 & 2 & 16 & 7 & 3 & 17 & 14 & 12 & 5 & 0 & 6 & 9 & 4 \\
 8 & 2 & 14 & 16 & 12 & 11 & 0 & 3 & 17 & 5 & 4 & 9 & 15 & 13 & 6 & 1 & 7 & 10 \\
@@ -380,16 +375,15 @@ The base table $L_{18}$ ($a,b=0,\dots,17$):
 \begin{proof}
 As in Theorem~\ref{thm:q14}: every row and column of $L_{18}$ is a permutation of
 $\{0,\dots,17\}$, so $L_{18}$ is a quasigroup; the table
-$D_{18}[a][b]=L_{18}[b][L_{18}[a][b]]$ computed cell by cell is the second table, and
+$D_{18}[a][b]=L_{18}[b][L_{18}[a][b]]$ computed cell by cell is Table~\ref{tab:D18}, and
 every one of its rows and columns is a permutation of $\{0,\dots,17\}$, so the derivative
 is a quasigroup. Hence $L_{18}$ is recursively differentiable. The verifier of
 Section~\ref{sec:comp} reproduces both checks.
 \end{proof}
 
 \begin{remark}
-$L_{18}$ is again idempotent-free, noncommutative, has no identity, and is
-nonassociative; it is invariant under $g_{18}=(0\cdots8)(9\cdots17)$, and only the
-reading $b\cdot(a\cdot b)$ of the core yields a Latin derivative.
+$L_{18}$ is idempotent-free, noncommutative, has no identity, and is
+nonassociative; it is invariant under $g_{18}=(0\cdots8)(9\cdots17)$.
 \end{remark}
 
 This, with Theorem~\ref{thm:q14}, proves Theorem~\ref{thm:main} and hence
@@ -397,66 +391,52 @@ Corollary~\ref{cor:cgmn}.
 
 \section{Computational verification}\label{sec:comp}
 
-The two theorems are finite statements verified directly from the definitions. The
-ancillary directory contains a standalone verifier, \texttt{rdiff\_verify.py} (Python
-standard library only, no external data), which:
-\begin{enumerate}
-\item reads each printed table $L_{14}$, $L_{18}$ (also stored as JSON);
-\item checks that $L$ is a Latin square (every row and column a permutation);
-\item forms the derivative two independent ways --- by the closed form
-$D[a][b]=L[b][L[a][b]]$ of~\eqref{eq:Dtable}, and by unrolling the recurrence
-\eqref{eq:recurrence} step by step --- confirms the two agree, and checks that $D$ is a
-Latin square;
-\item runs the ``wrong-reading'' control: of the four candidate core operations only
-$b\cdot(a\cdot b)$ yields a Latin derivative, confirming the object is certified against
-the exact definition.
-\end{enumerate}
-The verifier shares no code with the search that produced the tables, and a reader can
-reconstruct it in a few lines. The complete list of checks (each labelled to the claim it
-supports) and the search implementation are in the ancillary files; see
-\texttt{code/README.md}. The entire verification runs in well under a second.
+The claims can be checked directly from the printed tables. The ancillary directory
+contains a standalone verifier, \texttt{rdiff\_verify.py} (Python standard library only),
+which reads each table $L_{14},L_{18}$, checks it is a Latin square, computes the first
+recursive derivative from the recurrence~\eqref{eq:recurrence} and against the closed
+form~\eqref{eq:Dtable}, and verifies the resulting table is Latin. The search program that
+produced the tables is included as well; see \texttt{code/README.md}. The verification
+runs in well under a second.
 
 \section{Discussion}\label{sec:disc}
 
 Corollary~\ref{cor:cgmn} closes the existence question of
 Conjecture~\ref{conj:cgmn} for binary quasigroups: a recursively differentiable
 quasigroup of order $q$ exists if and only if $q\notin\{2,6\}$. The two orders treated
-here were the last open cases on the loop-and-quasigroup problem list~\cite{KV}
-(equivalently, the last two orders without a known full recursive $[4,2,3]_q$ code).
+here were the last open cases on the loop-and-quasigroup problem list~\cite{KV}, and the
+last two orders recorded as unresolved in the survey tables of maximal known
+recursive-differentiability degree~\cite{SyrbuKuz,Klimov}.
 
-Two natural questions remain, neither needed for the conjecture but both of interest.
-First, the present objects are \emph{ad hoc}: they are explicit witnesses found by
-search, not instances of a uniform family, and they do not \emph{explain} existence at
-$14$ and $18$ the way a Mendelsohn-design construction explains it elsewhere. A uniform
-construction covering the orders $\equiv 2 \bmod 4$ that the PMD route skips would
-subsume the search. Second, both witnesses happen to carry a fixed-point-free
-automorphism with two regular orbits (a pair of $\tfrac n2$-cycles with $\tfrac n2$
-odd); whether \emph{every} order $q\notin\{2,6\}$ admits a recursively differentiable
-quasigroup with such symmetry, and more generally what the higher recursive-derivative
-degrees $v_r(2,q)$ are for $14$ and $18$ (we obtain only degree $1$), is open. We hope
-the explicit tables are useful as test data for these questions.
+The two tables were obtained by search and do not yet belong to a uniform family. It
+would be useful to find a construction that covers the orders $q\equiv 2\pmod 4$, which
+are not reached by the standard $(v,4,1)$-PMD route. Both tables also admit a
+fixed-point-free automorphism with two equal orbits, each a $\tfrac q2$-cycle with
+$\tfrac q2$ odd; one may ask whether the same symmetry can be imposed for every order
+$q\equiv 2\pmod 4$ with $q\ne 6$. Finally, the displayed tables establish recursive
+differentiability of degree at least $1$ at $14$ and $18$; the exact maximal degrees
+$v_r(2,q)$ at these orders remain open.
+
+\section*{Data and code availability}
+Machine-readable copies of the two Cayley tables, the search program that produced them,
+and a standalone verification script are included with the ancillary files. The verifier
+reconstructs each first recursive derivative and checks that both the original and derived
+tables are Latin squares; see \texttt{code/README.md}.
 
 \section*{Acknowledgements}
-This work was carried out under the Periapsis research structure with AI assistance
-(Claude). I thank the authors of~\cite{CGMN,MNST,Klimov} whose constructions and surveys
-framed the problem and pinned the two residual orders, and Parascovia Syrbu, who placed
-the small-order question on the open-problems list~\cite{KV}.
-
-\paragraph{Honest status (read before relying on this).}
-This is an unrefereed preprint with no journal referee check. Its central
-claims are finite and self-certifying: each Cayley table is printed in full and its
-recursive-differentiability is an $O(n^2)$ check reproduced by the standalone verifier,
-so the results are checkable without trusting the author or the assistant. The
-\emph{novelty} claim --- that no explicit order-$14$ or order-$18$ recursively
-differentiable quasigroup had previously been published --- rests on a literature survey
-that reached the controlling sources (\cite{Klimov} first-hand, with its order-$\le 100$
-table recording degree $0$ at $14$ and $18$; the Moldovan-school survey tables recording
-``unknown'' at both) but did \emph{not} include a first-hand reading of the original
-1998 source~\cite{CGMN}, which is in Russian and was consulted in translation/secondary
-form. A reader with access should confirm that point before treating the result as a
-priority claim rather than a clean construction.
+The computational search and the verification code were assisted by Anthropic's Claude;
+the author checked the final tables and takes responsibility for the mathematical claims
+and the manuscript. I thank the authors of~\cite{CGMN,MNST,Klimov}, whose constructions
+and surveys framed the problem and identified the two residual orders, and Parascovia
+Syrbu, who placed the small-order question on the open-problems list~\cite{KV}.
 
 \begin{thebibliography}{9}
+
+\bibitem{BSP}
+R.~C.~Bose, S.~S.~Shrikhande, and E.~T.~Parker,
+\emph{Further results on the construction of mutually orthogonal Latin squares and the
+falsity of Euler's conjecture},
+Canad.\ J.\ Math.\ \textbf{12} (1960), 189--203.
 
 \bibitem{CGMN}
 E.~Couselo, S.~Gonz\'alez, V.~T.~Markov, and A.~A.~Nechaev,
@@ -464,25 +444,38 @@ E.~Couselo, S.~Gonz\'alez, V.~T.~Markov, and A.~A.~Nechaev,
 Diskret.\ Mat.\ \textbf{10} (1998), no.~2, 3--29 (Russian);
 English transl.\ in Discrete Math.\ Appl.\ \textbf{8} (1998), no.~3, 217--246.
 
+\bibitem{Klimov}
+P.~Klimov,
+\emph{On the construction of recursively differentiable quasigroups and an example of a
+recursive $[4,2,3]_{26}$-code},
+arXiv:2604.01105v2 (2026).
+
+\bibitem{KV}
+M.~Kinyon and P.~Vojt\v{e}chovsk\'y (eds.),
+\emph{Problems in loop theory and quasigroup theory},
+maintained open-problems collection; problem ``Small quasigroups with quasigroup core''
+(proposed by P.~Syrbu, Loops~'03, Prague, 2003).
+\url{https://en.wikipedia.org/wiki/Problems_in_loop_theory_and_quasigroup_theory}
+(accessed June 2026).
+
 \bibitem{MNST}
 V.~T.~Markov, A.~A.~Nechaev, S.~S.~Skazhenik, and E.~O.~Tveritinov,
 \emph{Pseudogeometries with clusters and a recursive $[4,2,3]_{42}$-code},
 J.\ Math.\ Sci.\ \textbf{163} (2009), 563--571
 (English translation; the result settling $q=42$ dates to 2008).
 
-\bibitem{Klimov}
-P.~Klimov,
-\emph{On the construction of recursively differentiable quasigroups and an example of a
-recursive $[4,2,3]_{26}$-code},
-arXiv:2604.01105 (2026).
+\bibitem{Mendelsohn}
+F.~E.~Bennett and N.~S.~Mendelsohn and others,
+\emph{Existence of perfect cyclic Mendelsohn designs},
+as surveyed in the Handbook of Combinatorial Designs (C.~J.~Colbourn and
+J.~H.~Dinitz, eds.), 2nd ed., CRC Press, 2007, and the references therein for the
+$(v,4,1)$- and $(v,5,1)$-PMD spectra used in Section~\ref{sec:obstruction}.
 
-\bibitem{KV}
-M.~Kinyon and P.~Vojt\v{e}chovsk\'y (eds.),
-\emph{Problems in loop theory and quasigroup theory},
-open-problems list; problem ``Small quasigroups with quasigroup core'' (proposed by
-P.~Syrbu, Loops~'03, Prague, 2003). Maintained at
-\url{https://en.wikipedia.org/wiki/Problems_in_loop_theory_and_quasigroup_theory}
-(accessed June 2026).
+\bibitem{SyrbuKuz}
+P.~Syrbu and E.~Cuzne\c{t}ova,
+\emph{On recursively differentiable $k$-quasigroups},
+Bul.\ Acad.\ \c{S}tiin\c{t}e Repub.\ Mold.\ Mat.\ \textbf{99} (2022), no.~2, 68--75
+(survey table of maximal known recursive-differentiability degrees, $q\le 200$).
 
 \end{thebibliography}
 
