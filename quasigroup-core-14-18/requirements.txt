@@ -1,0 +1,2 @@
+# No third-party dependencies. The verifier uses only the Python standard library.
+# Tested with CPython 3.14 (any Python >= 3.6 should work).
