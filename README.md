@@ -11,6 +11,7 @@ verification script a reviewer can run.
 | Directory | Result | Verify |
 |-----------|--------|--------|
 | [`hexagonal-hardin-family/`](hexagonal-hardin-family/) | Unified order-polynomial proof for the side-2/3/4 hexagonal Hardin arrays: OEIS [A216938](https://oeis.org/A216938), [A216939](https://oeis.org/A216939), and [A216940](https://oeis.org/A216940); includes Kauers-Koutschan Conjecture 12 as the side-4 case. Supersedes the side-4-only draft in `archive/`. | `python hexagonal-hardin-family/code/verify_family.py` |
+| [`a269021-kk-conjecture-17/`](a269021-kk-conjecture-17/) | Proof of the conjectured order-4/degree-21 recurrence for OEIS [A269021](https://oeis.org/A269021) (permutations of [2n] with an increasing subsequence of length n) — Kauers-Koutschan Conjecture 17 — via the Borodin-Okounkov-Olshanski discrete Bessel kernel and a Wilf-Zeilberger certificate. Unrefereed; not yet read by any human expert. | `python a269021-kk-conjecture-17/code/verify_a269021.py` |
 
 ## Archived
 
