@@ -100,8 +100,8 @@ formula for the one-point correlation function of the poissonized Plancherel mea
 Bessel kernel), and the elementary observation that a partition of $2n$ has at most one row of
 length at least $n$, so the relevant inclusion--exclusion truncates after one term. The summand is
 a proper hypergeometric term vanishing outside $n\le\rho\le 2n$, and Zeilberger's algorithm
-returns as its minimal telescoper \emph{exactly} the Kauers--Koutschan operator; we exhibit the
-rational certificate and prove the two resulting rational-function identities deterministically
+returns \emph{exactly} the Kauers--Koutschan operator as a telescoper for this sum; we exhibit
+the rational certificate and prove the two resulting rational-function identities deterministically
 (exact evaluation on integer grids exceeding explicit degree bounds). As corollaries,
 $a(n)/(2n)!^{2}$ is P-recursive --- to our knowledge the first D-finiteness proof for this
 coupled diagonal --- and
@@ -119,12 +119,11 @@ OEIS A269021.
 
 \vspace{4pt}
 \noindent\colorbox{black!3}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\small
-\textbf{Status \& provenance.} Preprint; \emph{unrefereed}, and \emph{not yet read by the
-conjecture authors or by any human expert}. The proof is computer-assisted: the certificate was
-found by the \texttt{zeilberger} package of Maxima and every step of the verification is
-mechanical (Section~\ref{sec:repro}); the two identities it rests on are proved by exact
-evaluation beyond explicit degree bounds, which a reader can re-run in $\sim$10 seconds from the
-shipped script. Two ingredients are \emph{cited, not re-derived}: the Robinson--Schensted
+\textbf{Status \& provenance.} This is an unrefereed, computer-assisted preprint. The
+certificate was found by the \texttt{zeilberger} package of Maxima and every step of the
+verification is mechanical (Section~\ref{sec:repro}); the two identities it rests on are proved
+by exact evaluation beyond explicit degree bounds, which a reader can re-run in $\sim$10 seconds
+from the shipped script, whose data are part of the proof object (Section~\ref{sec:repro}). Two ingredients are \emph{cited, not re-derived}: the Robinson--Schensted
 correspondence (Schensted~\cite{Sch61}), and the Borodin--Okounkov--Olshanski one-point formula
 with its kernel series (\cite{BOO00}, Theorem~2 and Proposition~2.6, eq.~(2.14), arXiv v2
 numbering; the statements used are quoted in Section~\ref{sec:rep}, and were cross-checked
@@ -189,7 +188,8 @@ The proof has two independent halves:
 \end{equation}
 the summand vanishing outside $n\le\rho\le2n$. This rests on the Robinson--Schensted
 correspondence, on the Borodin--Okounkov--Olshanski (BOO) formula for the one-point correlation
-function of the poissonized Plancherel measure, and on a one-line combinatorial truncation: a
+function of the poissonized Plancherel measure, and on the \emph{one-row truncation}, a
+one-line combinatorial observation: a
 partition of $2n$ has at most one row of length $\ge n$.
 \item \textbf{A Wilf--Zeilberger certificate (Section~\ref{sec:wz}).} The term $t(n,\rho)$ is
 proper hypergeometric, and the Kauers--Koutschan operator
@@ -205,7 +205,8 @@ $\Lop\,a=0$ for all $n\ge5$; the finitely many initial cases are checked directl
 \subsection{Why a term-match is not a proof, and what is genuinely needed}
 
 The $42$-term b-file cannot prove \eqref{eq:Lrec}: the recurrence has
-$5\cdot22=110$ unknown coefficients, and any candidate operator fitted to data --- or any second
+$5\cdot22=110$ unknown coefficients ($109$ degrees of freedom after overall scaling), and any
+candidate operator fitted to data --- or any second
 operator obtained from data by closure properties --- begs the question, since exhibiting
 \emph{any} bounded-order annihilator of $a(n)$ is essentially equivalent to the D-finiteness
 assertion being proved. (Kauers and Koutschan of course knew this; it is why they published the
@@ -238,7 +239,7 @@ correspondence is a bijection $S_m\to\bigcup_{\lambda\vdash m}\mathrm{SYT}(\lamb
 (the convention of \cite[\S1.2]{BOO00}; the map $i\mapsto\lambda_i-i$ is strictly decreasing, so
 each value is attained at most once).
 
-\begin{lemma}\label{lem:trunc}
+\begin{lemma}[one-row truncation]\label{lem:trunc}
 Let $\lambda\vdash 2n$ and $x\ge n-1$ an integer. If $x\in\Dset(\lambda)$, i.e.\
 $x=\lambda_i-i$ for some $i$, then $i=1$. Consequently
 \[
@@ -325,8 +326,11 @@ Summing \eqref{eq:onepoint2n} over all integers $x\ge n-1$ and using \eqref{eq:c
 \[
   \frac{a(n)}{(2n)!^{2}}\;=\;[\theta^{2n}]\;e^\theta \sum_{x\ge n-1}\JJ(x,x;\theta).
 \]
-Reindex the double series over $(x,m)$ by $\rho=x+m+1$ and $k=x+1$ (so $k$ runs over
-$n\le k\le\rho$ and $m=\rho-k$). Since
+For this coefficient extraction the sum over $x$ is finite: the diagonal series
+\eqref{eq:kernelseries} starts at $\theta^{\,x+1}$, so every $x\ge 2n$ contributes nothing to
+$[\theta^{2n}]$, and the interchange of the sum over $x$ with the coefficient extraction is the
+interchange of a finite sum. Reindex the double series over $(x,m)$ by $\rho=x+m+1$ and $k=x+1$
+(so $k$ runs over $n\le k\le\rho$ and $m=\rho-k$). Since
 $(2x+m+2)_m=(k+\rho)(k+\rho+1)\cdots(2\rho-1)=\frac{(2\rho-1)!}{(\rho+k-1)!}$ and
 $(x+m+1)!=\rho!$,
 \[
@@ -387,12 +391,13 @@ a combination supported on $n\le\rho\le2n+8$.
 \subsection{Discovery, and what is actually proved}
 
 Running Zeilberger's algorithm (Maxima's \texttt{zeilberger} package~\cite{Maxima}) on the
-hypergeometric term $t(n,\rho)$ returns a minimal telescoper of order $4$ --- and its
+hypergeometric term $t(n,\rho)$ returns a telescoper of order $4$ --- and its
 coefficients agree \emph{exactly}, polynomial for polynomial, with the guessed
-$c_0,\dots,c_4$. The algorithm also returns a rational certificate. We stress the logical role
-of this step: it is \emph{discovery only}. Nothing below depends on the correctness of Maxima;
-the certificate is re-stated in closed form and the identities it must satisfy are proved
-independently and deterministically.
+$c_0,\dots,c_4$. (What we use, and prove below, is only that the operator \emph{is} a
+telescoper; minimality is neither claimed nor needed.) The algorithm also returns a rational
+certificate. We stress the logical role of this step: it is \emph{discovery only}. Nothing below
+depends on the correctness of Maxima; the certificate is re-stated in closed form and the
+identities it must satisfy are proved independently and deterministically.
 
 \subsection{The certificate and the two identities}
 
@@ -457,9 +462,25 @@ factorial values).
 
 \begin{proof}
 Each side of \eqref{eq:diamond} is a rational function; clearing the explicit product of all
-denominators turns the difference into a polynomial $E(n,\rho)$. Summing the structural degrees
-of the factors in \eqref{eq:sigma}--\eqref{eq:cert} (the bookkeeping is carried out
-programmatically in the script, function \texttt{bound\_from\_terms}) bounds
+denominators turns the difference into a polynomial $E(n,\rho)$. The structural bidegrees of the
+seven addends of \eqref{eq:diamond}, read off the factored forms
+\eqref{eq:sigma}--\eqref{eq:cert} (recall $\deg c_i\le21$, $\deg_n\Xh=20$, $\deg_\rho\Xh=11$):
+\begin{center}\small
+\begin{tabular}{lcccc}
+\toprule
+addend & $\deg_n$ num.\ & $\deg_\rho$ num.\ & $\deg_n$ den.\ & $\deg_\rho$ den.\\
+\midrule
+$c_i(n)\,\sigma_i(n,\rho)$, $0\le i\le 4$ & $21+3(4{-}i)$ & $3(4{-}i)$ & $5(4{-}i)$ & $4{-}i$\\
+$\Rt(n,\rho{+}1)\,\tilde r(n,\rho)$ & $21$ & $14$ & $10$ & $7$\\
+$\Rt(n,\rho)$ & $20$ & $11$ & $8$ & $3$\\
+\bottomrule
+\end{tabular}
+\end{center}
+The denominator degrees total $68$ in $n$ and $20$ in $\rho$; each addend contributes to $E$ at
+most its numerator degree plus the total denominator degree of the \emph{other} addends, so
+$B_N=\max_t\bigl(\deg_n\mathrm{num}_t+68-\deg_n\mathrm{den}_t\bigr)=89$ (attained at
+$c_4\sigma_4$) and $B_R=28$ (attained at $c_0\sigma_0$ and at $\Rt$); the same bookkeeping is
+recomputed programmatically in the script (function \texttt{bound\_from\_terms}). Thus
 $\deg_n E\le 89$ and $\deg_\rho E\le 28$. A nonzero polynomial with
 $\deg_n\le B_N$, $\deg_\rho\le B_R$ cannot vanish on a grid of $(B_N{+}1)\times(B_R{+}1)$ points:
 fixing any grid row $n=n_0$ gives a univariate polynomial in $\rho$ of degree $\le B_R$ vanishing
@@ -542,8 +563,11 @@ $\sum_{\rho}(\Lop t)(n,\rho)=\sum_i c_i(n)a(n{+}i)=(\Lop a)(n)$.
 \begin{proof}[Proof of Theorem~\ref{main}]
 Theorem~\ref{thm:telescope} gives $(\Lop a)(n)=0$ for $n\ge5$. For $0\le n\le4$ the relation is
 a finite integer identity, verified directly on the values computed from \eqref{eq:star} (the
-script checks $n=0,\dots,52$; the research record checked $n\le80$ against an independent
-Toeplitz-determinant engine). This proves \eqref{eq:Lrec} for all $n\ge0$. For the equivalence
+script checks $n=0,\dots,52$, of which only $n\le4$ is needed here; the research record checked
+$n\le80$ against an independent Toeplitz-determinant engine). Here $a(0)=1$ --- the empty
+permutation vacuously contains the empty pattern --- and \eqref{eq:star} also evaluates to $1$
+at $n=0$ under the standard conventions, although Proposition~\ref{prop:rep} is stated for
+$n\ge1$. This proves \eqref{eq:Lrec} for all $n\ge0$. For the equivalence
 with the $\tilde a$-form of \cite{KK23}: substituting $\tilde a_{n+i}=a(n{+}i)/(2n{+}2i)!^{2}$
 into their Conjecture~17 and multiplying by $(2n{+}8)!^{2}$ yields exactly
 $4(n{+}3)(n{+}4)^2(2n{+}7)^2$ times \eqref{eq:Lrec} (a polynomial-coefficient identity checked in
@@ -557,17 +581,24 @@ Everything is re-checkable with one command and no external data:
 \begin{lstlisting}
 python code/verify_a269021.py     # expect "A269021 VERIFICATION: ALL 12 CHECKS PASS"
 \end{lstlisting}
-The script is Python~3 standard library only ($\sim$10\,s). Its twelve checks, in order:
+The script is Python~3 standard library only (observed: about $10$ seconds under CPython~3.12 on
+a consumer desktop). Its twelve checks, in order:
 brute force over \emph{all} $(2n)!$ permutations for $n\le3$ against \eqref{eq:star}; the
 hook-length sum \eqref{eq:rsk} for $n\le10$; the $16$ OEIS-listed terms; $\Lop$ annihilating the
-representation values for $n\le52$; the ratio closed forms of Lemma~\ref{lem:ratios} against
-direct factorial ratios; identity \eqref{eq:diamond} on its $90\times29$ grid; the junction
-ratios against factorial values; identity \eqref{eq:club} on its $352$-point grid; exhaustive
-telescoping ($(\Lop t)(n,\rho)=\Delta_\rho G^{*}$ at \emph{every} integer $\rho$, and
-$\sum_\rho(\Lop t)=0$, for $5\le n\le40$); and the equivalence with the $\tilde a$-form of
-\cite{KK23}. The conjectured coefficients $c_i$ and the certificate numerator $\Xh$ are embedded
-in the script verbatim; the empirical OEIS terms are used \emph{only} as anchors, never as proof
-input.
+representation values for $n\le52$ (of which only $n\le4$ is \emph{required} by the proof of
+Theorem~\ref{main} --- the rest is extra validation); the ratio closed forms of
+Lemma~\ref{lem:ratios} against direct factorial ratios; identity \eqref{eq:diamond} on its
+$90\times29$ grid; the junction ratios against factorial values; identity \eqref{eq:club} on its
+$352$-point grid; exhaustive telescoping ($(\Lop t)(n,\rho)=\Delta_\rho G^{*}$ at \emph{every}
+integer $\rho$, and $\sum_\rho(\Lop t)=0$, for $5\le n\le40$); and the equivalence with the
+$\tilde a$-form of \cite{KK23}.
+
+The script is part of the proof object, not an accessory: the conjectured coefficients $c_i$ and
+the certificate numerator $\Xh$ are embedded in it verbatim, and the certificate is additionally
+shipped as the machine-readable file \texttt{code/certificate\_xhat.json} (identical data). The
+empirical OEIS terms are used \emph{only} as anchors, never as proof input. For reference, the
+SHA-256 digest of \texttt{verify\_a269021.py} as distributed with this version of the paper is
+\begin{center}\ttfamily\footnotesize 2dee0cdc613f6d96beaa10f6c2f9f915f3cd1f42e03c7cf25724adda13538042\end{center}
 
 During the research phase the same material passed a larger battery: \eqref{eq:star} against $81$
 independently computed terms, \eqref{eq:starprime} against the exact LIS-distribution array for
@@ -591,9 +622,10 @@ independently of the particular certificate exhibited here.
 
 \begin{remark}[the coupled-diagonal regime]
 The obstruction named in \cite{KK23} --- fixed-pattern D-finiteness says nothing once the pattern
-length is coupled to the permutation length --- is genuine in general: the two-variable array
-$u_k(m)=\#\{\sigma\in S_m:\LIS(\sigma)\le k\}$ is provably not bivariate-holonomic (the order of
-its minimal $m$-recurrence grows with $k$). What makes the diagonal $k\approx m/2$ accessible is
+length is coupled to the permutation length --- is genuine: for the two-variable array
+$u_k(m)=\#\{\sigma\in S_m:\LIS(\sigma)\le k\}$, the fixed-$k$ Gessel determinant~\cite{Ges90}
+has size growing with $k$, so fixed-pattern D-finiteness by itself provides no bounded finite
+representation along a coupled diagonal. What makes the diagonal $k\approx m/2$ accessible is
 Lemma~\ref{lem:trunc}: in the upper-half regime the determinantal gap expansion collapses to its
 one-point term, producing a \emph{single} hypergeometric sum. The same collapse gives
 \eqref{eq:starprime} for the whole upper half of the LIS distribution, and two-row/two-point
@@ -622,8 +654,7 @@ Maxima~\cite{Maxima} (F.~Caruso's implementation) and verified independently as 
 This work was AI-assisted: the mathematics, code and manuscript were produced with Claude
 (Anthropic) operating autonomously under the Periapsis research architecture, with the
 verification designed so that no step rests on the assistant's (or any software's) say-so; the
-named human author directed the campaign and takes responsibility for the content. The
-manuscript is unrefereed and has not yet been read by the conjecture authors.
+named human author directed the campaign and takes responsibility for the content.
 
 \appendix
 
@@ -661,7 +692,8 @@ p_4&=-15900-61278n-68928n^2+48699n^3+204716n^4+233810n^5+143536n^6\\
 The certificate numerator $\Xh(n,\rho)$ of \eqref{eq:cert} has
 $\deg_\rho=11$, $\deg_n=20$, is divisible by $\rho^2$, and satisfies
 $[\rho^{11}]\Xh=p_0$; its full integer coefficient table is the constant \texttt{XHAT} in
-\texttt{code/verify\_a269021.py}.
+\texttt{code/verify\_a269021.py} and, in machine-readable form, the file
+\texttt{code/certificate\_xhat.json} (identical data).
 
 \section{Numerical anchors}\label{app:cert}
 
