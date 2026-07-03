@@ -167,9 +167,9 @@ result has no immediate implications on sequences we obtain when $n$ and $k$ are
 Indeed, for \emph{fixed} $k$ the counting sequence is governed by Gessel's Bessel--Toeplitz
 determinant~\cite{Ges90}, but the determinant's size grows with $k$; on the coupled diagonal
 $k=n$, $m=2n$ no finite a~priori representation --- a finite sum or integral of hypergeometric
-type to which creative telescoping could be applied --- was on record. That missing
-representation is the entire content of the present note; once it is found, the rest is the
-standard Wilf--Zeilberger method, and the certificate turns out to land exactly on the guessed
+type to which creative telescoping could be applied --- was on record. Supplying that
+representation is the whole point of this note; once it is in hand, the rest is the
+standard Wilf--Zeilberger method, and the certificate lands exactly on the guessed
 operator.
 
 \begin{theorem}\label{main}
@@ -356,8 +356,8 @@ $\binom{2\rho-1}{\rho-n-j}$.
 \end{proof}
 
 \begin{remark}\label{rem:checks}
-Proposition~\ref{prop:rep} is exact, not asymptotic, and it is heavily over-verified in the
-reproducibility script: \eqref{eq:staragain} agrees with a brute-force count over \emph{all}
+Proposition~\ref{prop:rep} is exact, not asymptotic, and the reproducibility script checks it far
+more than the proof strictly needs: \eqref{eq:staragain} agrees with a brute-force count over \emph{all}
 $(2n)!$ permutations for $n\le3$, with the hook-length sum \eqref{eq:rsk} for $n\le10$, and with
 the $16$ OEIS-listed terms; during the research run it was checked against $81$ independently
 computed terms ($n\le80$) and \eqref{eq:starprime} against the full exact array of LIS
