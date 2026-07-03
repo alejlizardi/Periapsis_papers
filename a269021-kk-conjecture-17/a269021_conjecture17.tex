@@ -356,8 +356,8 @@ $\binom{2\rho-1}{\rho-n-j}$.
 \end{proof}
 
 \begin{remark}\label{rem:checks}
-Proposition~\ref{prop:rep} is exact, not asymptotic, and it is heavily over-verified in the
-reproducibility script: \eqref{eq:staragain} agrees with a brute-force count over \emph{all}
+Proposition~\ref{prop:rep} is exact, not asymptotic, and it is checked several independent ways in
+the reproducibility script: \eqref{eq:staragain} agrees with a brute-force count over \emph{all}
 $(2n)!$ permutations for $n\le3$, with the hook-length sum \eqref{eq:rsk} for $n\le10$, and with
 the $16$ OEIS-listed terms; during the research run it was checked against $81$ independently
 computed terms ($n\le80$) and \eqref{eq:starprime} against the full exact array of LIS
@@ -593,7 +593,7 @@ $352$-point grid; exhaustive telescoping ($(\Lop t)(n,\rho)=\Delta_\rho G^{*}$ a
 integer $\rho$, and $\sum_\rho(\Lop t)=0$, for $5\le n\le40$); and the equivalence with the
 $\tilde a$-form of \cite{KK23}.
 
-The script is part of the proof object, not an accessory: the conjectured coefficients $c_i$ and
+The script is part of the proof object: the conjectured coefficients $c_i$ and
 the certificate numerator $\Xh$ are embedded in it verbatim, and the certificate is additionally
 shipped as the machine-readable file \texttt{code/certificate\_xhat.json} (identical data). The
 empirical OEIS terms are used \emph{only} as anchors, never as proof input. For reference, the
