@@ -1,0 +1,5 @@
+# No third-party dependencies for the core verifiers (Python standard library only).
+# Tested with CPython 3.14 (any Python >= 3.8 should work).
+# Optional, only for cpsat_rho.py (independent CP-SAT certification of rho values):
+#   pip install ortools
+# The C++ tools in code/cpp/ need a C++17 compiler (g++ -O2; rho_tool.cpp also -fopenmp).

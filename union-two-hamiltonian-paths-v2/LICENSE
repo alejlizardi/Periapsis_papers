@@ -1,0 +1,22 @@
+Licensing summary for this repository
+=====================================
+
+Different parts of this repository carry different licenses:
+
+1. Paper text and figures
+   Files: union_two_hamiltonian_paths.tex, union_two_hamiltonian_paths.pdf
+   License: Creative Commons Attribution 4.0 International (CC BY 4.0).
+   Full text: https://creativecommons.org/licenses/by/4.0/legalcode
+   You may share and adapt the material for any purpose, including commercially,
+   provided you give appropriate credit to the author (Alejandro Lizardi).
+
+2. Code (reproducibility artifact)
+   Directory: code/  (ships as anc/ on arXiv)
+   License: MIT. See code/LICENSE for the full text.
+
+3. Periapsis logos
+   Files: assets/lockup.png, assets/glyph_square.png, assets/mark.png
+   These are trademarks of Periapsis and are NOT covered by the licenses above.
+   They may not be reused in a way that implies endorsement.
+
+Copyright (c) 2026 Alejandro Lizardi.

@@ -1,0 +1,23 @@
+n=8 joint (b,rho) table; rows=b, min rho per b, count at min, exemplar
+b= 1 total=           2 minrho= 8 count@min=         2 ex=[0,1,2,3,4,5,6,7]
+b= 2 total=          34 minrho= 8 count@min=        34 ex=[1,2,3,4,5,6,7,0]
+b= 3 total=         366 minrho= 6 count@min=         4 ex=[1,0,4,3,2,5,6,7]
+b= 4 total=        2198 minrho= 6 count@min=         4 ex=[1,0,2,5,4,3,7,6]
+b= 5 total=        7198 minrho= 8 count@min=      7198 ex=[0,2,1,3,4,6,5,7]
+b= 6 total=       12846 minrho= 8 count@min=     12846 ex=[0,5,1,2,3,6,4,7]
+b= 7 total=       12434 minrho= 8 count@min=     12434 ex=[0,5,1,2,4,6,3,7]
+b= 8 total=        5242 minrho= 8 count@min=      5242 ex=[1,3,0,2,5,7,4,6]
+rho_min(8) = 6
+HIST b rho count
+H 1 8 2
+H 2 8 34
+H 3 6 4
+H 3 7 4
+H 3 8 358
+H 4 6 4
+H 4 7 20
+H 4 8 2174
+H 5 8 7198
+H 6 8 12846
+H 7 8 12434
+H 8 8 5242
