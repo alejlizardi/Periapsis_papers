@@ -500,7 +500,7 @@ For every $m\ge1$, $\ \rho(\sigma_m)\ge2m+3=(n+3)/2$.
 \begin{proof}
 Define a vertex sequence $\Gamma_m$ by starting with $(4m-2,\,4m-1,\,4m)$; then for
 $j=m,m-1,\dots,2$ appending the pair $(4j-3,\,4j-4)$; and finally appending $(0,1)$.
-For $m=4$ this is $\Gamma_4=(14,15,16,13,12,9,8,5,4,0,1)$, of length
+For $m=4$ this is $\Gamma_4=(14,15,16,13,12,9,8,5,4,0,1)$, of size
 $3+2(m-1)+2=2m+3$. We check $\Gamma_m$ is a PC path in $H_{\sigma_m}$.
 
 The edges fall into four groups, whose colors are forced by Definition~\ref{def:sigmam}
@@ -1305,7 +1305,7 @@ path components are the vertices of degree $\le 1$, giving (c).
 \begin{lemma}[Prescribed exposure]\label{lem:expose}
 Let $Q = x_0 - x_1 - \cdots - x_{m-1}$ be a path and $S \subseteq \{x_0,\dots,x_{m-1}\}$.
 A matching of $Q$ exposing exactly $S$ exists if and only if every maximal run of
-consecutive non-exposed vertices (in path order) has even length. In particular:
+consecutive non-exposed vertices (in path order) has even size. In particular:
 \begin{enumerate}
 \item[(a)] $m$ odd: a matching exposing exactly $\{x_j\}$ exists iff $j$ is even;
 \item[(b)] $m$ even: a perfect matching exists, and a matching exposing exactly
@@ -1316,9 +1316,9 @@ $\{x_i, x_j\}$ ($i < j$) exists iff $i$ is even and $j$ is odd.
 \begin{proof}
 If every run of non-exposed vertices is even, pair each run off consecutively.
 Conversely, a matching of a path covering a contiguous run of vertices bounded by
-exposed vertices must pair within the run, forcing even length. For (a), the runs have
-lengths $j$ and $m-1-j$, both even iff $j$ is even and $m$ is odd; for (b), the runs
-have lengths $i$, $j-i-1$, $m-1-j$, all even iff $i$ is even, $j$ is odd, $m$ is even.
+exposed vertices must pair within the run, forcing even size. For (a), the runs have
+sizes $j$ and $m-1-j$, both even iff $j$ is even and $m$ is odd; for (b), the runs
+have sizes $i$, $j-i-1$, $m-1-j$, all even iff $i$ is even, $j$ is odd, $m$ is even.
 \end{proof}
 
 \begin{lemma}[Exposure trick]\label{lem:trick}
