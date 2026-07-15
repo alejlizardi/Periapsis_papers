@@ -737,7 +737,7 @@ fact that with two colors ``$\ne\pc(r)$'' means ``$=\overline{\pc(r)}$''.
 \section{Inflation and the inflation lemma}\label{sec:inflation}
 
 \begin{definition}[Inflation]\label{def:inflation}
-Let $a \ge 2$, let $\tau$ be a permutation of $\{1, \dots, a\}$, and let
+Let $a \ge 2$, let $\tau$ be a permutation of $\{0, \dots, a-1\}$, and let
 $\pi_1, \dots, \pi_a$ be permutations of sizes $b_1, \dots, b_a \ge 2$,
 $N = \sum_i b_i$. Put $s_i = \sum_{j < i} b_j$ (position offsets) and
 $t_i = \sum_{j:\ \tau(j) < \tau(i)} b_j$ (value offsets). The \emph{inflation}
@@ -745,6 +745,10 @@ $\sigma = \tau[\pi_1, \dots, \pi_a] \in S_N$ is
 \[
 \sigma(s_i + r) = t_i + \pi_i(r), \qquad i = 1, \dots, a,\quad 0 \le r < b_i .
 \]
+(All permutations in this paper act on $\{0, \dots, \text{size}-1\}$; the block
+subscripts $\pi_1, \dots, \pi_a$ and the offset indices $i, j$ enumerate the $a$
+blocks and range over $1, \dots, a$, a labelling of blocks rather than a permutation
+domain.)
 \end{definition}
 
 The value intervals $[t_i, t_i + b_i - 1]$ partition $\{0, \dots, N-1\}$, so $\sigma$
