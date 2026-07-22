@@ -1,0 +1,6 @@
+s=9 k=5 n=45 status=OPTIMAL rho=38 expect=38 [2s]
+s=9 k=6 n=54 status=OPTIMAL rho=40 expect=40 [4s]
+s=9 k=7 n=63 status=OPTIMAL rho=42 expect=42 [7s]
+s=15 k=4 n=60 status=OPTIMAL rho=60 expect=60 [1s]
+s=15 k=5 n=75 status=OPTIMAL rho=62 expect=62 [6s]
+s=9 k=4 n=36 status=OPTIMAL rho=36 expect=36 [1s]
