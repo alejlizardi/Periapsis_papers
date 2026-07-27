@@ -1,0 +1,3 @@
+# The verifiers use the Python standard library plus SymPy (exact arithmetic / factoring).
+# Tested with CPython 3.13 (any Python >= 3.8 should work).
+sympy>=1.12

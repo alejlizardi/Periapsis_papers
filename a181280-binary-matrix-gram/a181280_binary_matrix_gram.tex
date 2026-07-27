@@ -1,0 +1,454 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1.1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{eso-pic}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\hypersetup{
+  pdftitle={A proof of the conjectured closed form for OEIS A181280},
+  pdfauthor={Alejandro Lizardi},
+  pdfsubject={Enumerative combinatorics; C-finite sequences; transfer matrices},
+  pdfkeywords={OEIS A181280; binary matrix; Gram matrix mod 2; transfer matrix; C-finite sequence; linear recurrence; Kauers-Koutschan; closed form}
+}
+
+% ----- Periapsis branding (house style; mirrors the sibling papers in this repo) -----------
+% Plain page numbers in the footer; no footer mark.
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\fancyfoot[C]{\footnotesize\thepage}
+\fancypagestyle{plain}{% so page 1 (\maketitle uses 'plain') carries the footer too
+  \fancyhf{}\renewcommand{\headrulewidth}{0pt}\renewcommand{\footrulewidth}{0pt}%
+  \fancyfoot[C]{\footnotesize\thepage}}
+% Bottom-left: the square-corner glyph flush in the page corner (~1/12 page height).
+\AddToShipoutPictureBG{%
+  \AtPageLowerLeft{\raisebox{0pt}[0pt][0pt]{\includegraphics[height=66pt]{assets/glyph_square.png}}}}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{example}[theorem]{Example}
+
+\DeclareMathOperator{\rank}{rank}
+\newcommand{\F}{\mathbb{F}_2}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\bv}{\mathbf{v}}
+
+\title{A proof of the conjectured closed form for OEIS A181280}
+\author{Alejandro Lizardi%
+\thanks{Independent researcher. \texttt{alejlizardi05@gmail.com}.}}
+\date{June 2026}
+
+\begin{document}
+\maketitle
+
+\begin{center}
+  \includegraphics[height=20pt]{assets/lockup.png}
+\end{center}
+\vspace{4pt}
+
+\begin{abstract}
+Let $a(n)$ count the $4\times n$ matrices $M$ over $\F$ whose four rows, read as bit
+strings, are lexicographically increasing and whose Gram matrix $G=MM^{\!\top}\in\F^{4\times4}$
+has lexicographically decreasing rows. Kauers and Koutschan conjectured a closed form for
+$a(n)$, recorded as OEIS A181280 and still marked open. We prove their conjecture. Reading a
+matrix column by column gives a finite-state transfer matrix $T$ with
+$a(n)=\mathbf u\,T^{\,n}\,\mathbf e_0$. Exact rational linear algebra yields an a priori bound
+on the recurrence order, and a Hankel computation determines the minimal recurrence of the
+tail ($n\ge4$), whose characteristic polynomial is
+\[
+  (x-16)(x-8)^2(x+8)(x-4)^3(x+4)^2(x-2)^2 .
+\]
+The conjectured expression satisfies this recurrence and agrees with $a(n)$ on the required
+initial values, hence equals $a(n)$ for all $n\ge4$. All computations use exact arithmetic and
+are supplied as ancillary code.
+\end{abstract}
+
+\medskip
+\noindent\textbf{2020 Mathematics Subject Classification.}
+05A15 (exact enumeration problems, generating functions);
+11B37 (recurrences);
+05B20 (matrices in combinatorics);
+68R05 (combinatorics in computer science).
+
+\noindent\textbf{Keywords.}
+OEIS A181280; binary matrix; Gram matrix over $\F$; transfer matrix; finite automaton;
+C-finite sequence; linear recurrence; closed form.
+
+\section{Introduction}\label{sec:intro}
+
+For a positive integer $n$, let $M$ range over the $4\times n$ matrices with entries in
+$\F=\{0,1\}$. Read each row of $M$ as a length-$n$ bit string, most significant bit first
+(column $1$ is most significant), and order bit strings lexicographically. Let
+$G=G(M)=MM^{\!\top}\in\F^{4\times4}$ be the Gram matrix over $\F$, i.e.
+$G_{ij}=\sum_{k=1}^{n} M_{ik}M_{jk}\bmod 2$; read each of its four rows as a $4$-bit string,
+again most significant bit (column $1$) first. Define
+\[
+  a(n)\;=\;\#\Bigl\{\,M\in\F^{4\times n}\ :\
+     \text{rows of }M\text{ strictly increasing, and rows of }G(M)\text{ strictly
+     decreasing}\,\Bigr\}.
+\]
+This is the sequence \textbf{A181280} in the On-Line Encyclopedia of Integer Sequences
+(OEIS)~\cite{OEIS}, contributed by R.~H.~Hardin in 2010; it is row $4$ of the table
+A181274. Its first nonzero values are $a(4)=58$, $a(5)=1629$, $a(6)=28924$,
+$a(7)=507052$, with $a(1)=a(2)=a(3)=0$.
+
+In their study of guessed-but-unproven recurrences in the OEIS, Kauers and
+Koutschan~\cite{KK23} subjected A181280 to their guessing pipeline. They recovered a
+plausible order-$10$ recurrence and the closed form below, but were unable to prove
+either; in their Table~1 the sequence carries the status letter ``O'' (``the case is
+open''), as opposed to ``P'' (recurrence proven) or ``D'' (D-finiteness proven)
+\cite[\S6.5]{KK23}. The OEIS entry records the same expression with the parenthetical
+``(conjectured)''.
+
+\begin{conjecture}[Kauers--Koutschan~{\cite[Conjecture 20]{KK23}}]\label{conj:KK}
+For all $n\ge 4$,
+\begin{align}
+  a(n)
+  &= \tfrac{1}{3}\,2^{\,2n-11}\bigl(6n^2-219n+820\bigr)
+   - \tfrac{1}{9}\,2^{\,n-5}\bigl(3n+32\bigr)
+   - \tfrac{113}{3}\,(-1)^n\,2^{\,3n-14}
+   + 2^{\,4n-9} \notag\\
+  &\quad{}- \tfrac{1}{3}\,(-1)^n\,2^{\,2n-11}\bigl(13n-164\bigr)
+   + \tfrac{1}{9}\,2^{\,3n-14}\bigl(288n-3473\bigr).
+  \label{eq:C20}
+\end{align}
+\end{conjecture}
+
+\noindent We prove Conjecture~\ref{conj:KK}.
+
+\begin{theorem}\label{thm:main}
+Equation~\eqref{eq:C20} holds for every integer $n\ge 4$.
+\end{theorem}
+
+\paragraph{Proof strategy.}
+Equation~\eqref{eq:C20} was obtained from initial terms, so further term comparisons alone do
+not prove it; with an a priori bound of degree $d$ on a candidate, agreement at $d+1$ points
+already determines it. We instead derive a recurrence independently from a finite-state model.
+Section~\ref{sec:tm} constructs the transfer matrix and establishes an a priori bound on the
+recurrence order, with no reference to~\eqref{eq:C20}. Section~\ref{sec:proof} determines the
+recurrence, proves that the conjectured formula satisfies it, and checks the required initial
+values.
+
+\paragraph{Relation to prior work.}
+The transfer-matrix argument is standard; see Stanley~\cite[Ch.~4]{EC1} and
+Kauers--Paule~\cite[Ch.~4]{CT}. The contribution here is its application to A181280 and the
+resulting proof of Conjecture~\ref{conj:KK}. The ``Hardinian arrays'' studied by
+Dougherty-Bliss and Kauers~\cite{DBK23} form a different family (king-move arrays
+A253026/A253223/A253004) and do not include A181280; we did not find~\eqref{eq:C20} proved
+elsewhere.
+
+\section{The transfer matrix and an a priori recurrence bound}\label{sec:tm}
+
+We model the count by a deterministic-counting automaton that reads $M$ one column at a
+time. A column is a vector $c\in\F^4$; there are $16$ possible columns. After reading the
+first $t$ columns, the only information about the prefix that can still affect acceptance
+is captured by a state defined now.
+
+\paragraph{State.}
+A state is a pair $s=(\mathrm{rel},g)$ where:
+\begin{itemize}
+\item $\mathrm{rel}$ assigns to each of the $\binom{4}{2}=6$ row pairs $(i,j)$, $i<j$, a
+  value in $\{\,\texttt{=},\ \texttt{<},\ \texttt{>}\,\}$, recording the lexicographic
+  comparison of the length-$t$ prefixes of rows $i$ and $j$: \texttt{=} if the prefixes are
+  equal, \texttt{<} if row $i$'s prefix is (strictly) smaller, \texttt{>} if larger. Because
+  comparison is most-significant-bit first, once a pair is decided (\texttt{<} or
+  \texttt{>}) it never changes; an \texttt{=} pair may later become \texttt{<} or \texttt{>}.
+\item $g\in\F^{4\times4}$ (symmetric, $10$ free bits) is the running Gram matrix
+  $\sum_{k\le t} c^{(k)}{c^{(k)}}^{\!\top}\bmod 2$ of the columns read so far.
+\end{itemize}
+The initial state $s_0$ (empty prefix) has every pair \texttt{=} and $g=0$.
+
+\paragraph{Transition.}
+Reading a column $c$ updates a state $(\mathrm{rel},g)$ to $(\mathrm{rel}',g')$ by:
+\begin{itemize}
+\item $g' = g + c\,c^{\!\top}\bmod 2$ (each $g'_{ij}=g_{ij}\oplus(c_i\wedge c_j)$);
+\item for each pair $(i,j)$ with $\mathrm{rel}(i,j)=\texttt{=}$: if $c_i\ne c_j$ the pair is
+  now decided, becoming \texttt{<} if $c_i<c_j$ (that is $c_i=0,c_j=1$) and \texttt{>}
+  otherwise; pairs already decided are unchanged.
+\end{itemize}
+We \emph{prune} any state in which some pair $(i,j)$, $i<j$, has become \texttt{>}: such a
+prefix already has row $i$ exceeding row $j$, so the final matrix can never have all rows
+strictly increasing. Pruned states are dropped (they contribute $0$ thereafter), which
+keeps the reachable state set finite and small.
+
+\paragraph{Acceptance.}
+A length-$n$ run is \emph{accepting} iff its terminal state $(\mathrm{rel},g)$ has
+$\mathrm{rel}(i,j)=\texttt{<}$ for all $i<j$ (all rows strictly increasing, no ties left)
+\emph{and} the four rows of the symmetric matrix $g$, read as $4$-bit strings, are strictly
+decreasing.
+
+\begin{lemma}\label{lem:model}
+$a(n)$ equals the number of length-$n$ sequences of columns whose run from $s_0$ is
+accepting. Equivalently, let $\mathcal S$ be the (finite) set of reachable, unpruned states,
+$T\in\Z^{\mathcal S\times\mathcal S}$ the matrix with $T_{s',s}=\#\{c\in\F^4:\text{$c$ sends
+$s$ to $s'$}\}$, $\mathbf e_0$ the indicator of $s_0$, and $\mathbf u$ the indicator
+(row) covector of accepting states. Then $a(n)=\mathbf u\,T^{\,n}\,\mathbf e_0$.
+\end{lemma}
+
+\begin{proof}
+The map sending $M$ to its sequence of columns $(c^{(1)},\dots,c^{(n)})$ is a bijection
+between $\F^{4\times n}$ and length-$n$ column sequences. By induction on $t$, after reading
+$c^{(1)},\dots,c^{(t)}$ the state $(\mathrm{rel},g)$ equals exactly the pairwise prefix
+comparisons and the Gram matrix of the submatrix on the first $t$ columns: the Gram update
+is the definition of $G$ accumulated one column at a time ($M M^{\!\top}=\sum_k
+c^{(k)}{c^{(k)}}^{\!\top}$), and the comparison update is the definition of lexicographic
+order read most-significant-first. Hence the terminal state records precisely the data the
+two defining conditions test, so a run is accepting iff $M$ is counted by $a(n)$; pruning
+only removes matrices already failing the increasing-rows condition. The matrix identity
+$a(n)=\mathbf u T^n\mathbf e_0$ is the standard expansion of the number of accepting walks:
+$(T^n\mathbf e_0)_{s}$ is the number of length-$n$ column sequences whose run ends in state
+$s$, and $\mathbf u$ sums those over accepting $s$.
+\end{proof}
+
+The reachable, unpruned state set has $|\mathcal S|=1242$ elements (enumerated by the
+breadth-first construction in the ancillary code). We never need $T$ in closed form; we need
+only the following two consequences, both exact.
+
+\begin{lemma}[a-priori order bound]\label{lem:apriori}
+The sequence $\bigl(a(n)\bigr)_{n\ge 0}$ satisfies a linear recurrence with constant
+(integer) coefficients of order at most $d_0$, where $d_0=\dim_{\mathbb Q}
+\operatorname{span}\{T^{\,n}\mathbf e_0 : n\ge 0\}$ is the dimension of the Krylov space of
+$\mathbf e_0$ under $T$. An exact rational computation gives $d_0=16$.
+\end{lemma}
+
+\begin{proof}
+Let $K=\operatorname{span}_{\mathbb Q}\{T^n\mathbf e_0:n\ge0\}$, a $T$-invariant subspace of
+$\mathbb Q^{\mathcal S}$ of dimension $d_0$. By construction $K$ is the Krylov orbit of
+$\mathbf e_0$, so $\mathbf e_0$ is a \emph{cyclic} vector for $T|_K$; hence
+$\deg\mu_K=\dim K=d_0$, where $\mu_K$ is the minimal polynomial of $T|_K$. The vectors
+$\mathbf e_0,T\mathbf e_0,\dots,T^{d_0}\mathbf e_0$ are $d_0+1$ elements of the
+$d_0$-dimensional space $K$, hence linearly dependent: there are rationals
+$\gamma_0,\dots,\gamma_{d_0}$, not all zero, with $\sum_{i=0}^{d_0}\gamma_i\,T^{i}\mathbf e_0=0$.
+(Take $\gamma$ to be the coefficients of $\mu_K$, which is monic of degree $d_0$, so
+$\gamma_{d_0}=1$.) Applying
+$\mathbf u\,T^{\,n}$ on the left gives $\sum_{i=0}^{d_0}\gamma_i\,a(n+i)=0$ for every $n\ge0$.
+This is the asserted recurrence; its order is at most $d_0$.
+
+The $\gamma_i$ are in fact integers (though only rationality is needed below). The minimal
+polynomial $\mu_K$ of $T|_K$ divides the minimal polynomial of the integer matrix $T$, which in
+turn divides the (monic, integer) characteristic polynomial $\chi_T$; so every root of $\mu_K$
+is an algebraic integer, and a monic rational polynomial whose roots are algebraic integers has
+integer coefficients. The value $d_0=16$ is obtained by exact Gaussian elimination over
+$\mathbb Q$ on the Krylov iterates (ancillary \texttt{proof\_matrix.py}).
+\end{proof}
+
+Lemma~\ref{lem:apriori} bounds the recurrence order from the structure of the counting problem
+alone, using nothing about Equation~\eqref{eq:C20}. The remaining work is to identify the
+minimal recurrence within this bound and match the closed form to it.
+
+\section{The minimal recurrence and closed form}\label{sec:proof}
+
+We work with the tail $\bigl(a(n)\bigr)_{n\ge4}$ (the values $a(0)=\dots=a(3)=0$ are a
+boundary the closed form does not describe; see Remark~\ref{rem:boundary}). All computations
+below are in exact integer/rational arithmetic.
+
+\begin{lemma}[minimal recurrence]\label{lem:min}
+The minimal constant-coefficient linear recurrence satisfied by $\bigl(a(n)\bigr)_{n\ge4}$
+has order $11$, with characteristic polynomial
+\begin{equation}\label{eq:charpoly}
+  p(x)=(x-16)(x-8)^2(x+8)(x-4)^3(x+4)^2(x-2)^2 .
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+Write $b_m=a(m+4)$ for the tail, and let $E$ be the forward-shift operator $(Eb)_m=b_{m+1}$.
+We establish order $\ge11$ and order $\le11$ separately, then read off $p$; the upper bound is
+where the a-priori bound of Lemma~\ref{lem:apriori} does the work.
+
+\emph{Lower bound (order $\ge11$).} The Hankel matrix $H_{11}=\bigl(b_{i+j}\bigr)_{0\le i,j\le
+10}$ is nonsingular: its determinant is a nonzero integer (computed exactly; ancillary
+\texttt{proof\_matrix.py}). If the tail satisfied a monic recurrence of order $r<11$, its
+shifts $b,Eb,\dots,E^{10}b$ would be linearly dependent, forcing $\det H_{11}=0$; hence no
+recurrence of order $<11$ annihilates the tail.
+
+\emph{Determination of $p$.} Because $H_{11}$ is nonsingular, a monic order-$11$ recurrence
+$\sum_{j=0}^{11}c_j\,b_{n+j}=0$ ($c_{11}=1$) has its coefficients $c_0,\dots,c_{10}$ \emph{uniquely}
+determined by the $11$ shifted equations for $n=0,\dots,10$, i.e.\ by the linear system
+$H_{11}\,(c_0,\dots,c_{10})^{\!\top}=-(b_{11},\dots,b_{21})^{\!\top}$. Solving it exactly
+(ancillary \texttt{proof\_matrix.py}) gives the monic polynomial
+\begin{multline*}
+  p(x)=x^{11}-32x^{10}+244x^{9}+1552x^{8}-27392x^{7}+70144x^{6}\\
+  {}+484352x^{5}-2781184x^{4}+1212416x^{3}+20185088x^{2}-48234496x+33554432,
+\end{multline*}
+with integer coefficients, which factors over $\Z$ as~\eqref{eq:charpoly}. (The same $p$ is
+recovered independently in Section~\ref{sec:comp} by Berlekamp--Massey on a separately computed
+list of terms.) This $p$ is so far only a candidate: the shifted system used only
+$b_0,\dots,b_{21}$, so it expresses that $p(E)b_n=0$ for $n=0,\dots,10$, not yet for all $n$.
+
+\emph{Upper bound (order $\le11$), via the a-priori recurrence.} By Lemma~\ref{lem:apriori}
+there is a monic polynomial $q$ with $\deg q=d_0\le16$ and $q(E)a=0$ on all of $\mathbb N$;
+hence $q(E)b=0$ as well. Consider the residual sequence $r=p(E)b$. Since shift-operator
+polynomials commute,
+\[
+  q(E)\,r \;=\; q(E)p(E)\,b \;=\; p(E)q(E)\,b \;=\; p(E)\,0 \;=\;0,
+\]
+so $r$ itself satisfies the monic order-$d_0$ recurrence $q(E)r=0$. A monic recurrence of order
+$d_0$ propagates: if $r_n=0$ for $d_0$ consecutive indices $n=n_0,\dots,n_0+d_0-1$, then
+$r_{n_0+d_0}=0$, and inductively $r_n=0$ for all $n\ge n_0$. An exact computation shows
+$r_n=p(E)b_n=0$ for the $26$ consecutive indices $n=0,\dots,25$ (equivalently $p(E)a(m)=0$ for
+$m=4,\dots,29$; ancillary \texttt{proof\_matrix.py}); since $26\ge d_0$, the propagation gives
+$r_n=0$ for \emph{all} $n\ge0$. Thus $p(E)$ annihilates the entire tail, so the tail satisfies a
+recurrence of order $\le11$.
+
+Combining the two bounds, the minimal constant-coefficient recurrence of $\bigl(a(n)\bigr)_{n\ge4}$
+has order exactly $11$ and characteristic polynomial $p=\eqref{eq:charpoly}$. (The residual is
+nonzero at $n=0,1,2,3$, i.e.\ $p(E)a(m)\ne0$ for $m=0,1,2,3$, consistent with the boundary at
+$m=4$ of Remark~\ref{rem:boundary}.)
+\end{proof}
+
+\begin{lemma}[the closed form solves the same recurrence]\label{lem:c20}
+Let $C(n)$ denote the right-hand side of~\eqref{eq:C20}. Then $C$ satisfies a
+constant-coefficient linear recurrence whose characteristic polynomial is exactly $p(x)$
+of~\eqref{eq:charpoly}; in particular $\sum_{i=0}^{11}p_i\,C(n+i)=0$ for all integers $n$.
+\end{lemma}
+
+\begin{proof}
+Expanding~\eqref{eq:C20} and grouping by exponential type writes $C(n)$ in the form
+$\sum_i P_i(n)\,\gamma_i^{\,n}$ of Stanley~\cite[Thm.~4.1.1(iii)]{EC1}, namely as a
+$\mathbb Q$-linear combination of the eleven sequences
+\[
+  16^n,\quad 8^n,\ n\,8^n,\quad (-8)^n,\quad 4^n,\ n\,4^n,\ n^2 4^n,\quad
+  (-4)^n,\ n\,(-4)^n,\quad 2^n,\ n\,2^n,
+\]
+with (nonzero) coefficients
+$\tfrac{1}{512}$, $-\tfrac{3473}{147456}$, $\tfrac{1}{512}$, $-\tfrac{113}{49152}$,
+$\tfrac{205}{1536}$, $-\tfrac{73}{2048}$, $\tfrac{1}{1024}$, $\tfrac{41}{1536}$,
+$-\tfrac{13}{6144}$, $-\tfrac{1}{9}$, $-\tfrac{1}{96}$ respectively (ancillary
+\texttt{derive\_closed\_form.py}). In the notation of~\cite[Thm.~4.1.1]{EC1}, $C$ has the
+form~(4.3) with distinct nonzero bases $\gamma_i\in\{16,8,-8,4,-4,2\}$ and polynomial parts
+$P_i$ of degrees $0,1,0,2,1,1$; by the theorem's equivalence (iii)$\Leftrightarrow$(ii) the
+denominator is $\prod_i(1-\gamma_i x)^{d_i}$ with $d_i=\deg P_i+1$, i.e.\ multiplicities
+$16:1$, $8:2$, $-8:1$, $4:3$, $-4:2$, $2:2$. Reversing each factor
+$(1-\gamma x)\mapsto(x-\gamma)$ gives exactly the characteristic
+polynomial~\eqref{eq:charpoly}, and $C$ satisfies its associated recurrence~(4.2). (One also
+checks the eleven annihilations directly in the ancillary code: $n^k\gamma^n$ is killed by
+$(\text{shift}-\gamma)^{k+1}$, hence by any shift-polynomial with $\gamma$ a root of
+multiplicity $>k$.)
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:main}]
+By Lemmas~\ref{lem:min} and~\ref{lem:c20}, both $\bigl(a(n)\bigr)_{n\ge4}$ and
+$\bigl(C(n)\bigr)_{n\ge4}$ satisfy the order-$11$ linear recurrence with characteristic
+polynomial $p$, i.e.\ $\sum_{i=0}^{11}p_i\,x(n+i)=0$ for $x\in\{a,C\}$ and all $n\ge4$. A
+constant-coefficient linear recurrence of order $11$ with invertible leading coefficient
+($p_{11}=1$) determines each term from the preceding $11$ (Stanley~\cite[Thm.~4.1.1]{EC1}: in
+the equivalence there, condition (ii) is exactly such a recurrence, and ``we may choose
+$f(0),\dots,f(d-1)$ and then the other $f(n)$'s are uniquely determined''); by a trivial
+induction, two solutions that agree on any $11$ consecutive indices agree everywhere on the
+domain of the recurrence. The two sequences agree at the $11$ consecutive indices
+$n=4,5,\dots,14$:
+\[
+\begin{array}{llll}
+a(4)=58, & a(5)=1629, & a(6)=28924, & a(7)=507052,\\
+a(8)=8211776, & a(9)=133693904, & a(10)=2140571200, & a(11)=34361115072,\\
+a(12)=549587348992, & a(13)=8798356254976, & a(14)=140744002571264, &
+\end{array}
+\]
+each equal to $C(n)$ in exact arithmetic (ancillary; the seed values are also listed in
+\texttt{code/seeds.txt}). Therefore $a(n)=C(n)$ for all $n\ge4$, which is
+Theorem~\ref{thm:main}. \qedhere
+\end{proof}
+
+\begin{remark}[the $n\ge4$ boundary is genuine]\label{rem:boundary}
+For $n<4$ there are no valid matrices ($a(1)=a(2)=a(3)=0$, and $a(0)=0$ vacuously), whereas
+$C(0),\dots,C(3)$ are the non-integers $\tfrac{103}{4096},-\tfrac{71}{1024},-\tfrac{1}{64},
+-\tfrac{1}{16}$. The closed form is the count only on $n\ge4$, exactly as
+Conjecture~\ref{conj:KK} states; the recurrence likewise annihilates the sequence only from
+$n=4$ onward.
+\end{remark}
+
+\begin{remark}[order $11$ versus the guessed order $10$]\label{rem:order}
+Kauers--Koutschan report a guessed recurrence of order $r=10$ \cite[Table~1]{KK23}. There is
+no conflict: their order counts a \emph{$P$-recursive} (polynomial-coefficient) recurrence,
+a strictly more general and typically lower-order normal form, whereas our $11$ is the order
+of the minimal \emph{constant}-coefficient (C-finite) recurrence, equal to the degree of the
+characteristic polynomial, i.e.\ the sum $1+2+1+3+2+2=11$ of the root multiplicities. Both
+descriptions are correct for the same sequence.
+\end{remark}
+
+\section{Computational verification}\label{sec:comp}
+
+The proof uses three exact computations: the dimension of the Krylov space of $(T,\mathbf e_0)$,
+the determinant and shifted solve associated with $H_{11}$, and the $26$ recurrence residuals of
+Lemma~\ref{lem:min}. The ancillary scripts reconstruct these objects from the transition rules of
+Section~\ref{sec:tm} using integer or rational arithmetic; no floating-point calculations are
+used. Concretely:
+\begin{enumerate}
+\item the Krylov dimension of $(T,\mathbf e_0)$ is $16$ (Lemma~\ref{lem:apriori});
+\item the order-$11$ Hankel matrix $H_{11}$ of the tail is nonsingular (its determinant is a
+nonzero integer), and the shifted $11\times11$ Hankel system yields the integer-coefficient $p$
+of~\eqref{eq:charpoly};
+\item the residual $p(E)a(n)$ vanishes for the $26$ consecutive indices $n=4,\dots,29$, at least
+the $d_0\le16$ the propagation argument of Lemma~\ref{lem:min} requires, and is nonzero for
+$n=0,1,2,3$.
+\end{enumerate}
+These are performed in \texttt{proof\_matrix.py}. The reachable state set has $1242$ elements
+($a(n)=\mathbf u T^n\mathbf e_0$), and \texttt{code/README.md} maps each computation to its driver
+and expected output; \texttt{code/MANIFEST.sha256} lists file hashes. Every object is rebuilt from
+the definitions, with no external data file.
+
+\paragraph{Independent checks.}
+Several further computations, not needed for the proof, corroborate it. The transfer matrix
+reproduces the OEIS values for $n=1,\dots,12$ (\texttt{transfer.py}); two independent brute-force
+implementations agree for $n=4,5,6$, and the row-tuple implementation also verifies $a(7)=507052$
+(\texttt{brute.py}, \texttt{brute\_indep.py}); the polynomial $p$ is recovered again by
+Berlekamp--Massey on a separately computed term list, and the exponential-basis solution of
+Lemma~\ref{lem:c20} agrees with~\eqref{eq:C20} symbolically (\texttt{derive\_closed\_form.py});
+and $a(n)=C(n)$ for $n=4,\dots,60$ as an additional check (\texttt{recurrence.py}).
+
+A separate route recomputes $a(n)$ without the automaton of Section~\ref{sec:tm}:
+\texttt{machine\_fourier\_coupled.py} applies a Walsh--Hadamard (Fourier) diagonalization over
+$(\Z/2)^{10}$ that decouples the Gram constraint from the ordering constraint, reducing the live
+state space to $8$ ordering states recombined by Fourier inversion against a fixed weight over the
+$48$ strictly-decreasing Gram matrices. This different state space reproduces $a(4),\dots,a(12)$,
+the characteristic polynomial~\eqref{eq:charpoly}, and the closed form~\eqref{eq:C20}.
+
+\section*{Acknowledgments}
+
+I thank R.~H.~Hardin for contributing A181280 to the OEIS, and Manuel Kauers and Christoph
+Koutschan for formulating the conjecture proved here. Claude (Anthropic) was used to assist with
+proof exploration and the preparation of the verification scripts. The author checked all
+arguments and computations and takes responsibility for the contents of the paper.
+
+\begin{thebibliography}{9}
+
+\bibitem{KK23}
+M.~Kauers and C.~Koutschan,
+\emph{Some D-finite and some possibly D-finite sequences in the OEIS},
+J.~Integer Seq.\ \textbf{26} (2023), Article 23.4.3; arXiv:2303.02793.
+
+\bibitem{OEIS}
+OEIS Foundation Inc.,
+\emph{The On-Line Encyclopedia of Integer Sequences},
+Sequence A181280, \url{https://oeis.org/A181280} (accessed June 2026).
+
+\bibitem{DBK23}
+R.~Dougherty-Bliss and M.~Kauers,
+\emph{Hardinian arrays},
+arXiv:2309.00487, 2023.
+
+\bibitem{EC1}
+R.~P.~Stanley,
+\emph{Enumerative Combinatorics, Volume 1}, 2nd ed.,
+Cambridge Studies in Advanced Mathematics \textbf{49}, Cambridge Univ.\ Press, 2012
+(\S4.1, Theorem 4.1.1).
+
+\bibitem{CT}
+M.~Kauers and P.~Paule,
+\emph{The Concrete Tetrahedron},
+Texts and Monographs in Symbolic Computation, Springer, 2011
+(Chapter~4, C-finite sequences).
+
+\end{thebibliography}
+
+\end{document}
