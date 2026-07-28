@@ -768,7 +768,22 @@ Let $S = \{2, 3, \dots, b-2\}$ (the \emph{segment}), $|S| = b - 3$. By
 Lemma~\ref{lem:inventory}, the sub-multigraph on $S$ is the doubled path
 $2 - 3 - \cdots - (b-2)$; the only edges from $S$ to its complement are the two at
 vertex $2$ (P $\{1,2\}$, V $\{2,b-1\}$) and the two at vertex $b-2$ (P $\{b-2,b-1\}$,
-V $\{1,b-2\}$); and no terminal lies in $S$.
+V $\{1,b-2\}$); and no terminal lies in $S$. Figure~\ref{fig:Tb} pictures the
+inventory.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=.92\textwidth]{assets/fig_gadget_Tb.pdf}
+\caption{The gadget $H_{T_b}$: (a) the instance $T_8 = (0,7,2,3,4,5,6,1)$;
+(b) general even $b$, the middle of the segment elided. Vertices are positions on a
+line, with the value $T_b(i)$ in small gray below; blue arcs above the line are
+P-edges, red arcs below are V-edges, and a purple pair of mirrored arcs is a doubled
+pair. The doubled run on the segment $S = \{2,\dots,b{-}2\}$ is flanked by the three
+P-only edges $\{0,1\}, \{1,2\}, \{b{-}2,b{-}1\}$ and the three V-only edges
+$\{0,b{-}1\}, \{2,b{-}1\}, \{1,b{-}2\}$; the terminals are $0$ ($= p_0 = v_0$),
+$1$ ($= v_1$), and $b{-}1$ ($= p_1$).}
+\label{fig:Tb}
+\end{figure}
 
 \begin{lemma}[Segment behavior]\label{lem:segment}
 Let $Q$ be a PC path in $H_{T_b}$.
@@ -970,6 +985,11 @@ $M(T_b) = 3$ for even $6 \le b \le 100$, and confirms the \emph{exact list} of
 Theorem~\ref{thm:classification} for even $6 \le b \le 14$ by independent brute-force
 enumeration (ancillary file \texttt{verify\_M.py}).
 \end{remark}
+
+A sibling gadget $T'_b$ -- the identity with the values $2$ and $b{-}1$ exchanged --
+serves \emph{odd} $b$ by the same mechanism with the good parity reversed; its
+admissible visits are classified completely in Appendix~\ref{app:oddb}, and it enters
+the transit-floor bound through Proposition~\ref{prop:floor-upper}.
 
 \begin{corollary}[Two visits to one $T_b$-block]\label{cor:pairs}
 Let $\sigma = \tau[\pi_1, \dots, \pi_a]$ be an inflation, $B_i$ a block whose pattern
@@ -1565,158 +1585,14 @@ matching-edge content stays linear while $\rho$ drops to $\sqrt n$.)
 
 \appendix
 
-\section{A second construction: trap chains}\label{app:trap}
-
-This appendix gives an independent proof of $\pmin(n) = O(\sqrt n)$ by a different
-family, found in a parallel verification effort. It does not use
-Sections~\ref{sec:ports}--\ref{sec:gadget}; conversely, the main text does not use this
-appendix. The mechanism is again a parity obstruction, but localized differently: here
-\emph{large reversed blocks of odd size, flanked by singletons}, are traps that no
-properly colored path can cross.
-
-\begin{definition}\label{def:chain}
-Let $C = (c_0, c_1, \dots, c_r)$ be a composition of $n$ with $c_t \ge 1$ and
-\emph{no two consecutive entries equal to $1$}. Put $P_t = c_0 + \dots + c_{t-1}$, and
-let block $t$ occupy positions and values $[P_t, P_t + c_t - 1]$, reversed:
-\[
-\sigma_C(P_t + i) \;=\; P_t + c_t - 1 - i, \qquad 0 \le i < c_t .
-\]
-Write $L_t = P_t$ and $R_t = P_t + c_t - 1$ (the \emph{ports} of block $t$).
-\end{definition}
-
-\begin{lemma}\label{lem:chain-inv}
-$H_{\sigma_C}$ consists exactly of:
-\begin{enumerate}
-\item[(a)] doubled pairs $\{p, p+1\}$ for all consecutive positions inside each block;
-\item[(b)] for each $0 \le t < r$, one P-only cross edge $\{R_t, L_{t+1}\}$;
-\item[(c)] for each $0 \le t < r$, one V-only cross edge $\{L_t, R_{t+1}\}$;
-\item[(d)] nothing else.
-\end{enumerate}
-In particular the cross edges incident to block $t$ attach as follows
-(\emph{port--color crossover}): at $L_t$, a P-edge toward block $t-1$ and a V-edge
-toward block $t+1$; at $R_t$, a V-edge toward block $t-1$ and a P-edge toward block
-$t+1$ (omitting nonexistent neighbors). Non-port vertices carry no cross edges.
-\end{lemma}
-
-\begin{proof}
-(a) Inside a block, consecutive positions hold consecutive (descending) values: both a
-P-edge and a V-edge. (b) Positions $R_t, L_{t+1}$ are consecutive; their values are
-$P_t$ (block minimum) and $P_{t+1} + c_{t+1} - 1$ (block maximum), which differ by
-$c_t + c_{t+1} - 1 \ge 2$ since not both $c_t, c_{t+1}$ equal $1$: P-only. (c) The
-values $P_t + c_t - 1$ (maximum of block $t$, held at position $L_t$ since the block
-descends) and $P_t + c_t = P_{t+1}$ (minimum of block $t+1$, held at $R_{t+1}$) are
-consecutive; the positions $L_t, R_{t+1}$ differ by $c_t + c_{t+1} - 1 \ge 2$: V-only.
-(d) Positions in non-consecutive blocks are never adjacent; values in non-consecutive
-blocks never differ by $1$ (value ranges are contiguous in block order); within
-consecutive blocks, (b)/(c) list the only position-adjacent (resp.\ value-adjacent)
-pairs not internal to a block. The crossover statement reads off (b) and (c) at blocks
-$t-1, t, t+1$.
-\end{proof}
-
-\begin{lemma}\label{lem:chain-visit}
-Let $Q$ be a PC path in $H_{\sigma_C}$ and let $t$ be a block containing no endpoint of
-$Q$. Then every maximal run of consecutive $Q$-vertices inside block $t$ is either
-(i) a single port vertex, or (ii) a \emph{full traversal} of all $c_t$ vertices from
-one port to the other. In case (ii), if the entering cross edge has color $\chi$, the
-exiting cross edge has color $\ne \chi$ if and only if $c_t$ is odd.
-\end{lemma}
-
-\begin{proof}
-A run with no endpoint of $Q$ has an entering and an exiting cross edge, which by
-Lemma~\ref{lem:chain-inv} attach only at ports; the run's internal edges lie in the
-block, whose internal graph is a doubled path. If the run enters and leaves at the same
-port it is that single vertex (re-reaching the entry port would repeat it); the two
-cross edges at one port have different colors (Lemma~\ref{lem:chain-inv}), as the PC
-condition requires. Otherwise it goes from one port to the other through the entire
-internal path: a full traversal with $c_t - 1$ internal edges. The PC condition forces
-the internal colors to alternate starting with $\bar\chi$, so the last internal edge has
-color $\chi$ iff $c_t - 1$ is even; the exit edge differs from it, so it has color
-$\bar\chi$ iff $c_t$ is odd.
-\end{proof}
-
-\begin{lemma}[Trap Lemma]\label{lem:trap}
-Let block $t$ of $\sigma_C$ have odd size $c_t \ge 3$ with singleton neighbors
-$c_{t-1} = c_{t+1} = 1$ ($1 \le t \le r-1$). Let $Q$ be a PC path with no endpoint in
-block $t$. Then $Q$ uses at most $2$ vertices of block $t$ (at most one visit per port,
-and no full traversal).
-\end{lemma}
-
-\begin{proof}
-Write $A$ for block $t$ and $s^-, s^+$ for the single vertices of blocks $t-1$, $t+1$.
-By Lemma~\ref{lem:chain-inv} the four cross edges at $A$ are
-\[
-\text{at } L_A:\ \{s^-, L_A\} \text{ (P)}, \quad \{L_A, s^+\} \text{ (V)};
-\qquad
-\text{at } R_A:\ \{s^-, R_A\} \text{ (V)}, \quad \{R_A, s^+\} \text{ (P)}.
-\]
-Suppose $Q$ makes a full traversal of $A$, entering by a cross edge of color $\chi$;
-since $c_t$ is odd it exits by a cross edge of color $\bar\chi$
-(Lemma~\ref{lem:chain-visit}). Four cases:
-\begin{enumerate}
-\item enter at $L_A$ by $\{s^-, L_A\}$ ($\chi = \mathrm P$): the exit is the V-colored
-cross edge at $R_A$, $\{s^-, R_A\}$ -- but $s^-$ was visited immediately before
-entering, a repetition;
-\item enter at $L_A$ by $\{L_A, s^+\}$ ($\chi = \mathrm V$): the exit is
-$\{R_A, s^+\}$ -- repeats $s^+$;
-\item enter at $R_A$ by $\{s^-, R_A\}$ ($\chi = \mathrm V$): the exit is
-$\{s^-, L_A\}$ -- repeats $s^-$;
-\item enter at $R_A$ by $\{R_A, s^+\}$ ($\chi = \mathrm P$): the exit is
-$\{L_A, s^+\}$ -- repeats $s^+$.
-\end{enumerate}
-Each case contradicts simplicity of $Q$. So every visit is a single port vertex; there
-are two ports.
-\end{proof}
-
-\begin{theorem}\label{thm:trap-main}
-Let $L \ge 3$ be odd, $k \ge 1$, $0 \le p \le L+1$, and $C = (2, (L, 1)^k, 3+p, 2)$, a
-composition of $n = (L+1)k + p + 7$ with no two consecutive $1$'s. Then
-\[
-\rho(\sigma_C) \;\le\; 3k + 3L + p + 1 .
-\]
-Consequently $\pmin(n) \le 7\sqrt n + O(1)$ for all sufficiently large $n$, by choosing
-$L$ the largest odd integer $\le \sqrt n$ and $k = \lfloor (n-7)/(L+1) \rfloor$,
-$p = n - 7 - (L+1)k$.
-\end{theorem}
-
-\begin{proof}
-The blocks, in order, are: a $2$-block; $A_1, s_1, A_2, s_2, \dots, A_k, s_k$ where each
-$A_t$ has size $L$ and each $s_t$ is a singleton; a $(3+p)$-block; a $2$-block. For
-$2 \le t \le k$ the block $A_t$ is flanked by the singletons $s_{t-1}$ and $s_t$, so
-Lemma~\ref{lem:trap} applies to it; $A_1$ is flanked on the left by the initial
-$2$-block and is not trapped.
-
-Fix a PC path $Q$ and charge each block with the number of $Q$-vertices it contains;
-$\rho(Q)$ is the sum of the charges, bounded by category:
-\begin{itemize}
-\item each singleton $s_t$: charge $\le 1$; total $\le k$;
-\item each trapped block $A_t$ ($2 \le t \le k$) with no endpoint of $Q$: charge $\le
-2$ (Lemma~\ref{lem:trap}); at most $2$ trapped blocks may contain an endpoint of $Q$,
-each then with charge $\le L$ (its size). Hence the trapped blocks contribute at most
-$2(k-1) + 2(L - 2)$ in total (each endpoint block exceeds the trap bound $2$ by at most
-$L - 2$);
-\item $A_1$: charge $\le L$;
-\item the three remaining blocks: charges $\le 2$, $\le 3+p$, $\le 2$; total $\le 7+p$.
-\end{itemize}
-Summing: $\rho(Q) \le k + 2(k-1) + 2(L-2) + L + (7+p) = 3k + 3L + p + 1$. (If an
-endpoint lies in a non-trapped block, the corresponding excess term is not needed; the
-bound only improves.)
-
-For the corollary: with $L \le \sqrt n$ odd and maximal, $k \le n/(L+1) \le n/L$ and
-$p \le L + 1$, so $\rho \le 3n/L + 4L + 4 = 7\sqrt n + O(1)$ using $L = \sqrt n -
-O(1)$.
-\end{proof}
-
-\begin{remark}\label{rem:trap-data}
-The parity hypothesis is again essential: for even $L$, Lemma~\ref{lem:chain-visit}
-makes a full traversal \emph{preserve} the boundary color, the four cases of
-Lemma~\ref{lem:trap} become consistent, and computation shows the analogous even-$L$
-chains are fully traversable ($\rho$ grows with slope $1$). Exact computation (log
-\texttt{check\_trap.log}, plus the parallel C++ solver) gives
-$\rho(\sigma_C) = 2k + 2(L-1)$ for $C = (2,(L,1)^k,3,2)$, odd $L \in \{5,7,9,13,15,21\}$
-and all $k \ge 2$ within reach ($n \le 57$): the same per-period slope $2$ as the family
-of Section~\ref{sec:main}. We do not know whether the two families are related beyond
-sharing this slope.
-\end{remark}
+%% [E6 cut 2026-07-27] Appendix A "A second construction: trap chains"
+%% (app:trap) removed in full: def:chain, lem:chain-inv, lem:chain-visit,
+%% lem:trap (Trap Lemma), thm:trap-main, rem:trap-data. Stale refs remain
+%% (per the stale-ref policy, logged in edit ledger E6, NOT fixed here):
+%% Sec 1 intro "second, independent construction" paragraph; sec:comp
+%% Implementations "trap-family values of Appendix at six points"; sec:disc
+%% "or from the chains of Appendix..."; Acknowledgments "second proof in
+%% Appendix..."; ancillary code/ trap files (check_trap.log etc.).
 
 \section{The odd gadget: classification of admissible visits of
 \texorpdfstring{$H_{T'_b}$}{H\_\{T'\_b\}}}\label{app:oddb}
@@ -1797,6 +1673,19 @@ Lemma~\ref{lem:oddb-inventory}, the sub-multigraph on $D$ is the doubled path
 $3 - 4 - \cdots - (b-2)$; the only edges from $D$ to its complement are the two at
 vertex $3$ (P $\{2,3\}$, V $\{3,b-1\}$) and the two at vertex $b-2$
 (P $\{b-2,b-1\}$, V $\{2,b-2\}$); and no terminal lies in $D$.
+Figure~\ref{fig:Tpb} pictures the inventory.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=.92\textwidth]{assets/fig_gadget_Tpb.pdf}
+\caption{The odd gadget $H_{T'_b}$: (a) the instance $T'_9 = (0,1,8,3,4,5,6,7,2)$;
+(b) general odd $b$, the middle of the highway elided. Conventions as in
+Figure~\ref{fig:Tb}. Note the contrasts with $H_{T_b}$: vertex $0$ is a leaf (its
+doubled pair $\{0,1\}$ is its only edge pair), the terminal $v_1$ sits at vertex $2$,
+and the doubled run $D = \{3,\dots,b{-}2\}$ is one vertex shorter than the segment of
+$H_{T_b}$ -- the relabeling that reverses the good parity from even to odd $b$.}
+\label{fig:Tpb}
+\end{figure}
 
 \begin{lemma}[Highway behavior]\label{lem:oddb-segment}
 Let $Q$ be a PC path in $H_{T'_b}$, $b \ge 7$ odd.
