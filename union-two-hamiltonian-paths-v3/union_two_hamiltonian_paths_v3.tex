@@ -10,7 +10,7 @@
   pdftitle={Properly colored paths in the union of two Hamiltonian paths: the O(sqrt n) collapse, the transit floor, and the failure of block lower bounds},
   pdfauthor={Alejandro Lizardi},
   pdfsubject={Combinatorics; properly colored paths in edge-colored multigraphs},
-  pdfkeywords={properly colored path; alternating path; edge-colored multigraph; union of Hamiltonian paths; permutation; inflation; transit number; block-free permutation; scrambled ladder}
+  pdfkeywords={properly colored path; alternating path; edge-colored multigraph; union of Hamiltonian paths; permutation; inflation; transit number; scrambled ladder}
 }
 
 % ----- Periapsis branding (house style) -------------------------------------
@@ -164,32 +164,16 @@ The question we consider central, and cannot answer, points the other way:
 
 A union of two Hamiltonian paths is spanning and connected, and every vertex sits on
 two long monochromatic paths; it is hard to believe that its longest properly colored
-path could stay \emph{bounded} as $n \to \infty$. Nothing we know rules it out. The
-two calibration results of this paper quantify part of the difficulty: the transit
-floor (Section~\ref{sec:floor}) shows the construction machinery cannot be improved by
-better gadgets, and the block-count refutations (Section~\ref{sec:blockfail}) close
-the most natural lower-bound route while capping any future lower bound at
+path could stay \emph{bounded} as $n \to \infty$. Nothing we know rules it out.
+The transit floor (Section~\ref{sec:floor}) quantifies part of the difficulty:
+the construction machinery cannot be improved by better gadgets, and
+Theorem~\ref{thm:main-intro} itself caps any future lower bound at
 $O(\sqrt n\,)$. We hope the question finds attackers.
 %% [E8 temp 2026-07-28] next sentence = TEMPORARY n=11 mention pending the
 %% human-written abstract (ledger E13).
 Section~\ref{sec:disc} closes with three further open problems supported by
 exact data, among them a $k$-color analogue of the main question whose smallest
 counterexample -- a single triple of orderings of eleven points -- we exhibit.
-
-The route to Theorem~\ref{thm:main-intro} passes through a refutation. Small cases
-and a locally extremal family pointed at a linear lower bound with constant $1/2$:
-
-\begin{quote}
-\emph{Half-bound (refuted, Section~\ref{sec:halfbound}):} for every $\sigma\in S_n$,
-$\ \rho(\sigma) \ge \lceil (n+3)/2 \rceil$.
-\end{quote}
-
-This holds on a block-reversal family $\sigma_m$ (which attains it exactly) and through
-exhaustive enumeration of $S_n$ for $n\le 12$, but it is false: at $n=18$ an explicit
-permutation $\sigma^*$ has $\rho(\sigma^*)=10<11$ (Theorem~\ref{thm:n18}). The
-construction of $\sigma^*$ -- deleting one singleton from $\sigma_4$ to fuse two
-$3$-blocks -- is the seed of the gadget idea, and the main theorem shows that the
-half-bound fails not by an additive constant but by a polynomial factor.
 
 The construction behind the main theorem is explicit. For even $b\ge 6$ let
 \[
@@ -263,7 +247,7 @@ inventories, and they were found and verified independently, by different method
 different solvers. We give both because a redundant proof of the main claim is worth
 the space.
 
-The paper then proves two calibration results, one on each side of the main theorem.
+The paper then proves a calibration result.
 
 \paragraph{3. The transit floor (Section~\ref{sec:floor}).}
 The inflation calculus makes one parameter decisive: how small a transit number a
@@ -280,28 +264,11 @@ with values $2$ and $b-1$ exchanged) for odd $b$, whose admissible visits we als
 classify completely (Appendix~\ref{app:oddb}). Consequently no choice of inflation
 blocks can improve the visit-count bookkeeping of the method by more than constants.
 
-\paragraph{4. Block counts do not bound $\rho$ (Section~\ref{sec:blockfail}).}
-Writing $b(\sigma)$ for the number of maximal $\pm1$-blocks, the inequality
-$\rho(\sigma) \ge c\,b(\sigma)$ for any fixed $c > 0$ would imply
-$\pmin(n) \ge c\sqrt n$ (Section~\ref{sec:disc}), and $\rho \ge b(\sigma)$ holds
-exhaustively through $n = 12$. We show this route is closed: there are
-\emph{block-free} permutations ($b(\sigma) = n$) built as chains of a modular
-staircase pattern whose longest properly colored path has $\Theta(\sqrt n)$ vertices,
-so $\inf_\sigma \rho(\sigma)/b(\sigma) = 0$. The proof is a visit analysis in the
-inflation framework of Section~\ref{sec:inflation}: a bipartite parity obstruction
-pins every through-transit of a chain piece to a \emph{single vertex}, so all but four
-pieces of the chain contribute at most $2$ vertices each. The same computation that
-locates counterexamples finds the exact threshold for the case $c = 1$: the smallest
-counterexamples to $\rho \ge b(\sigma)$ occur at $n = 14$ (an explicit block-free
-witness with $\rho = 13$; exactly $16$ such permutations at $n = 14$, none for
-block-free $n \le 13$ nor for arbitrary $\sigma$ with $n \le 12$). The first
-counterexamples we had found lay at $n = 240$, inside the family $\sigma_{a,b}$; the
-true threshold is $14$.
-
-Section~\ref{sec:disc} collects what remains of the lower-bound question -- which is
-now known to require tools beyond block statistics: even $\pmin(n) \to \infty$ is
-open, and by Section~\ref{sec:blockfail} a lower bound of order $\sqrt n$ would be
-best possible.
+%% [E14 2026-07-28] Intro par. 4 (block counts do not bound rho) removed;
+%% best-possible re-sourced to thm:main-intro.
+Section~\ref{sec:disc} collects what remains of the lower-bound question: even
+$\pmin(n) \to \infty$ is open, and by Theorem~\ref{thm:main-intro} a lower bound
+of order $\sqrt n$ would be best possible.
 
 %% [E7 2026-07-28] subsec:scope REMOVED (label deleted). Its Lovasz content is
 %% superseded by the appendix provenance mention; its pmin-side content
@@ -342,15 +309,10 @@ partition the positions, and are the unit of the lower-bound discussion
 %% final appendix (the scrambled ladder). Section numbering below shifts by one.
 %% Ledger: E7 (placement decided 2026-07-28).
 
-\section{\texorpdfstring{$\pm1$}{+-1}-blocks and unconditional lower bounds}\label{sec:halfbound}
-%% [E2 cut 2026-07-21] Original title: "The half-bound and its refutation".
-%% The half-bound arc is removed (see marker below); def:pmblock, prop:survive
-%% and subsec:survive are kept -- still used by the abstract, Remark rem:blocks,
-%% and sec:disc. Label sec:halfbound kept so existing \ref's compile until the
-%% cross-reference pass.
-
-This section defines the $\pm1$-block structure of $\sigma$ and records the
-unconditional lower bounds it yields.
+%% [E14 2026-07-28] Old Section 3 folded into the Preliminaries: def:pmblock +
+%% prop:survive kept below; subsec:survive (prop:quotient, block-quotient
+%% machinery) REMOVED; labels sec:halfbound and subsec:survive retired.
+%% Ledger: E14 C1/C2.
 
 \begin{definition}[$\pm1$-block]\label{def:pmblock}
 A \emph{$\pm1$-block} of $\sigma$ is a maximal interval of positions
@@ -387,54 +349,6 @@ may be appended at $p$, yielding a PC path on $\smax+1$ vertices.
 These are weak in absolute terms -- the gadget family below has $\smax=b$ fixed while
 $n\to\infty$ -- but they are the floor any combined bound must clear, and they are the
 only unconditional lower bounds we have (Section~\ref{sec:disc}).
-
-%% [E2 cut 2026-07-21] Removed here: subsection "The block-reversal family and
-%% the half-bound" (def:sigmam, prop:sigmam-lower, Conjecture conj:half) and
-%% subsection "An n=18 counterexample" (subsec:n18: thm:n18, rem:howfound).
-%% TODO(cross-ref pass): subsec:survive below still says "survives the
-%% refutation" and cites sigma_m as meeting prop:quotient's hypothesis; the
-%% intro (Sec. 1) and sec:comp still reference the half-bound arc.
-
-\subsection{Structural results that survive}\label{subsec:survive}
-
-Besides the unconditional Proposition~\ref{prop:survive}, one conditional comparison
-survives the refutation and is used nowhere below but is recorded for completeness. For
-$\sigma$ with $\pm1$-blocks $B_1,\dots,B_{b(\sigma)}$ in position order, the
-\emph{block-quotient permutation} $\tau_\sigma$ ranks the blocks by their value range;
-$H_{\tau_\sigma}$ is the corresponding graph on $b(\sigma)$ vertices.
-
-\begin{proposition}[Odd-only quotient lift]\label{prop:quotient}
-If every $\pm1$-block of $\sigma$ that is neither first nor last in position order has
-odd size, then $\rho(\sigma)\ge\rho(\tau_\sigma)$.
-\end{proposition}
-
-\begin{proof}
-Take a maximum PC path $Q$ in $H_{\tau_\sigma}$ and lift it to $H_\sigma$, replacing
-each block-vertex visit by a visit to the corresponding block. A block visited as a
-through-vertex of $Q$ is entered and left by edges of different colors (the PC condition
-at the block-vertex). The entry and exit cross edges attach at terminals of the block,
-whose port colors equal the entry and exit colors; two cases arise.
-
-If those two terminals are the \emph{same} physical vertex of the block (a $\pm1$-block
-can have a P-terminal and a V-terminal coinciding), lift the quotient vertex to that
-single vertex: it carries two roles of different port colors, so it forms an admissible
-visit of type (ii) and the two cross edges meet the PC condition there.
-
-If the two terminals are \emph{distinct} vertices, lift to a full traversal of the
-interval block, which has size $s$. The $s-1$ internal edges alternate, so the entry and
-exit colors differ if and only if $s-1$ is even, i.e.\ $s$ is odd. By hypothesis every
-internal block has odd size, so each such full traversal meets the PC condition at both
-ports. (End blocks carry only one external edge and impose no parity constraint; lift
-them by any traversal reaching their single port.)
-
-Either way the lift uses at least one vertex per block-vertex of $Q$ and respects the PC
-condition at every junction, so it is a PC path on at least $\rho(\tau_\sigma)$ vertices.
-\end{proof}
-
-The hypothesis is met by $\sigma_m$ (internal blocks of sizes $3$ and $1$). The naive
-lift fails for general $\sigma$: a quotient path demanding a full traversal of an
-\emph{even} internal block forces equal entry/exit colors. The unconditional inequality
-$\rho(\sigma)\ge\rho(\tau_\sigma)$, verified empirically for $n\le11$, is open.
 
 \section{Interval blocks and ports}\label{sec:ports}
 
@@ -1293,14 +1207,12 @@ record the gap at $4$ as data; we have no proof that it persists for odd $b > 8$
 \section{Computational verification}\label{sec:comp}
 
 The asymptotic theorems and their constants are proved without computation; the
-computer-assisted claims are the exact values in the two counterexamples ---
-$\rho(\sigma^\ast)=10$ at $n=18$ (Theorem~\ref{thm:n18}) and
-$\rho(\sigma^\dagger)=13$ at $n=14$ (Theorem~\ref{thm:n14}) -- together with the
-exhaustive census counts of Theorem~\ref{thm:n14}(a)--(c), the small-size base cases
-$b \in \{4,5\}$ of Proposition~\ref{prop:floor-upper}, and the spectrum data of
-Remark~\ref{rem:spectrum}. This section specifies the computations that independently
-verify the constructions and supply the exact small-case values, and records the
-empirical sharpness of the families.
+computer-assisted claims are the small-size base cases $b \in \{4,5\}$ of
+Proposition~\ref{prop:floor-upper}, the spectrum data of Remark~\ref{rem:spectrum},
+the $\pmin$ census of Appendix~\ref{app:census}, and the $k$-color and
+matching-content values of Section~\ref{sec:disc}. This section specifies the
+computations that independently verify the constructions and supply the exact
+small-case values, and records the empirical sharpness of the families.
 \textbf{All code, command lines, and output logs are provided as ancillary files with
 this submission} (directory \texttt{code/} in the repository, shipped as the standard
 ancillary directory \texttt{anc/} on arXiv; \texttt{code/README.md} maps each claim
@@ -1327,7 +1239,7 @@ with the initial and accepting states restricted.
 \paragraph{Implementations.} Three independent implementations were used: a plain
 recursive enumerator and a memoized iterative one (both Python, in the artifact), which
 agree on $300$ random permutations of sizes $4$--$8$; and a separately written C++
-solver (also in the artifact) from a parallel verification effort, which agrees with the
+solver (also in the artifact), independently written, which agrees with the
 Python solvers on every instance checked by both, including exact values of
 $\rho(\sigma_{a,b})$ at $(a,b) \in \{(6,8), (5,10), (4,12)\}$ and the trap-family values
 of Appendix~\ref{app:trap} at six points. In addition, the artifact contains a
@@ -1337,10 +1249,9 @@ the complete list of admissible visits by brute force for $b \le 14$.
 
 \paragraph{Verified statements.} Each item states the claim, its range, and its log.
 \begin{enumerate}
-\item \textbf{Anchors of Section~\ref{sec:halfbound}} (\texttt{validate2.log},
-\texttt{search\_small.log}): $\rho(\sigma_m) = 2m + 3$ for the block-reversal family at
-$m = 1, 2, 3, 4$ ($n = 7, 11, 15, 19$); $\rho(\sigma^\ast) = 10$ for the $n = 18$
-counterexample; $\pmin(7) = 5$ and $\pmin(8) = 6$ by full enumeration of $S_7, S_8$.
+\item \textbf{Census anchors} (\texttt{search\_small.log}): $\pmin(7) = 5$ and
+$\pmin(8) = 6$ by full enumeration of $S_7, S_8$ with the Python solvers,
+independently of the C++ censuses of item~7; see Appendix~\ref{app:census}.
 \item \textbf{Classification} (\texttt{verify\_M.log}): for even $b \in \{6, 8, 10, 12,
 14\}$ the admissible visits of $H_{T_b}$ are \emph{exactly} (V1)--(V5) of
 Theorem~\ref{thm:classification}; for odd $b \in \{7, 9, 11\}$, $M(T_b) = b$.
@@ -1380,11 +1291,11 @@ $a$ & $b$ & $n$ & $\rho$ (exact) & $2a{+}2b{-}4$ & $4a{+}2b$ & $\rho/n$ \\
 Every exact value equals $2a + 2b - 4$ and sits inside the proven window
 $[2a{+}2b{-}7,\ 4a{+}2b]$ of \eqref{eq:twosided}; the two rows at $n = 480$ (differing
 in $\rho$) illustrate that $\rho(\sigma_{a,b})$ tracks $a$ and $b$ separately, not just
-their product. At $n = 720$ the ratio $0.150$ is far below any ratio that the
-block-reversal experiments of Section~\ref{sec:halfbound} suggested was attainable.
+their product.
 \item \textbf{Exhaustive small-$n$ statistics} (\texttt{logs/exh7.txt}--%
 \texttt{exh12.txt}, C++ solver): the joint distribution of $(b(\sigma), \rho(\sigma))$
-over all of $S_n$ for $7 \le n \le 12$, used in Theorem~\ref{thm:n14}(a) and
+over all of $S_n$ for $7 \le n \le 12$, the source of the $\pmin$ census of
+Appendix~\ref{app:census} and of the deficient-set counts $|D(n)|$ quoted in
 Section~\ref{sec:disc}; at $n = 12$ this enumerates all $479{,}001{,}600$
 permutations.
 \item \textbf{Landscape} (exploratory; \texttt{probe.py}): under adjacent
@@ -1407,27 +1318,9 @@ even-gadget family. Separately, exhaustive computation of $M(\pi)$ for every
 $\pi \in S_b$, $2 \le b \le 8$, yields $\mu(2) = 2$, $\mu(b) = 3$ for $3 \le b \le 8$,
 and the attained spectra of Remark~\ref{rem:spectrum}
 (\texttt{verify\_spectrum.log}).
-\item \textbf{The $n = 14$ threshold} (\texttt{verify\_n14.log}): $\sigma^\dagger$
-is block-free with
-$\rho(\sigma^\dagger) = 13$ (exact search, both reference solvers); the block-free
-censuses behind Theorem~\ref{thm:n14}(b)--(c) -- all $831{,}283{,}558$ block-free
-permutations of $S_{13}$ properly-colored Hamiltonian, exactly $16$ failures at
-$n = 14$ -- are reproducible from the census programs
-(\texttt{cpp/bfcensus.cpp} with log \texttt{blockfree13.txt}, hours of CPU time, a
-contracted matching-union Hamiltonicity criterion rather than the path solver,
-independently re-run once; and \texttt{n14\_doublebad.py} for the exact count).
-\item \textbf{Staircase chains} (\texttt{verify\_stair.log}): block-freeness and the
-junction structure of
-Lemma~\ref{lem:stair} checked mechanically for admissible $s \le 33$ and $k \le 6$;
-exact $\rho(\Theta_{9,k}) = 9k$ for $k \le 3$ by the reference solvers; the
-certified-optimal values of Remark~\ref{rem:stairdata}
-($\rho = 36, 38, 40, 42$ at $n = 36, 45, 54, 63$; $60, 62$ for $s = 15$) obtained by
-an independent constraint-programming model (CP-SAT, \texttt{cpsat\_rho.py} with log
-\texttt{cpsat\_stair.txt}) that proves optimality, a solver unrelated to the
-state-space search.
 \end{enumerate}
 
-Items 1--7 and 9--12 are exhaustive or certified within their stated ranges and
+Items 1--7 and 9--10 are exhaustive or certified within their stated ranges and
 reproducible by running the listed scripts; item 8 is exploratory.
 
 The $k$-color and matching-content computations behind
@@ -1446,35 +1339,17 @@ reported cases); and an edge-by-edge verifier for the chain snake
 
 \section{Lower bounds and open problems}\label{sec:disc}
 
-We work with $\pm1$-blocks (Definition~\ref{def:pmblock}); $b(\sigma)$ is their number
-and $\smax(\sigma)$ the largest size. Two elementary facts frame the lower-bound
-question. First, the $\pm1$-blocks partition the positions, so
-\[
-\smax(\sigma) \cdot b(\sigma) \;\ge\; n,
-\qquad\text{hence}\qquad
-\max\bigl(\smax(\sigma),\, b(\sigma)\bigr) \;\ge\; \sqrt n .
-\]
-Second, $\rho(\sigma) \ge \smax(\sigma)$ always
-(Proposition~\ref{prop:survive}). Consequently an absolute $c > 0$ with
-$\rho(\sigma) \ge c\, b(\sigma)$ for all $\sigma$ would give
-$\pmin(n) \ge c\sqrt n$ and, with Theorem~\ref{thm:main}, settle
-$\pmin(n) = \Theta(\sqrt n)$.
-%% [E8 call-6 2026-07-28] conj:sqrt demoted from displayed conjecture to prose;
-%% conj:exactgadget (below) is the paper's displayed conjecture. Stale
-%% \ref{conj:sqrt} site later in this section: recorded in ledger E10.
-
-Section~\ref{sec:blockfail} rules this out: no such $c$ exists --
-indeed $\inf \rho/b = 0$, attained in the limit by block-free permutations whose
-$\rho$ is itself $\Theta(\sqrt n)$ (Theorem~\ref{thm:noblockfloor}), with the exact
-finite threshold for $c = 1$ at $n = 14$ (Theorem~\ref{thm:n14}). Two things survive
-on the positive side. First, the conjecture itself: both known collapsing families --
-the gadget inflations with $b \approx 4\sqrt n$ and the staircase chains with $b = n$
--- bottom out at $\Theta(\sqrt n)$, never below, and
-Corollary~\ref{cor:stairconst} pins the target from above at
-$4\sqrt2\,\sqrt N - 8$ infinitely often. Second, the unconditional floor
-$\rho \ge \smax$, which degenerates for permutations with all blocks of bounded size
--- exactly the regime of Section~\ref{sec:blockfail}'s witnesses. Beyond it our
-methods produce no lower bounds at all. This is the state of the problem we most want
+%% [E14 2026-07-28] Block-bound post-mortem removed (de-historicize); what is
+%% known stated positively. b(sigma)'s remaining role: ledger E15.
+We work with $\pm1$-blocks (Definition~\ref{def:pmblock}); $b(\sigma)$ is their
+number and $\smax(\sigma)$ the largest size. What is known on the lower-bound
+side is quickly stated. The only unconditional lower bound we have is the floor
+$\rho \ge \smax$ (Proposition~\ref{prop:survive}), and it degenerates exactly
+where it is needed most: on permutations whose blocks all have bounded size,
+$\smax$ is constant while $n$ grows. Beyond the floor our methods produce no
+lower bounds at all, while Theorem~\ref{thm:main} caps everything at
+$O(\sqrt n\,)$; we expect the cap to be the truth, i.e.\ that
+$\pmin(n) = \Theta(\sqrt n)$. This is the state of the problem we most want
 to advertise:
 
 \begin{quote}
@@ -1484,15 +1359,12 @@ to advertise:
 The difficulty is easy to underestimate. The graphs $H_\sigma$ are spanning,
 connected, of maximum degree four, and every vertex lies on two Hamiltonian
 monochromatic paths; the natural intuition is that so much connectivity must force
-alternating paths of unbounded length. But the quantities that make that intuition
-precise keep failing: the half-bound died at $n = 18$, the block bound at $n = 14$,
-the constant-factor block bound died outright
-(Theorem~\ref{thm:noblockfloor}), and the surviving floor $\rho \ge \smax$ is
-constant exactly on the candidate extremal families. A proof of
-$\pmin(n) \to \infty$ must therefore see something in $H_\sigma$ that none of the
-block statistics see, and by Theorem~\ref{thm:n14} it cannot lean on small-$n$
-exhaustive evidence either. A disproof -- a family with $\rho$ bounded -- would be at
-least as interesting, though we do not expect one (Conjecture~\ref{conj:sqrt}).
+alternating paths of unbounded length. We know no quantity that makes that
+intuition precise, and the census of Appendix~\ref{app:census} together with
+Proposition~\ref{prop:k3} (three orderings suffice through $n = 10$ and fail at
+$n = 11$) warns that small-$n$ exhaustive evidence is weak evidence in this
+problem family. A disproof -- a family with $\rho$ bounded -- would be at least
+as interesting, though we do not expect one.
 
 On the gadget side, the calibration question is settled by
 Theorem~\ref{thm:floor}: transit numbers cannot be made smaller than $3$ at any size,
@@ -1633,7 +1505,7 @@ a clean first project on these objects.
 \section{A second construction: trap chains}\label{app:trap}
 
 This appendix gives an independent proof of $\pmin(n) = O(\sqrt n)$ by a different
-family, found in a parallel verification effort. It does not use
+family, found and verified independently of the main text. It does not use
 Sections~\ref{sec:ports}--\ref{sec:gadget}; conversely, the main text does not use this
 appendix. The mechanism is again a parity obstruction, but localized differently: here
 \emph{large reversed blocks of odd size, flanked by singletons}, are traps that no
@@ -2050,6 +1922,44 @@ so the two gadget families attain the transit floor through genuinely different 
 structures.
 \end{remark}
 
+%% [E14 2026-07-28] Census appendix added (de-historicize pass): clean home for
+%% the exhaustive censuses; anchors the Q1 deficient-set counts. Ledger: E14.
+
+\section{A concise \texorpdfstring{$\pmin$}{rho-min} census}\label{app:census}
+
+For $n \le 12$ the exact value of $\pmin(n)$, and the size of the \emph{deficient
+set} $D(n) = \{\sigma \in S_n : \rho(\sigma) < n\}$, are known by exhaustive
+enumeration (the joint $(b, \rho)$ censuses of Section~\ref{sec:comp}, logs
+\texttt{exh7.txt}--\texttt{exh12.txt}). For $n \le 6$ every union is
+properly-colored Hamiltonian: $D(n) = \emptyset$ and $\pmin(n) = n$, which also
+follows from $f(n) = n$ for $n \le 6$ together with
+Observation~\ref{obs:topcontent}.
+
+\begin{center}
+\begin{tabular}{rrrr}
+\toprule
+$n$ & $n!$ & $|D(n)|$ & $\pmin(n)$ \\
+\midrule
+$\le 6$ &  & $0$ & $n$ \\
+$7$  & $5{,}040$         & $8$             & $5$ \\
+$8$  & $40{,}320$        & $32$            & $6$ \\
+$9$  & $362{,}880$       & $896$           & $7$ \\
+$10$ & $3{,}628{,}800$   & $5{,}824$       & $8$ \\
+$11$ & $39{,}916{,}800$  & $135{,}712$     & $7$ \\
+$12$ & $479{,}001{,}600$ & $1{,}178{,}624$ & $8$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Two features of the table are worth recording. First, $\pmin$ is not monotone:
+$\pmin(11) = 7 < 8 = \pmin(10)$, and the values at $n = 7, 11$ sit below both
+neighbors. Second, the deficient sets remain a vanishing fraction of $S_n$
+throughout the range ($|D(12)|/12! \approx 0.25\%$), while their internal
+structure is what the three-color census of Proposition~\ref{prop:k3} mines.
+These are data, not theorems; nothing in the main text depends on this table
+beyond the values $\pmin(7) = 5$ and $\pmin(8) = 6$ and the counts $|D(n)|$
+quoted in Section~\ref{sec:disc}.
+
 %% [E7 2026-07-28] The conversion lemma (old Section 3) relocated here as an
 %% appendix per the E7 directive; the scrambled-ladder name (E11) and the single
 %% Lovasz provenance mention live here. Ledger: E7/E8/E11.
@@ -2130,12 +2040,10 @@ reduction into the study of $\pmin(n)$.
 
 \section*{Acknowledgments}
 
-This paper merges and supersedes the author's two earlier notes on this problem -- an
-extremal-conjecture note containing the conversion lemma, the block-reversal family, and
-the $n=18$ refutation, and a second note proving the $O(\sqrt n)$ bound -- and extends
-them with the transit-floor theorem (Section~\ref{sec:floor}) and the block-bound
-refutations (Section~\ref{sec:blockfail}), which were obtained in a follow-up research
-campaign on the open problems of the earlier version. The proofs and computations were
+This paper merges and supersedes the author's two earlier notes on this problem,
+and extends them with the transit-floor theorem (Section~\ref{sec:floor}) and the
+open-problems data of Section~\ref{sec:disc}, obtained in a follow-up research
+campaign. The proofs and computations were
 AI-assisted by Claude, under the Periapsis research structure. Because of that, I have
 tried to make the paper checkable without trusting either the author or the assistant:
 the central case analyses are classifications

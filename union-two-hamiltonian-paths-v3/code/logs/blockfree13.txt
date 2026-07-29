@@ -1,2 +1,0 @@
-n=11 blockfree_total=5296790 ham_fails=0
-n=13 blockfree_total=831283558 ham_fails=0
