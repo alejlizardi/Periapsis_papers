@@ -153,10 +153,10 @@ We answer it in the negative, and quantitatively.
 
 \begin{theorem}[Main Theorem]\label{thm:main-intro}
 $\pmin(n) = O(\sqrt n\,)$. Explicitly, $\pmin(n) \le 8\sqrt n + 20$ for all
-$n \ge 100$. Consequently $\pmin(n)/n \to 0$.
+$n \ge 100$.
 \end{theorem}
 
-The question we consider central, and cannot answer, points the other way:
+The question we consider central points the other way:
 
 \begin{quote}
 \emph{Does $\pmin(n) \to \infty$?}
@@ -234,7 +234,7 @@ contrast shows that the parity, not some feature of the argument, is what bounds
 transit number.
 
 Combining the two components and balancing $a$ against $b$ yields
-Theorem~\ref{thm:main-intro} (proved as Theorem~\ref{thm:main}). The two-visit
+Theorem~\ref{thm:main-intro} (proved in Section~\ref{sec:main}). The two-visit
 refinement of the classification (Corollary~\ref{cor:pairs}) gives the stated constant
 $8\sqrt n + 20$; the value $M(T_b) = 3$ alone, without the full classification, already
 suffices for the weaker $\pmin(n) \le 10\sqrt n + 10$ (Remark~\ref{rem:crude}).
@@ -266,7 +266,7 @@ blocks can improve the visit-count bookkeeping of the method by more than consta
 
 %% [E14 2026-07-28] Intro par. 4 (block counts do not bound rho) removed;
 %% best-possible re-sourced to thm:main-intro.
-Section~\ref{sec:disc} collects what remains of the lower-bound question: even
+Section~\ref{sec:disc} collects what remains of the lower-bound question:
 $\pmin(n) \to \infty$ is open, and by Theorem~\ref{thm:main-intro} a lower bound
 of order $\sqrt n$ would be best possible.
 
@@ -649,8 +649,8 @@ end forces the exit edge to have color $\ne c$.
 \subsection{The classification theorem}
 
 \begin{theorem}[Classification of admissible visits]\label{thm:classification}
-Let $b \ge 6$ be even. Up to reversal (Lemma~\ref{lem:reversal}), the graph $H_{T_b}$ has
-exactly five admissible visits. They are the following, each with the role pair shown:
+Let $b \ge 6$ be even. Up to the reversal symmetry of Lemma~\ref{lem:reversal},
+the graph $H_{T_b}$ has exactly five admissible visits. They are the following, each with the role pair shown:
 \begin{center}
 \begin{tabular}{clll}
 \toprule
@@ -796,8 +796,7 @@ $3$, attained by (V4) and (V5).
 
 \begin{corollary}\label{cor:M3}
 $M(T_b) = 3$ for every even $b \ge 6$, and $c^* := \liminf_n \pmin(n)/n$ satisfies
-$c^* \le 6/b$ for every even $b \ge 6$; hence $c^* = 0$ and the question of
-Section~\ref{sec:intro} has a negative answer.
+$c^* \le 6/b$ for every even $b \ge 6$; hence $c^* = 0$.
 \end{corollary}
 
 \begin{proof}
@@ -811,11 +810,9 @@ For \emph{odd} $b$, $b - 4$ is odd, so the last internal edge of a full crossing
 color $\bar c$ and the exit edge may have color $c$. The route
 $0 \xrightarrow{\mathrm P} 1 \xrightarrow{\mathrm V} b-2 \rightsquigarrow 2
 \xrightarrow{\mathrm V\{2,b-1\}} b-1$ (full crossing in the middle) then becomes
-properly colored, an admissible visit for $\{v_0, p_1\}$ of size $b$. Exact computation
-(Section~\ref{sec:comp}) confirms $M(T_b) = b$ for odd $b \in \{7, 9, 11, 13\}$ and
-$M(T_b) = 3$ for even $6 \le b \le 100$, and confirms the \emph{exact list} of
-Theorem~\ref{thm:classification} for even $6 \le b \le 14$ by independent brute-force
-enumeration (ancillary file \texttt{verify\_M.py}).
+properly colored, an admissible visit for $\{v_0, p_1\}$ of size $b$.
+%% [E20 2026-07-29] Brute-force-confirmation sentence cut (rem:parity); the
+%% structural route above already yields M(T_b)=b for odd b.
 \end{remark}
 
 A sibling gadget $T'_b$ -- the identity with the values $2$ and $b{-}1$ exchanged --
@@ -854,20 +851,22 @@ $\sigma_{a,b} = \mathrm{id}_a[T_b, \dots, T_b]$, i.e.\ $\sigma_{a,b}(jb+r) = jb 
 and the proof combines the two-visit bound for one $T_b$-block
 (Corollary~\ref{cor:pairs}) with the inflation count of Section~\ref{sec:inflation}.
 
-\begin{theorem}[Main bound]\label{thm:main}
-For every even $b \ge 6$ and $a \ge 2$, $\ \rho(\sigma_{a,b}) \le 4a + 2b$. Consequently
-$\pmin(n) \le 8\sqrt n + 20$ for every $n \ge 100$, so $\pmin(n) = O(\sqrt n)$ and
-$\pmin(n)/n \to 0$.
+%% [E20 2026-07-29] thm:main reduced to the family bound; the pmin(n) half is now
+%% the proof of Theorem 1.1 directly, so the main theorem carries one number.
+\begin{theorem}[Family bound]\label{thm:main}
+For every even $b \ge 6$ and $a \ge 2$, $\ \rho(\sigma_{a,b}) \le 4a + 2b$.
 \end{theorem}
 
 \begin{proof}
-\emph{The family bound.} Let $Q$ be a PC path in $H_{\sigma_{a,b}}$ with $q$ visits. If
+Let $Q$ be a PC path in $H_{\sigma_{a,b}}$ with $q$ visits. If
 $q = 1$ then $|Q| \le b$. Otherwise, by Lemma~\ref{lem:visits} the first and last visits
 have at most $b$ vertices each, and by Corollary~\ref{cor:pairs} the interior visits
 contribute at most $4$ per block, i.e.\ at most $4a$ in total. Hence
 $\rho(\sigma_{a,b}) \le 4a + 2b$.
+\end{proof}
 
-\emph{The bound on $\pmin(n)$.} Let $b = 2\lfloor \sqrt n / 2 \rfloor$, so $b$ is even,
+\begin{proof}[Proof of Theorem~\ref{thm:main-intro}]
+Let $b = 2\lfloor \sqrt n / 2 \rfloor$, so $b$ is even,
 $\sqrt n - 2 < b \le \sqrt n$, and $b \ge 10$ since $n \ge 100$. Let
 $a = \lfloor n/b \rfloor \ge 2$ and $s = n - (a-1)b$, so $b \le s < 2b$. Define
 $\sigma \in S_n$ as the inflation (identity outer permutation) of:
@@ -932,8 +931,9 @@ All vertices are distinct (stages use disjoint blocks; within a stage the listed
 vertices are distinct), and consecutive edge colors differ at every junction. The vertex
 count is $(b - 2)$ in stage 1 ($b-3$ segment vertices plus $(0, b-1)$), $2(a-2)$ in
 stage 2, and $(b - 1)$ in stage 3 ($(a-1,0)$, $(a-1,b-1)$, and the $b-3$ segment
-vertices), totalling $2a + 2b - 7$. The path is checked mechanically, edge by edge, in
-the ancillary file \texttt{verify\_path.py}.
+vertices), totalling $2a + 2b - 7$.
+%% [E20 2026-07-29] F2 cut: mechanical-check sentence removed (proof is complete
+%% without it; the sec:comp item is E19's call).
 \end{proof}
 
 \begin{remark}[Constants; exact values]\label{rem:constants}
@@ -1036,7 +1036,8 @@ path components are the vertices of degree $\le 1$, giving (c).
 \end{proof}
 
 \begin{lemma}[Prescribed exposure]\label{lem:expose}
-Let $Q = x_0 - x_1 - \cdots - x_{m-1}$ be a path and $S \subseteq \{x_0,\dots,x_{m-1}\}$.
+Let $Q = x_0 - x_1 - \cdots - x_{m-1}$ be a path and let
+$S \subseteq \{x_0,\dots,x_{m-1}\}$.
 A matching of $Q$ exposing exactly $S$ exists if and only if every maximal run of
 consecutive non-exposed vertices (in path order) has even size. In particular:
 \begin{enumerate}
@@ -1214,8 +1215,8 @@ matching-content values of Section~\ref{sec:disc}. This section specifies the
 computations that independently verify the constructions and supply the exact
 small-case values, and records the empirical sharpness of the families.
 \textbf{All code, command lines, and output logs are provided as ancillary files with
-this submission} (directory \texttt{code/} in the repository, shipped as the standard
-ancillary directory \texttt{anc/} on arXiv; \texttt{code/README.md} maps each claim
+this submission} (directory \texttt{code/} in the repository; \texttt{code/README.md}
+maps each claim
 below to a script and a log, and \texttt{code/MANIFEST.sha256} lists SHA-256 checksums).
 
 \paragraph{Algorithm.} The basic object is an exact longest-PC-path search. Its state
@@ -1238,8 +1239,8 @@ with the initial and accepting states restricted.
 
 \paragraph{Implementations.} Three independent implementations were used: a plain
 recursive enumerator and a memoized iterative one (both Python, in the artifact), which
-agree on $300$ random permutations of sizes $4$--$8$; and a separately written C++
-solver (also in the artifact), independently written, which agrees with the
+agree on $300$ random permutations of sizes $4$--$8$; and an independently written C++
+solver (also in the artifact), which agrees with the
 Python solvers on every instance checked by both, including exact values of
 $\rho(\sigma_{a,b})$ at $(a,b) \in \{(6,8), (5,10), (4,12)\}$ and the trap-family values
 of Appendix~\ref{app:trap} at six points. In addition, the artifact contains a
@@ -1347,7 +1348,7 @@ side is quickly stated. The only unconditional lower bound we have is the floor
 $\rho \ge \smax$ (Proposition~\ref{prop:survive}), and it degenerates exactly
 where it is needed most: on permutations whose blocks all have bounded size,
 $\smax$ is constant while $n$ grows. Beyond the floor our methods produce no
-lower bounds at all, while Theorem~\ref{thm:main} caps everything at
+lower bounds at all, while Theorem~\ref{thm:main-intro} caps everything at
 $O(\sqrt n\,)$; we expect the cap to be the truth, i.e.\ that
 $\pmin(n) = \Theta(\sqrt n)$. This is the state of the problem we most want
 to advertise:
@@ -1360,11 +1361,9 @@ The difficulty is easy to underestimate. The graphs $H_\sigma$ are spanning,
 connected, of maximum degree four, and every vertex lies on two Hamiltonian
 monochromatic paths; the natural intuition is that so much connectivity must force
 alternating paths of unbounded length. We know no quantity that makes that
-intuition precise, and the census of Appendix~\ref{app:census} together with
-Proposition~\ref{prop:k3} (three orderings suffice through $n = 10$ and fail at
-$n = 11$) warns that small-$n$ exhaustive evidence is weak evidence in this
-problem family. A disproof -- a family with $\rho$ bounded -- would be at least
+intuition precise. A disproof -- a family with $\rho$ bounded -- would be at least
 as interesting, though we do not expect one.
+%% [E20 2026-07-29] "warns that small-n exhaustive evidence is weak" sentence cut.
 
 On the gadget side, the calibration question is settled by
 Theorem~\ref{thm:floor}: transit numbers cannot be made smaller than $3$ at any size,
@@ -1647,8 +1646,8 @@ O(1)$.
 The parity hypothesis is again essential: for even $L$, Lemma~\ref{lem:chain-visit}
 makes a full traversal \emph{preserve} the boundary color, the four cases of
 Lemma~\ref{lem:trap} become consistent, and computation shows the analogous even-$L$
-chains are fully traversable ($\rho$ grows with slope $1$). Exact computation (log
-\texttt{check\_trap.log}, plus the parallel C++ solver) gives
+chains are fully traversable ($\rho$ grows with slope $1$). Exact computation
+(Section~\ref{sec:comp}) gives
 $\rho(\sigma_C) = 2k + 2(L-1)$ for $C = (2,(L,1)^k,3,2)$, odd $L \in \{5,7,9,13,15,21\}$
 and all $k \ge 2$ within reach ($n \le 57$): the same per-period slope $2$ as the family
 of Section~\ref{sec:main}. We do not know whether the two families are related beyond
@@ -1925,12 +1924,26 @@ structures.
 %% [E14 2026-07-28] Census appendix added (de-historicize pass): clean home for
 %% the exhaustive censuses; anchors the Q1 deficient-set counts. Ledger: E14.
 
-\section{A concise \texorpdfstring{$\pmin$}{rho-min} census}\label{app:census}
+\section{A \texorpdfstring{$\pmin$}{rho-min} census}\label{app:census}
 
 For $n \le 12$ the exact value of $\pmin(n)$, and the size of the \emph{deficient
 set} $D(n) = \{\sigma \in S_n : \rho(\sigma) < n\}$, are known by exhaustive
 enumeration (the joint $(b, \rho)$ censuses of Section~\ref{sec:comp}, logs
-\texttt{exh7.txt}--\texttt{exh12.txt}). For $n \le 6$ every union is
+\texttt{exh7.txt}--\texttt{exh12.txt}).
+%% [E22 2026-07-29] Census extended to n <= 16 from the WP-I threshold censuses
+%% (research repo); |D(n)| not recorded there. Values ride P-WPI.1/.2/.4/.5.
+For $13 \le n \le 16$ the value of
+$\pmin(n)$ is likewise exact, by exhaustive \emph{decision censuses at a
+threshold}: the search enumerates one representative per orbit of the
+$\rho$-preserving symmetries of $H_\sigma$ (reversal of $\sigma$,
+value-complementation, and inversion, the last of which exchanges the two
+colors) and records every $\sigma$ at or below the threshold. This determines
+$\pmin(n)$ and \emph{all} of its minimizers, but not the full distribution, so
+$|D(n)|$ is not recorded in that range. Every minimizer found was certified by
+the same independent integer-programming formulation used for
+Proposition~\ref{prop:k3}; these censuses and their certificates are archived
+in the research repository rather than in the ancillary artifact. For
+$n \le 6$ every union is
 properly-colored Hamiltonian: $D(n) = \emptyset$ and $\pmin(n) = n$, which also
 follows from $f(n) = n$ for $n \le 6$ together with
 Observation~\ref{obs:topcontent}.
@@ -1947,15 +1960,21 @@ $9$  & $362{,}880$       & $896$           & $7$ \\
 $10$ & $3{,}628{,}800$   & $5{,}824$       & $8$ \\
 $11$ & $39{,}916{,}800$  & $135{,}712$     & $7$ \\
 $12$ & $479{,}001{,}600$ & $1{,}178{,}624$ & $8$ \\
+$13$ & $6{,}227{,}020{,}800$      & --- & $9$ \\
+$14$ & $87{,}178{,}291{,}200$     & --- & $10$ \\
+$15$ & $1{,}307{,}674{,}368{,}000$  & --- & $9$ \\
+$16$ & $20{,}922{,}789{,}888{,}000$ & --- & $10$ \\
 \bottomrule
 \end{tabular}
 \end{center}
 
 Two features of the table are worth recording. First, $\pmin$ is not monotone:
-$\pmin(11) = 7 < 8 = \pmin(10)$, and the values at $n = 7, 11$ sit below both
-neighbors. Second, the deficient sets remain a vanishing fraction of $S_n$
-throughout the range ($|D(12)|/12! \approx 0.25\%$), while their internal
-structure is what the three-color census of Proposition~\ref{prop:k3} mines.
+the values at $n = 7, 11, 15$ sit below both neighbors. Second, the deficient
+sets remain a vanishing fraction of $S_n$ throughout the range where the full
+distribution is known ($|D(12)|/12! \approx 0.25\%$), while their internal
+structure is what the three-color census of Proposition~\ref{prop:k3} mines;
+the minimizers themselves are rare (the number of $\sigma$ attaining
+$\pmin(n)$ at $n = 13, 14, 15, 16$ is $290$, $2894$, $8$, $240$ respectively).
 These are data, not theorems; nothing in the main text depends on this table
 beyond the values $\pmin(7) = 5$ and $\pmin(8) = 6$ and the counts $|D(n)|$
 quoted in Section~\ref{sec:disc}.
@@ -1973,9 +1992,8 @@ lemma linking $f$ to $\pmin$. It is logically independent of the main text;
 the growth of $f$ is posed among the open problems of Section~\ref{sec:disc}.
 
 \begin{definition}\label{def:Gns}
-For $\sigma \in S_n$, the \emph{scrambled ladder} $G(n,\sigma)$ is the graph on $2n$
-vertices
-$\{v_0,\dots,v_{n-1},u_0,\dots,u_{n-1}\}$ with edges:
+For $\sigma \in S_n$, the \emph{scrambled ladder} $G(n,\sigma)$ is the graph on the
+$2n$ vertices $v_0,\dots,v_{n-1}$, $u_0,\dots,u_{n-1}$, with edges:
 a \emph{top path} $v_0 v_1 \cdots v_{n-1}$; a \emph{bottom path}
 $u_0 u_1 \cdots u_{n-1}$; and a \emph{matching} $M = \{v_i u_{\sigma(i)} : 0\le i\le
 n-1\}$. Every $v_i$ and every $u_j$ is incident to exactly one matching edge; the four
@@ -2044,39 +2062,23 @@ This paper merges and supersedes the author's two earlier notes on this problem,
 and extends them with the transit-floor theorem (Section~\ref{sec:floor}) and the
 open-problems data of Section~\ref{sec:disc}, obtained in a follow-up research
 campaign. The proofs and computations were
-AI-assisted by Claude, under the Periapsis research structure. Because of that, I have
-tried to make the paper checkable without trusting either the author or the assistant:
-the central case analyses are classifications
+AI-assisted by Claude, under the Periapsis research structure.
+%% [E20 2026-07-29] "checkable without trusting either the author or the
+%% assistant" stance removed (not appropriate for publication); the factual
+%% checkability list below is kept.
+The central case analyses are classifications
 (Theorems~\ref{thm:classification} and~\ref{thm:oddb-classification}) and elementary
 matching arguments (Theorem~\ref{thm:floor-lower}) whose every step is locally
 verifiable; every computational claim is reproducible from the ancillary artifact,
 which includes independent verifiers written directly from the definitions; and the
-main theorem has a second proof in Appendix~\ref{app:trap}. This is an unrefereed
-preprint; no journal referee has yet checked it.
+main theorem has a second proof in Appendix~\ref{app:trap}.
+%% [E20 2026-07-29] "unrefereed preprint" sentence cut (same stance-genre as the
+%% removed trust wording; false upon acceptance).
 
+%% [E20 2026-07-29] References reordered by approximate relevance: the
+%% alternating-path literature (the paper's field) first; the f(n)/provenance
+%% cluster (appendix-only) after; Lovasz last.
 \begin{thebibliography}{9}
-
-\bibitem{Lov70}
-L.~Lov\'asz,
-Problem 11, in:
-\emph{Combinatorial Structures and their Applications}
-(Proc.\ Calgary Internat.\ Conf., 1969),
-Gordon and Breach, New York, 1970, p.~497.
-
-\bibitem{NSTW25}
-S.~Norin, R.~Steiner, S.~Thomass\'e, and P.~Wollan,
-\emph{Small hitting sets for longest paths and cycles},
-arXiv:2505.08634, 2025.
-
-\bibitem{BCPS26}
-M.~Buci\'c, M.~Christoph, A.~Pokrovskiy, and R.~Steiner,
-\emph{Towards the Lov\'asz conjecture via sublinear expanders},
-arXiv:2606.09742, 2026.
-
-\bibitem{LYZ18}
-Q.~Liu, X.~Yu, and Z.~Zhang,
-\emph{Circumference of 3-connected cubic graphs},
-J.~Combin.\ Theory Ser.~B \textbf{128} (2018), 134--159.
 
 \bibitem{BJG97}
 J.~Bang-Jensen and G.~Gutin,
@@ -2093,6 +2095,28 @@ Lecture Notes in Comput.\ Sci.\ 5420, Springer, 2009, 200--208.
 A.~Abouelaoualim, V.~Borozan, Y.~Manoussakis, C.~Martinhon, and R.~Muthu,
 \emph{Properly colored paths in edge-colored graphs},
 Discrete Math.\ \textbf{310} (2010), 1610--1620.
+
+\bibitem{NSTW25}
+S.~Norin, R.~Steiner, S.~Thomass\'e, and P.~Wollan,
+\emph{Small hitting sets for longest paths and cycles},
+arXiv:2505.08634, 2025.
+
+\bibitem{LYZ18}
+Q.~Liu, X.~Yu, and Z.~Zhang,
+\emph{Circumference of 3-connected cubic graphs},
+J.~Combin.\ Theory Ser.~B \textbf{128} (2018), 134--159.
+
+\bibitem{BCPS26}
+M.~Buci\'c, M.~Christoph, A.~Pokrovskiy, and R.~Steiner,
+\emph{Towards the Lov\'asz conjecture via sublinear expanders},
+arXiv:2606.09742, 2026.
+
+\bibitem{Lov70}
+L.~Lov\'asz,
+Problem 11, in:
+\emph{Combinatorial Structures and their Applications}
+(Proc.\ Calgary Internat.\ Conf., 1969),
+Gordon and Breach, New York, 1970, p.~497.
 
 \end{thebibliography}
 

@@ -4,9 +4,8 @@ Ancillary files for: *Properly colored paths in the union of two Hamiltonian pat
 the O(√n) collapse, the transit floor, and the failure of block lower bounds*
 (Lizardi, July 2026).
 
-On arXiv these files ship in the standard ancillary directory `anc/`; in the source
-repository they live in `code/`. The two are the same files — the paper refers to them
-as the ancillary artifact and cites individual logs by name.
+These files accompany the paper as its ancillary artifact; in the source repository
+they live in `code/`. The paper cites individual logs by name.
 
 Environment used to produce `logs/`: Python 3.14, Windows 10, single core; no external
 Python dependencies for the core verifiers (standard library only). Two optional
@@ -103,6 +102,5 @@ open-problems section.
 The exact search explores the state graph on triples (visited set, current vertex,
 last color), each state visited once; no pruning. Exactness is by construction; cost is
 the number of reachable states, which the logs report per instance (57,066 at n = 80;
-5,012,186 at n = 600; 7,273,586 at n = 720 for σ_{a,b}; 1,938 for the n = 14
-witness). On unstructured permutations the state space is exponential and the method
-was used only for n ≤ 19 (plus the structured staircase chains through n = 27).
+5,012,186 at n = 600; 7,273,586 at n = 720 for σ_{a,b}). On unstructured permutations
+the state space is exponential and the method was used only for n ≤ 19.
