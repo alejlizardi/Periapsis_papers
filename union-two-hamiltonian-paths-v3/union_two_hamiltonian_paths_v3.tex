@@ -48,7 +48,7 @@ and the failure of block lower bounds}
 \thanks{Independent researcher, \texttt{alejlizardi05@gmail.com}.
 The proofs and computations in this paper were AI-assisted by Claude, under the
 Periapsis research structure. All computational claims are reproducible from the
-ancillary files accompanying this submission; see Section~\ref{sec:comp}.}}
+ancillary files accompanying this submission; see Appendix~\ref{sec:comp}.}}
 \date{July 2026}
 
 \begin{document}
@@ -184,7 +184,8 @@ define $\sigma_{a,b} \in S_{ab}$ by
 \[
 \sigma_{a,b}(jb + r) \;=\; jb + T_b(r) \qquad (0 \le j < a,\ 0 \le r < b),
 \]
-i.e.\ $a$ consecutive copies of $T_b$ on consecutive value ranges. We prove the
+i.e.\ $a$ position-consecutive blocks, each a copy of $T_b$, on consecutive value
+ranges. We prove the
 two-sided estimate
 \begin{equation}\label{eq:twosided}
 2a + 2b - 7 \;\le\; \rho(\sigma_{a,b}) \;\le\; 4a + 2b
@@ -198,7 +199,7 @@ the upper bound is tight for this family and not an artifact of a construction w
 true value is smaller. (For $a = 2$ both bounds in \eqref{eq:twosided} are weak; the
 construction is informative for $a \ge 3$, and asymptotically for $a \to \infty$.)
 Exact machine computation gives $\rho(\sigma_{a,b}) = 2a + 2b - 4$ at every tested
-point up to $n = 720$ (Section~\ref{sec:comp}); we use this exact formula nowhere in
+point up to $n = 720$ (Appendix~\ref{sec:comp}); we use this exact formula nowhere in
 the proofs and state it only as data.
 
 The proof of the upper bounds has two independent components.
@@ -229,9 +230,11 @@ parity obstruction: $H_{T_b}$ contains a long run of doubled edges which any
 terminal-to-terminal passage must either avoid or cross completely, and a full crossing
 forces the color of the departing edge precisely so that, for even $b$, every
 continuation is blocked. For odd $b$ the parity reverses and a transit can collect all
-$b$ vertices; exact computation confirms $M(T_b) = b$ for odd $b$. The even/odd
+$b$ vertices. The even/odd
 contrast shows that the parity, not some feature of the argument, is what bounds the
 transit number.
+%% [E25 cut 2026-07-30] "exact computation confirms M(T_b)=b for odd b" clause
+%% removed above (retires E20 flag F1; rem:parity's structural route proves it).
 
 Combining the two components and balancing $a$ against $b$ yields
 Theorem~\ref{thm:main-intro} (proved in Section~\ref{sec:main}). The two-visit
@@ -239,13 +242,9 @@ refinement of the classification (Corollary~\ref{cor:pairs}) gives the stated co
 $8\sqrt n + 20$; the value $M(T_b) = 3$ alone, without the full classification, already
 suffices for the weaker $\pmin(n) \le 10\sqrt n + 10$ (Remark~\ref{rem:crude}).
 
-Appendix~\ref{app:trap} contains a \emph{second, independent} construction proving
-$\pmin(n) = O(\sqrt n)$: chains of reversed odd blocks separated by singletons, where a
-different parity trap blocks every crossing, with its own complete proof. The two
-constructions share the parity-trap idea but are different families with different edge
-inventories, and they were found and verified independently, by different methods and
-different solvers. We give both because a redundant proof of the main claim is worth
-the space.
+%% [E24 cut 2026-07-30] Intro paragraph advertising the trap-chain appendix removed
+%% with app:trap (the appendix's 7*sqrt(n)+O(1) undercut the main theorem's constant
+%% story; see ledger E24).
 
 The paper then proves a calibration result.
 
@@ -338,7 +337,7 @@ $\smax$ vertices: this gives the first bound.
 
 For the second, if $\smax=1$ then all blocks are singletons; with $b\ge2$ the P-edge
 $\{0,1\}$ exists and is a PC path on $2=\smax+1$ vertices. Otherwise $\smax\ge2$. Since
-$b\ge2$, a largest block $B$ has a $\pm1$-block neighbor, hence an external edge $e$ of
+$b\ge2$, a largest block $B$ has a position-adjacent $\pm1$-block, hence an external edge $e$ of
 some color $c$ at a port $p\in\{p_\ell,p_r\}$ (Lemma~\ref{lem:ports} below gives the
 port structure for interval blocks, of which $B$ is one). Traverse $B$ from the port
 opposite $p$ toward $p$, choosing the starting color so that the last internal edge has
@@ -484,7 +483,7 @@ four port positions is met by at most one cross edge.
 
 \begin{lemma}[Visit decomposition]\label{lem:visits}
 Let $\sigma = \tau[\pi_1, \dots, \pi_a]$, $a \ge 2$, and let $Q$ be a PC path in
-$H_\sigma$. Partition the vertex sequence of $Q$ into maximal runs of consecutive
+$H_\sigma$. Partition the vertex sequence of $Q$ into maximal runs of $Q$-consecutive
 vertices lying in a common block; call these runs \emph{visits}. Then:
 \begin{enumerate}
 \item[(a)] Consecutive visits are joined by exactly one cross edge; distinct
@@ -941,7 +940,7 @@ Together, Theorem~\ref{thm:main} and Proposition~\ref{prop:lower} give
 $2(a+b) - 7 \le \rho(\sigma_{a,b}) \le 4a + 2b$: the family is $\Theta(a + b)$, and with
 $a \asymp b$ realizes $\Theta(\sqrt n)$, so the upper bound of
 Theorem~\ref{thm:main-intro} is achieved by this family up to the constant. Exact
-machine computation (Section~\ref{sec:comp}) gives $\rho(\sigma_{a,b}) = 2a + 2b - 4$ at
+machine computation (Appendix~\ref{sec:comp}) gives $\rho(\sigma_{a,b}) = 2a + 2b - 4$ at
 every tested point up to $n = 720$; we conjecture this holds for all $a \ge 3$, even
 $b \ge 6$, but we neither prove nor use it. Optimizing the proven upper bound $4a + 2b$
 at $n = ab$ with $b \asymp \sqrt{2n}$ gives $\pmin(n) \le 4\sqrt{2n} + O(1) \approx
@@ -990,7 +989,7 @@ parity mechanism is the same doubled-run obstruction as in
 Lemma~\ref{lem:segment}, with the run shortened by one vertex, which is exactly what
 reverses the good parity from even $b$ to odd $b$.) The two remaining sizes $b = 4, 5$
 are settled by the exhaustive enumeration already reported in
-Section~\ref{sec:comp}: $\min_{\pi \in S_b} M(\pi) = 3$ for $4 \le b \le 9$; for $b=5$
+Appendix~\ref{sec:comp}: $\min_{\pi \in S_b} M(\pi) = 3$ for $4 \le b \le 9$; for $b=5$
 the pattern $T'_5 = (0,1,4,3,2)$ attains it, with admissible-visit list
 $(0)$, $(0,1,2)$, $(0,1,4)$, $(2,1,4)$, $(2,3,4)$.
 \end{proof}
@@ -1185,14 +1184,14 @@ Theorem~\ref{thm:floor} answers the calibration question raised in
 Section~\ref{sec:disc}: transit numbers cannot be pushed below $3$, so within the
 inflation framework the per-visit cost of this paper's gadgets is optimal, and
 improvements to Theorem~\ref{thm:main-intro} must come from the visit \emph{count} or
-from outside the inflation method. The construction of
-Theorem~\ref{thm:floor-lower} is validated mechanically, independently of its proof,
-in the ancillary artifact (Section~\ref{sec:comp}).
+from outside the inflation method.
+%% [E25 cut 2026-07-30] Validation sentence removed (retires E20 flag F3, paired
+%% with the sec:comp floor-construction item cut).
 \end{remark}
 
 \begin{remark}[The spectrum of transit numbers; data]\label{rem:spectrum}
 Exhaustive computation of $\{M(\pi) : \pi \in S_b\}$ for $b \le 8$
-(Section~\ref{sec:comp}) shows that the attained set is $\{3, 4, \dots, b\}$ for even
+(Appendix~\ref{sec:comp}) shows that the attained set is $\{3, 4, \dots, b\}$ for even
 $b$ but $\{3\} \cup \{5, \dots, b\}$ for odd $b$: the value $4$ is not attained at
 odd $b \le 8$. The maximum $M(\pi) = b$ is always attained (e.g.\ by the identity). We
 record the gap at $4$ as data; we have no proof that it persists for odd $b > 8$.
@@ -1205,138 +1204,8 @@ record the gap at $4$ as data; we have no proof that it persists for odd $b > 8$
 %% the abstract, Sec. 1 (intro par. 4 + best-possible claims), sec:comp anchors,
 %% sec:disc, and the appendix closing note -- deferred to the cross-reference pass.
 
-\section{Computational verification}\label{sec:comp}
-
-The asymptotic theorems and their constants are proved without computation; the
-computer-assisted claims are the small-size base cases $b \in \{4,5\}$ of
-Proposition~\ref{prop:floor-upper}, the spectrum data of Remark~\ref{rem:spectrum},
-the $\pmin$ census of Appendix~\ref{app:census}, and the $k$-color and
-matching-content values of Section~\ref{sec:disc}. This section specifies the
-computations that independently verify the constructions and supply the exact
-small-case values, and records the empirical sharpness of the families.
-\textbf{All code, command lines, and output logs are provided as ancillary files with
-this submission} (directory \texttt{code/} in the repository; \texttt{code/README.md}
-maps each claim
-below to a script and a log, and \texttt{code/MANIFEST.sha256} lists SHA-256 checksums).
-
-\paragraph{Algorithm.} The basic object is an exact longest-PC-path search. Its state
-space is the set of triples (\emph{visited set}, \emph{current vertex}, \emph{last edge
-color}); the initial states are all $(\{x, w\}, w, c)$ over edges $\{x, w\}$ of color
-$c$; a transition extends a state by an unvisited neighbor along an edge of the other
-color. The legal future extensions of a partial PC path depend only on its state, so
-distinct PC paths reaching the same state may be identified without loss; $\rho(\sigma)$
-is then the maximum cardinality of the visited set over all \emph{reachable} states,
-computed by an exhaustive search that visits every reachable state once (a memo set of
-states; no pruning). The method is exact by construction; its cost is the number of
-reachable states. That number is exponential in general -- on unstructured instances we
-used the method only for $n \le 19$ -- but is small on the structured families here,
-because the gadget admits relatively few reachable states: for $\sigma_{a,b}$ we measure
-$57{,}066$
-reachable states at $n = 80$, $5{,}012{,}186$ at $n = 600$, and $7{,}273{,}586$ at
-$n = 720$ (the logs report the count for every table row). The constrained variants
-computing $M(\pi)$ (fixed start/end terminals and first/last colors) are the same search
-with the initial and accepting states restricted.
-
-\paragraph{Implementations.} Three independent implementations were used: a plain
-recursive enumerator and a memoized iterative one (both Python, in the artifact), which
-agree on $300$ random permutations of sizes $4$--$8$; and an independently written C++
-solver (also in the artifact), which agrees with the
-Python solvers on every instance checked by both, including exact values of
-$\rho(\sigma_{a,b})$ at $(a,b) \in \{(6,8), (5,10), (4,12)\}$ and the trap-family values
-of Appendix~\ref{app:trap} at six points. In addition, the artifact contains a
-\emph{minimal independent verifier} (\texttt{verify\_M.py}, about $100$ lines, written
-directly from Definition~\ref{def:M} with no shared code), which re-derives $M(T_b)$ and
-the complete list of admissible visits by brute force for $b \le 14$.
-
-\paragraph{Verified statements.} Each item states the claim, its range, and its log.
-\begin{enumerate}
-\item \textbf{Census anchors} (\texttt{search\_small.log}): $\pmin(7) = 5$ and
-$\pmin(8) = 6$ by full enumeration of $S_7, S_8$ with the Python solvers,
-independently of the C++ censuses of item~7; see Appendix~\ref{app:census}.
-\item \textbf{Classification} (\texttt{verify\_M.log}): for even $b \in \{6, 8, 10, 12,
-14\}$ the admissible visits of $H_{T_b}$ are \emph{exactly} (V1)--(V5) of
-Theorem~\ref{thm:classification}; for odd $b \in \{7, 9, 11\}$, $M(T_b) = b$.
-\item \textbf{The family at scale} (\texttt{check\_all\_even.log}): $M(T_b) = 3$ for
-\emph{every} even $6 \le b \le 100$; $M(T_b) = b$ for odd $b \in \{7,9,11,13\}$
-(\texttt{validate2.log}).
-\item \textbf{Optimality of the gadget at small sizes} (\texttt{search\_small.log}):
-full enumeration of $S_b$ for $4 \le b \le 9$ gives $\min_{\pi \in S_b} M(\pi) = 3$ in
-every case; no gadget of size $\le 9$ beats transit number $3$.
-\item \textbf{Explicit lower-bound path} (\texttt{verify\_path.log}): the path of
-Proposition~\ref{prop:lower} is checked edge-by-edge at seven $(a,b)$ points including
-$(20,20)$.
-\item \textbf{Exact values} (\texttt{endtoend.log}, \texttt{bigtable.log}): for
-$\sigma_{a,b}$:
-
-\begin{center}
-\begin{tabular}{rrrrrrr}
-\toprule
-$a$ & $b$ & $n$ & $\rho$ (exact) & $2a{+}2b{-}4$ & $4a{+}2b$ & $\rho/n$ \\
-\midrule
-10 & 8  & 80  & 32 & 32 & 56  & 0.400 \\
-12 & 8  & 96  & 36 & 36 & 64  & 0.375 \\
-12 & 12 & 144 & 44 & 44 & 72  & 0.306 \\
-16 & 12 & 192 & 52 & 52 & 88  & 0.271 \\
-20 & 12 & 240 & 60 & 60 & 104 & 0.250 \\
-16 & 16 & 256 & 60 & 60 & 96  & 0.234 \\
-24 & 16 & 384 & 76 & 76 & 128 & 0.198 \\
-20 & 20 & 400 & 76 & 76 & 120 & 0.190 \\
-30 & 16 & 480 & 88 & 88 & 152 & 0.183 \\
-24 & 20 & 480 & 84 & 84 & 136 & 0.175 \\
-30 & 20 & 600 & 96 & 96 & 160 & 0.160 \\
-36 & 20 & 720 & 108 & 108 & 184 & 0.150 \\
-\bottomrule
-\end{tabular}
-\end{center}
-
-Every exact value equals $2a + 2b - 4$ and sits inside the proven window
-$[2a{+}2b{-}7,\ 4a{+}2b]$ of \eqref{eq:twosided}; the two rows at $n = 480$ (differing
-in $\rho$) illustrate that $\rho(\sigma_{a,b})$ tracks $a$ and $b$ separately, not just
-their product.
-\item \textbf{Exhaustive small-$n$ statistics} (\texttt{logs/exh7.txt}--%
-\texttt{exh12.txt}, C++ solver): the joint distribution of $(b(\sigma), \rho(\sigma))$
-over all of $S_n$ for $7 \le n \le 12$, the source of the $\pmin$ census of
-Appendix~\ref{app:census} and of the deficient-set counts $|D(n)|$ quoted in
-Section~\ref{sec:disc}; at $n = 12$ this enumerates all $479{,}001{,}600$
-permutations.
-\item \textbf{Landscape} (exploratory; \texttt{probe.py}): under adjacent
-transpositions, $\sigma_{4,6}$ ($n = 24$, $\rho = 16$) is a strict local minimum of
-$\rho$, while greedy descent from random starts stalls around $\rho \approx 23$ --
-extremal permutations of this type are found by design, not by local search.
-\item \textbf{The transit-floor construction} (\texttt{verify\_floor.log}): the
-matching-union witness of
-Theorem~\ref{thm:floor-lower} is built by an implementation of the exact case tree of
-the proof and validated against Definition~\ref{def:M} from scratch (proper coloring
-with respect to the actual edge sets, simplicity, endpoint roles, complementary end
-colors, size $\ge 3$): exhaustively for \emph{every} $\pi \in S_b$, $3 \le b \le 9$,
-and on random samples up to $b = 50$, with $0$ failures.
-\item \textbf{The odd gadget and the spectrum} (\texttt{verify\_oddb.log},
-\texttt{verify\_spectrum.log}): the inventory, highway and crossing claims of
-Appendix~\ref{app:oddb} confirmed uniformly for odd $b \in \{7, 9, \dots, 21\}$, and
-$M(T'_b) = 3$ there and at the degenerate $b = 5$; as positive control the same
-checker reproduces $M(T_b) = 3$ (even $b$) and $M(T_b) = b$ (odd $b$) for the
-even-gadget family. Separately, exhaustive computation of $M(\pi)$ for every
-$\pi \in S_b$, $2 \le b \le 8$, yields $\mu(2) = 2$, $\mu(b) = 3$ for $3 \le b \le 8$,
-and the attained spectra of Remark~\ref{rem:spectrum}
-(\texttt{verify\_spectrum.log}).
-\end{enumerate}
-
-Items 1--7 and 9--10 are exhaustive or certified within their stated ranges and
-reproducible by running the listed scripts; item 8 is exploratory.
-
-The $k$-color and matching-content computations behind
-Proposition~\ref{prop:k3}, Observation~\ref{obs:topcontent}, and the exact
-$f(n)$ values are likewise included in the ancillary artifact: a three-color
-extension of the search engine with the deficient-set/coset-triangle reduction
-(\texttt{k3.cpp}) and an independent integer-programming certification of all
-twelve witnesses (\texttt{cpsat\_rho3.py}); an exact bitmask dynamic program
-for $\max_\pi \mu(\pi)$ over $G(n,\sigma)$ (\texttt{fmu.cpp}; validated
-against a direct search on all of $S_n$ for $n \le 7$, and against the
-conversion inequality $\max_\pi \mu \ge \rho$ pointwise on every permutation
-processed); an integer-programming formulation for $\max_\pi \mu$ used for
-the structured instances (\texttt{fmu\_cpsat.py}, optimality certified in all
-reported cases); and an edge-by-edge verifier for the chain snake
-(\texttt{trap\_snake.py}).
+%% [E25 2026-07-30] sec:comp (Computational verification) RELOCATED to the
+%% final appendix (after the scrambled ladder); label kept. Ledger: E25.
 
 \section{Lower bounds and open problems}\label{sec:disc}
 
@@ -1449,29 +1318,27 @@ $\sigma \in S_n$, $n \le 9$. The top value is exact and structural:
 \begin{observation}\label{obs:topcontent}
 $\max_\pi \mu(\pi) = n$ if and only if $\rho(\sigma) = n$. Indeed, a simple
 path in $G(n,\sigma)$ using all $n$ matching edges visits all $2n$ vertices and
-has exactly $n-1$ non-matching edges, one between consecutive matching edges;
-consecutive connector edges must alternate between the top and bottom paths,
+has exactly $n-1$ non-matching edges, one between matching edges that are consecutive
+along the path; consecutive connector edges must alternate between the top and bottom paths,
 so the path is precisely the image of a properly colored Hamiltonian path
 under the conversion of Theorem~\ref{thm:conversion}, and pulls back. Thus the
 conversion inequality $\max_\pi \mu \ge \rho$ is tight at full content, and
 $f(n) \le n-1$ for every $n \ge 7$.
 \end{observation}
 
-On the negative side, the collapse of $\rho$ does \emph{not} transfer: both
-families of this paper have nearly full matching content at every point we can
-compute exactly. For the gadget family, exact values (integer programming,
+On the negative side, the collapse of $\rho$ does \emph{not} transfer: the
+gadget family has nearly full matching content at every point we can
+compute exactly. Exact values (integer programming,
 optimality certified) are
 \[
 \max_\pi \mu \;=\; n,\ n-1,\ n-2,\ n-3 \qquad \text{for } \sigma_{a,6},\ a = 2,3,4,5,
 \]
 i.e.\ the loss is $a-2$ -- one matching edge per gadget copy beyond the second
 -- while $\rho(\sigma_{a,b}) = \Theta(a+b)$ collapses; the snake bound
-$\ge n - 3a$ of \texttt{verify\_f\_linear.py} is far from optimal. The chains
-of Appendix~\ref{app:trap} behave identically: an explicit snake
-(machine-verified edge by edge at sizes up to $n = 5201$) uses at least
-$n - \#\{\text{odd blocks of size} \ge 3\}$ matching edges, and the exact values at
-computable sizes again lose only one edge per block beyond the second
-(e.g.\ $\max_\pi\mu = 26 = n-3$ for the five-block chain at $n = 29$).
+$\ge n - 3a$ of \texttt{verify\_f\_linear.py} is far from optimal.
+%% [E24 cut 2026-07-30] Trap-chain evidence sentence removed with app:trap; Q2
+%% evidence is now single-family (option (a), Alejandro 2026-07-30 -- consciously
+%% reverses E8 resolved-call 2's multi-family choice).
 
 \begin{quote}
 \emph{Open problem (the growth of $f$). Is $f(n) = n - o(n)$? In particular,
@@ -1484,7 +1351,7 @@ $n$. A proof of $f(n) = n - o(n)$ -- or a family beating the one-edge-per-piece
 pattern above -- would be very interesting.
 
 \paragraph{The exact gadget value.}
-Third, the machine computations of Section~\ref{sec:comp} support promoting
+Third, the machine computations of Appendix~\ref{sec:comp} support promoting
 the observed formula for the gadget family to a conjecture:
 
 \begin{conjecture}\label{conj:exactgadget}
@@ -1498,161 +1365,11 @@ a clean first project on these objects.
 
 \appendix
 
-%% [E6 REVERSED 2026-07-28, Alejandro] Trap-chain appendix reinstated verbatim
-%% from v2 (multi-family f-evidence kept for the E8/Q2 splice; see edit ledger).
-
-\section{A second construction: trap chains}\label{app:trap}
-
-This appendix gives an independent proof of $\pmin(n) = O(\sqrt n)$ by a different
-family, found and verified independently of the main text. It does not use
-Sections~\ref{sec:ports}--\ref{sec:gadget}; conversely, the main text does not use this
-appendix. The mechanism is again a parity obstruction, but localized differently: here
-\emph{large reversed blocks of odd size, flanked by singletons}, are traps that no
-properly colored path can cross.
-
-\begin{definition}\label{def:chain}
-Let $C = (c_0, c_1, \dots, c_r)$ be a composition of $n$ with $c_t \ge 1$ and
-\emph{no two consecutive entries equal to $1$}. Put $P_t = c_0 + \dots + c_{t-1}$, and
-let block $t$ occupy positions and values $[P_t, P_t + c_t - 1]$, reversed:
-\[
-\sigma_C(P_t + i) \;=\; P_t + c_t - 1 - i, \qquad 0 \le i < c_t .
-\]
-Write $L_t = P_t$ and $R_t = P_t + c_t - 1$ (the \emph{ports} of block $t$).
-\end{definition}
-
-\begin{lemma}\label{lem:chain-inv}
-$H_{\sigma_C}$ consists exactly of:
-\begin{enumerate}
-\item[(a)] doubled pairs $\{p, p+1\}$ for all consecutive positions inside each block;
-\item[(b)] for each $0 \le t < r$, one P-only cross edge $\{R_t, L_{t+1}\}$;
-\item[(c)] for each $0 \le t < r$, one V-only cross edge $\{L_t, R_{t+1}\}$;
-\item[(d)] nothing else.
-\end{enumerate}
-In particular the cross edges incident to block $t$ attach as follows
-(\emph{port--color crossover}): at $L_t$, a P-edge toward block $t-1$ and a V-edge
-toward block $t+1$; at $R_t$, a V-edge toward block $t-1$ and a P-edge toward block
-$t+1$ (omitting nonexistent neighbors). Non-port vertices carry no cross edges.
-\end{lemma}
-
-\begin{proof}
-(a) Inside a block, consecutive positions hold consecutive (descending) values: both a
-P-edge and a V-edge. (b) Positions $R_t, L_{t+1}$ are consecutive; their values are
-$P_t$ (block minimum) and $P_{t+1} + c_{t+1} - 1$ (block maximum), which differ by
-$c_t + c_{t+1} - 1 \ge 2$ since not both $c_t, c_{t+1}$ equal $1$: P-only. (c) The
-values $P_t + c_t - 1$ (maximum of block $t$, held at position $L_t$ since the block
-descends) and $P_t + c_t = P_{t+1}$ (minimum of block $t+1$, held at $R_{t+1}$) are
-consecutive; the positions $L_t, R_{t+1}$ differ by $c_t + c_{t+1} - 1 \ge 2$: V-only.
-(d) Positions in non-consecutive blocks are never adjacent; values in non-consecutive
-blocks never differ by $1$ (value ranges are contiguous in block order); within
-consecutive blocks, (b)/(c) list the only position-adjacent (resp.\ value-adjacent)
-pairs not internal to a block. The crossover statement reads off (b) and (c) at blocks
-$t-1, t, t+1$.
-\end{proof}
-
-\begin{lemma}\label{lem:chain-visit}
-Let $Q$ be a PC path in $H_{\sigma_C}$ and let $t$ be a block containing no endpoint of
-$Q$. Then every maximal run of consecutive $Q$-vertices inside block $t$ is either
-(i) a single port vertex, or (ii) a \emph{full traversal} of all $c_t$ vertices from
-one port to the other. In case (ii), if the entering cross edge has color $\chi$, the
-exiting cross edge has color $\ne \chi$ if and only if $c_t$ is odd.
-\end{lemma}
-
-\begin{proof}
-A run with no endpoint of $Q$ has an entering and an exiting cross edge, which by
-Lemma~\ref{lem:chain-inv} attach only at ports; the run's internal edges lie in the
-block, whose internal graph is a doubled path. If the run enters and leaves at the same
-port it is that single vertex (re-reaching the entry port would repeat it); the two
-cross edges at one port have different colors (Lemma~\ref{lem:chain-inv}), as the PC
-condition requires. Otherwise it goes from one port to the other through the entire
-internal path: a full traversal with $c_t - 1$ internal edges. The PC condition forces
-the internal colors to alternate starting with $\bar\chi$, so the last internal edge has
-color $\chi$ iff $c_t - 1$ is even; the exit edge differs from it, so it has color
-$\bar\chi$ iff $c_t$ is odd.
-\end{proof}
-
-\begin{lemma}[Trap Lemma]\label{lem:trap}
-Let block $t$ of $\sigma_C$ have odd size $c_t \ge 3$ with singleton neighbors
-$c_{t-1} = c_{t+1} = 1$ ($1 \le t \le r-1$). Let $Q$ be a PC path with no endpoint in
-block $t$. Then $Q$ uses at most $2$ vertices of block $t$ (at most one visit per port,
-and no full traversal).
-\end{lemma}
-
-\begin{proof}
-Write $A$ for block $t$ and $s^-, s^+$ for the single vertices of blocks $t-1$, $t+1$.
-By Lemma~\ref{lem:chain-inv} the four cross edges at $A$ are
-\[
-\text{at } L_A:\ \{s^-, L_A\} \text{ (P)}, \quad \{L_A, s^+\} \text{ (V)};
-\qquad
-\text{at } R_A:\ \{s^-, R_A\} \text{ (V)}, \quad \{R_A, s^+\} \text{ (P)}.
-\]
-Suppose $Q$ makes a full traversal of $A$, entering by a cross edge of color $\chi$;
-since $c_t$ is odd it exits by a cross edge of color $\bar\chi$
-(Lemma~\ref{lem:chain-visit}). Four cases:
-\begin{enumerate}
-\item enter at $L_A$ by $\{s^-, L_A\}$ ($\chi = \mathrm P$): the exit is the V-colored
-cross edge at $R_A$, $\{s^-, R_A\}$ -- but $s^-$ was visited immediately before
-entering, a repetition;
-\item enter at $L_A$ by $\{L_A, s^+\}$ ($\chi = \mathrm V$): the exit is
-$\{R_A, s^+\}$ -- repeats $s^+$;
-\item enter at $R_A$ by $\{s^-, R_A\}$ ($\chi = \mathrm V$): the exit is
-$\{s^-, L_A\}$ -- repeats $s^-$;
-\item enter at $R_A$ by $\{R_A, s^+\}$ ($\chi = \mathrm P$): the exit is
-$\{L_A, s^+\}$ -- repeats $s^+$.
-\end{enumerate}
-Each case contradicts simplicity of $Q$. So every visit is a single port vertex; there
-are two ports.
-\end{proof}
-
-\begin{theorem}\label{thm:trap-main}
-Let $L \ge 3$ be odd, $k \ge 1$, $0 \le p \le L+1$, and $C = (2, (L, 1)^k, 3+p, 2)$, a
-composition of $n = (L+1)k + p + 7$ with no two consecutive $1$'s. Then
-\[
-\rho(\sigma_C) \;\le\; 3k + 3L + p + 1 .
-\]
-Consequently $\pmin(n) \le 7\sqrt n + O(1)$ for all sufficiently large $n$, by choosing
-$L$ the largest odd integer $\le \sqrt n$ and $k = \lfloor (n-7)/(L+1) \rfloor$,
-$p = n - 7 - (L+1)k$.
-\end{theorem}
-
-\begin{proof}
-The blocks, in order, are: a $2$-block; $A_1, s_1, A_2, s_2, \dots, A_k, s_k$ where each
-$A_t$ has size $L$ and each $s_t$ is a singleton; a $(3+p)$-block; a $2$-block. For
-$2 \le t \le k$ the block $A_t$ is flanked by the singletons $s_{t-1}$ and $s_t$, so
-Lemma~\ref{lem:trap} applies to it; $A_1$ is flanked on the left by the initial
-$2$-block and is not trapped.
-
-Fix a PC path $Q$ and charge each block with the number of $Q$-vertices it contains;
-$\rho(Q)$ is the sum of the charges, bounded by category:
-\begin{itemize}
-\item each singleton $s_t$: charge $\le 1$; total $\le k$;
-\item each trapped block $A_t$ ($2 \le t \le k$) with no endpoint of $Q$: charge $\le
-2$ (Lemma~\ref{lem:trap}); at most $2$ trapped blocks may contain an endpoint of $Q$,
-each then with charge $\le L$ (its size). Hence the trapped blocks contribute at most
-$2(k-1) + 2(L - 2)$ in total (each endpoint block exceeds the trap bound $2$ by at most
-$L - 2$);
-\item $A_1$: charge $\le L$;
-\item the three remaining blocks: charges $\le 2$, $\le 3+p$, $\le 2$; total $\le 7+p$.
-\end{itemize}
-Summing: $\rho(Q) \le k + 2(k-1) + 2(L-2) + L + (7+p) = 3k + 3L + p + 1$. (If an
-endpoint lies in a non-trapped block, the corresponding excess term is not needed; the
-bound only improves.)
-
-For the corollary: with $L \le \sqrt n$ odd and maximal, $k \le n/(L+1) \le n/L$ and
-$p \le L + 1$, so $\rho \le 3n/L + 4L + 4 = 7\sqrt n + O(1)$ using $L = \sqrt n -
-O(1)$.
-\end{proof}
-
-\begin{remark}\label{rem:trap-data}
-The parity hypothesis is again essential: for even $L$, Lemma~\ref{lem:chain-visit}
-makes a full traversal \emph{preserve} the boundary color, the four cases of
-Lemma~\ref{lem:trap} become consistent, and computation shows the analogous even-$L$
-chains are fully traversable ($\rho$ grows with slope $1$). Exact computation
-(Section~\ref{sec:comp}) gives
-$\rho(\sigma_C) = 2k + 2(L-1)$ for $C = (2,(L,1)^k,3,2)$, odd $L \in \{5,7,9,13,15,21\}$
-and all $k \ge 2$ within reach ($n \le 57$): the same per-period slope $2$ as the family
-of Section~\ref{sec:main}. We do not know whether the two families are related beyond
-sharing this slope.
-\end{remark}
+%% [E24 cut 2026-07-30] Appendix A (trap chains, app:trap) REMOVED for good:
+%% def:chain, lem:chain-inv, lem:chain-visit, lem:trap, thm:trap-main, rem:trap-data
+%% (reverses the E6 reversal). Rationale: thm:trap-main's 7*sqrt(n)+O(1) is
+%% asymptotically sharper than the main theorem's 8*sqrt(n)+20, silently undercutting
+%% the paper's constant story and the classification-payoff framing. Ledger: E24.
 
 \section{The odd gadget: classification of admissible visits of
 \texorpdfstring{$H_{T'_b}$}{H\_\{T'\_b\}}}\label{app:oddb}
@@ -1915,7 +1632,7 @@ direct enumeration confirms that the classification's \emph{shape} persists:
 $T'_5 = (0,1,4,3,2)$ has admissible visits exactly $(0)$, $(0,1,2)$, $(0,1,4)$,
 $(2,1,4)$, $(2,3,4)$, so $M(T'_5) = 3$. For $b = 3, 4$ no member of either gadget
 family exists, and the exhaustive minima $\mu(3) = \mu(4) = 3$ are computed directly
-(Section~\ref{sec:comp}). Note also the role pairs realized here ---
+(Appendix~\ref{sec:comp}). Note also the role pairs realized here ---
 $\{p_0, v_1\}$ and $\{v_0, p_1\}$ appear, while $T_b$ forbids exactly those two ---
 so the two gadget families attain the transit floor through genuinely different visit
 structures.
@@ -1928,7 +1645,7 @@ structures.
 
 For $n \le 12$ the exact value of $\pmin(n)$, and the size of the \emph{deficient
 set} $D(n) = \{\sigma \in S_n : \rho(\sigma) < n\}$, are known by exhaustive
-enumeration (the joint $(b, \rho)$ censuses of Section~\ref{sec:comp}, logs
+enumeration (the joint $(b, \rho)$ censuses of Appendix~\ref{sec:comp}, logs
 \texttt{exh7.txt}--\texttt{exh12.txt}).
 %% [E22 2026-07-29] Census extended to n <= 16 from the WP-I threshold censuses
 %% (research repo); |D(n)| not recorded there. Values ride P-WPI.1/.2/.4/.5.
@@ -2037,8 +1754,8 @@ Taking $\pi=\Pi$ gives $\max_\pi\mu(\pi)\ge\rho(\sigma)$ for each $\sigma$; the
 minimum over $\sigma$ gives $f(n)\ge\pmin(n)$.
 \end{proof}
 
-The conversion is one-directional: a path in $G(n,\sigma)$ that uses a run of two
-same-colored path edges (top or bottom) has no PC-path preimage, so the inequality
+The conversion is one-directional: a path in $G(n,\sigma)$ that uses two consecutive
+edges of the same path (top or bottom) has no PC-path preimage, so the inequality
 $f(n)\ge\pmin(n)$ cannot be reversed. This is the precise sense in which the negative
 result for $\pmin$ (Theorem~\ref{thm:main-intro}) does not transfer to $f$.
 
@@ -2056,6 +1773,130 @@ sublinear-expander methods reach the same $n^{2/3-o(1)}$ target without the
 matching structure \cite{BCPS26} -- it was the initial motivation for our
 reduction into the study of $\pmin(n)$.
 
+\section{Computational verification}\label{sec:comp}
+
+The asymptotic theorems and their constants are proved without computation; the
+computer-assisted claims are the small-size base cases $b \in \{4,5\}$ of
+Proposition~\ref{prop:floor-upper}, the spectrum data of Remark~\ref{rem:spectrum},
+the $\pmin$ census of Appendix~\ref{app:census}, and the $k$-color and
+matching-content values of Section~\ref{sec:disc}. This section specifies the
+computations that independently verify the constructions and supply the exact
+small-case values, and records the empirical sharpness of the families.
+\textbf{All code, command lines, and output logs are provided as ancillary files with
+this submission} (directory \texttt{code/} in the repository; \texttt{code/README.md}
+maps each claim
+below to a script and a log, and \texttt{code/MANIFEST.sha256} lists SHA-256 checksums).
+
+\paragraph{Algorithm.} The basic object is an exact longest-PC-path search. Its state
+space is the set of triples (\emph{visited set}, \emph{current vertex}, \emph{last edge
+color}); the initial states are all $(\{x, w\}, w, c)$ over edges $\{x, w\}$ of color
+$c$; a transition extends a state by an unvisited neighbor along an edge of the other
+color. The legal future extensions of a partial PC path depend only on its state, so
+distinct PC paths reaching the same state may be identified without loss; $\rho(\sigma)$
+is then the maximum cardinality of the visited set over all \emph{reachable} states,
+computed by an exhaustive search that visits every reachable state once (a memo set of
+states; no pruning). The method is exact by construction; its cost is the number of
+reachable states. That number is exponential in general -- on unstructured instances we
+used the method only for $n \le 19$ -- but is small on the structured families here,
+because the gadget admits relatively few reachable states: for $\sigma_{a,b}$ we measure
+$57{,}066$
+reachable states at $n = 80$, $5{,}012{,}186$ at $n = 600$, and $7{,}273{,}586$ at
+$n = 720$ (the logs report the count for every table row). The constrained variants
+computing $M(\pi)$ (fixed start/end terminals and first/last colors) are the same search
+with the initial and accepting states restricted.
+
+\paragraph{Implementations.} Three independent implementations were used: a plain
+recursive enumerator and a memoized iterative one (both Python, in the artifact), which
+agree on $300$ random permutations of sizes $4$--$8$; and an independently written C++
+solver (also in the artifact), which agrees with the
+Python solvers on every instance checked by both, including exact values of
+$\rho(\sigma_{a,b})$ at $(a,b) \in \{(6,8), (5,10), (4,12)\}$. In addition, the
+artifact contains a
+\emph{minimal independent verifier} (\texttt{verify\_M.py}, about $100$ lines, written
+directly from Definition~\ref{def:M} with no shared code), which re-derives $M(T_b)$ and
+the complete list of admissible visits by brute force for $b \le 14$.
+
+\paragraph{Verified statements.} Each item states the claim, its range, and its log.
+\begin{enumerate}
+\item \textbf{Census anchors} (\texttt{search\_small.log}): $\pmin(7) = 5$ and
+$\pmin(8) = 6$ by full enumeration of $S_7, S_8$ with the Python solvers,
+independently of the C++ censuses of item~4; see Appendix~\ref{app:census}.
+%% [E25 cut 2026-07-30] Item "Classification" (verify_M checks of thm:classification
+%% + odd-b values) removed: reassurance of a fully proved theorem; the intro's
+%% F1 clause went with it. verify_M.py itself stays (Implementations paragraph).
+%% [E25 cut 2026-07-30] Item "The family at scale" (M(T_b)=3 to b=100) removed:
+%% pure reassurance of thm:classification, which proves it for all even b.
+\item \textbf{Optimality of the gadget at small sizes} (\texttt{search\_small.log}):
+full enumeration of $S_b$ for $4 \le b \le 9$ gives $\min_{\pi \in S_b} M(\pi) = 3$ in
+every case; no gadget of size $\le 9$ beats transit number $3$.
+%% [E25 cut 2026-07-30] Item "Explicit lower-bound path" removed: reassurance of the
+%% fully proved prop:lower (twin of the E20-F2 in-proof sentence cut).
+\item \textbf{Exact values} (\texttt{endtoend.log}, \texttt{bigtable.log}): for
+$\sigma_{a,b}$:
+
+\begin{center}
+\begin{tabular}{rrrrrrr}
+\toprule
+$a$ & $b$ & $n$ & $\rho$ (exact) & $2a{+}2b{-}4$ & $4a{+}2b$ & $\rho/n$ \\
+\midrule
+10 & 8  & 80  & 32 & 32 & 56  & 0.400 \\
+12 & 8  & 96  & 36 & 36 & 64  & 0.375 \\
+12 & 12 & 144 & 44 & 44 & 72  & 0.306 \\
+16 & 12 & 192 & 52 & 52 & 88  & 0.271 \\
+20 & 12 & 240 & 60 & 60 & 104 & 0.250 \\
+16 & 16 & 256 & 60 & 60 & 96  & 0.234 \\
+24 & 16 & 384 & 76 & 76 & 128 & 0.198 \\
+20 & 20 & 400 & 76 & 76 & 120 & 0.190 \\
+30 & 16 & 480 & 88 & 88 & 152 & 0.183 \\
+24 & 20 & 480 & 84 & 84 & 136 & 0.175 \\
+30 & 20 & 600 & 96 & 96 & 160 & 0.160 \\
+36 & 20 & 720 & 108 & 108 & 184 & 0.150 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Every exact value equals $2a + 2b - 4$ and sits inside the proven window
+$[2a{+}2b{-}7,\ 4a{+}2b]$ of \eqref{eq:twosided}; the two rows at $n = 480$ (differing
+in $\rho$) illustrate that $\rho(\sigma_{a,b})$ tracks $a$ and $b$ separately, not just
+their product.
+\item \textbf{Exhaustive small-$n$ statistics} (\texttt{logs/exh7.txt}--%
+\texttt{exh12.txt}, C++ solver): the joint distribution of $(b(\sigma), \rho(\sigma))$
+over all of $S_n$ for $7 \le n \le 12$, the source of the $\pmin$ census of
+Appendix~\ref{app:census} and of the deficient-set counts $|D(n)|$ quoted in
+Section~\ref{sec:disc}; at $n = 12$ this enumerates all $479{,}001{,}600$
+permutations.
+%% [E25 cut 2026-07-30] Item "Landscape" (probe.py, exploratory) removed: orphan --
+%% no claim in the paper cited it; process narrative.
+%% [E25 cut 2026-07-30] Item "The transit-floor construction" (verify_floor) removed:
+%% reassurance of the fully proved thm:floor-lower; the rem:floor-consequences
+%% validation sentence (E20-F3) went with it.
+\item \textbf{The odd gadget and the spectrum} (\texttt{verify\_oddb.log},
+\texttt{verify\_spectrum.log}): the inventory, highway and crossing claims of
+Appendix~\ref{app:oddb} confirmed uniformly for odd $b \in \{7, 9, \dots, 21\}$, and
+$M(T'_b) = 3$ there and at the degenerate $b = 5$; as positive control the same
+checker reproduces $M(T_b) = 3$ (even $b$) and $M(T_b) = b$ (odd $b$) for the
+even-gadget family. Separately, exhaustive computation of $M(\pi)$ for every
+$\pi \in S_b$, $2 \le b \le 8$, yields $\mu(2) = 2$, $\mu(b) = 3$ for $3 \le b \le 8$,
+and the attained spectra of Remark~\ref{rem:spectrum}
+(\texttt{verify\_spectrum.log}).
+\end{enumerate}
+
+Every item is exhaustive or certified within its stated range and reproducible by
+running the listed scripts.
+
+The $k$-color and matching-content computations behind
+Proposition~\ref{prop:k3}, Observation~\ref{obs:topcontent}, and the exact
+$f(n)$ values are likewise included in the ancillary artifact: a three-color
+extension of the search engine with the deficient-set/coset-triangle reduction
+(\texttt{k3.cpp}) and an independent integer-programming certification of all
+twelve witnesses (\texttt{cpsat\_rho3.py}); an exact bitmask dynamic program
+for $\max_\pi \mu(\pi)$ over $G(n,\sigma)$ (\texttt{fmu.cpp}; validated
+against a direct search on all of $S_n$ for $n \le 7$, and against the
+conversion inequality $\max_\pi \mu \ge \rho$ pointwise on every permutation
+processed); an integer-programming formulation for $\max_\pi \mu$ used for
+the structured instances (\texttt{fmu\_cpsat.py}, optimality certified in all
+reported cases).
+
 \section*{Acknowledgments}
 
 This paper merges and supersedes the author's two earlier notes on this problem,
@@ -2070,8 +1911,8 @@ The central case analyses are classifications
 (Theorems~\ref{thm:classification} and~\ref{thm:oddb-classification}) and elementary
 matching arguments (Theorem~\ref{thm:floor-lower}) whose every step is locally
 verifiable; every computational claim is reproducible from the ancillary artifact,
-which includes independent verifiers written directly from the definitions; and the
-main theorem has a second proof in Appendix~\ref{app:trap}.
+which includes independent verifiers written directly from the definitions.
+%% [E24 cut 2026-07-30] "second proof in Appendix A" clause removed with app:trap.
 %% [E20 2026-07-29] "unrefereed preprint" sentence cut (same stance-genre as the
 %% removed trust wording; false upon acceptance).
 
