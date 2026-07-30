@@ -1,0 +1,23 @@
+=== STRUCTURAL CLAIM CONFIRMATION for pi_b, odd b ===
+
+b= 7: ALL OK
+b= 9: ALL OK
+b=11: ALL OK
+b=13: ALL OK
+b=15: ALL OK
+b=17: ALL OK
+b=19: ALL OK
+b=21: ALL OK
+
+=== POSITIVE CONTROL: paper gadget T_b ===
+  T_6 (even): M=3  (expect 3)
+  T_8 (even): M=3  (expect 3)
+  T_10 (even): M=3  (expect 3)
+  T_7 (odd) : M=7  (expect 7)
+  T_9 (odd) : M=9  (expect 9)
+  T_11 (odd) : M=11  (expect 11)
+
+=== NEGATIVE CONTROL: M=2 floor ===
+  min M over all perms: b=2 -> 2 (expect 2), b=3 -> 3 (expect 3), b=4 -> 3 (expect 3)
+
+RESULT: structural confirmation PASSED for all tested odd b

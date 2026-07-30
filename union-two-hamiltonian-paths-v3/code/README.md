@@ -7,7 +7,7 @@ the O(√n) collapse, the transit floor, and the failure of block lower bounds*
 These files accompany the paper as its ancillary artifact; in the source repository
 they live in `code/`. The paper cites individual logs by name.
 
-Environment used to produce `logs/`: Python 3.14, Windows 10, single core; no external
+Environment used to produce `logs/`: Python 3.14, Windows 11, single core; no external
 Python dependencies for the core verifiers (standard library only). Two optional
 scripts, `cpsat_rho3.py` and `fmu_cpsat.py`, use Google OR-Tools (`pip install
 ortools`) to certify optimality of the three-color witnesses and the exact max-μ
@@ -32,13 +32,13 @@ The item numbers match the numbered list of verified statements in that section.
 ## How to reproduce
 
 ```
-python verify_M.py        # ~40 s   independent verifier: classification + M values
-python validate2.py       # ~5 s    solver cross-validation + odd-b parity + two-visit total
-python endtoend.py        # ~1 min  exact rho of inflations vs bound, n ≤ 80
-python search_small.py    # ~2 min  rho_min(7,8) + exhaustive min M over S_b, b ≤ 9
-python bigtable.py        # ~1 min  exact rho table up to n = 720
-python verify_oddb.py     # ~2 min  odd-gadget structural confirmation + controls
-python verify_spectrum.py # ~20 min transit spectrum, all of S_b for b ≤ 8
+python verify_M.py        # ~1 s   independent verifier: classification + M values
+python validate2.py       # ~1 s   solver cross-validation + odd-b parity + two-visit total
+python endtoend.py        # ~1 s   exact rho of inflations vs bound, n ≤ 80
+python search_small.py    # ~40 s  rho_min(7,8) + exhaustive min M over S_b, b ≤ 9
+python bigtable.py        # ~40 s  exact rho table up to n = 720
+python verify_oddb.py     # ~1 s   odd-gadget structural confirmation + controls
+python verify_spectrum.py # ~4 min transit spectrum, all of S_b for b ≤ 8
 python cpsat_rho3.py      # optional (ortools): certify the 12 three-color witnesses
 python fmu_cpsat.py       # optional (ortools): certify exact max-mu values
 ```

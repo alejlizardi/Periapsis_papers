@@ -1,0 +1,7 @@
+a=  3 b=  6 n=  18: path on 24 vertices, 9 matching edges (claim >= 9 = n - 3a)  VALID
+a=  4 b=  8 n=  32: path on 49 vertices, 20 matching edges (claim >= 20 = n - 3a)  VALID
+a= 10 b=  8 n=  80: path on 127 vertices, 50 matching edges (claim >= 50 = n - 3a)  VALID
+a= 12 b= 12 n= 144: path on 249 vertices, 108 matching edges (claim >= 108 = n - 3a)  VALID
+a= 20 b= 20 n= 400: path on 737 vertices, 340 matching edges (claim >= 340 = n - 3a)  VALID
+a= 30 b= 20 n= 600: path on 1107 vertices, 510 matching edges (claim >= 510 = n - 3a)  VALID
+ALL CHECKS PASSED

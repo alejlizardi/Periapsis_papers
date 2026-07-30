@@ -11,3 +11,5 @@
 # Python
 __pycache__/
 *.pyc
+# Ancillary artifact logs are shipped outputs, not build artifacts
+!union-two-hamiltonian-paths-v3/code/logs/*.log

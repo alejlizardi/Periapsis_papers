@@ -1,0 +1,9 @@
+a=3 b=6 n=18: rho=14  bound=30  rho/n=0.778  [1728 states, 0.0s] bound vacuous
+a=4 b=6 n=24: rho=16  bound=36  rho/n=0.667  [3402 states, 0.0s] bound vacuous
+a=5 b=6 n=30: rho=18  bound=42  rho/n=0.600  [5652 states, 0.0s] bound vacuous
+a=4 b=8 n=32: rho=20  bound=40  rho/n=0.625  [7506 states, 0.0s] bound vacuous
+a=6 b=8 n=48: rho=24  bound=52  rho/n=0.500  [18842 states, 0.0s] bound vacuous
+a=5 b=10 n=50: rho=26  bound=50  rho/n=0.520  [22046 states, 0.0s] bound vacuous
+a=8 b=8 n=64: rho=28  bound=64  rho/n=0.438  [35362 states, 0.0s] bound vacuous
+a=6 b=10 n=60: rho=28  bound=56  rho/n=0.467  [33226 states, 0.0s] ok
+a=10 b=8 n=80: rho=32  bound=76  rho/n=0.400  [57066 states, 0.0s] ok
