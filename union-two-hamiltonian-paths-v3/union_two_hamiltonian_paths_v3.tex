@@ -63,6 +63,10 @@ ancillary files accompanying this submission; see Appendix~\ref{sec:comp}.}}
 \vspace{4pt}
 
 \begin{abstract}
+%% [E13 draft 2026-07-30, merged 2026-08-04] E5-era scaffolding abstract replaced
+%% by the two-paragraph draft (chat-drafted, Alejandro-approved 07-30); the f(n)
+%% ending re-aligned to the E27 recast (conj:flinear, "high" wording) at merge
+%% time. Final hand-polish remains Alejandro's (E13).
 Overlay two Hamiltonian paths on a common vertex set of size $n$, one blue and one
 red. How long a properly colored path -- consecutive edges alternating in color --
 must the union contain? Every such union is $H_\sigma$ for a permutation $\sigma$ of
@@ -70,16 +74,27 @@ $\{0,\dots,n-1\}$, with blue edges joining consecutive positions and red edges
 consecutive values; write $\rho(\sigma)$ for the maximum number of vertices on a
 properly colored path in $H_\sigma$, and $\pmin(n) = \min_\sigma \rho(\sigma)$. We
 prove $\pmin(n) = O(\sqrt n\,)$, explicitly $\pmin(n) \le 8\sqrt n + 20$ for
-$n \ge 100$, by inflating a gadget whose \emph{transit number} equals $3$ -- and we
-prove that $3$ is optimal for every gadget size. In the other direction we show that
-block statistics yield no lower bound: there are \emph{block-free} permutations
-($b(\sigma) = n$ maximal $\pm1$-blocks) with $\rho = \Theta(\sqrt n\,)$, so
-$\inf_\sigma \rho(\sigma)/b(\sigma) = 0$, and the inequality
-$\rho \ge b(\sigma)$, which holds exhaustively through $n = 12$, first fails at
-$n = 14$. The problem the paper poses is the lower bound: \emph{does
+$n \ge 100$, by inflating a gadget whose \emph{transit number} equals $3$, and we
+prove that $3$ is optimal at every gadget size: the construction cannot be improved
+by better gadgets. The problem the paper poses is the lower bound: \emph{does
 $\pmin(n) \to \infty$?} Two overlaid spanning paths look far too connected for the
-answer to be no, yet no lower bound growing with $n$ is known, and our results show
-that any such bound must stop at $O(\sqrt n\,)$.
+answer to be no, yet no bound growing with $n$ is known, and any such bound must
+stop at $O(\sqrt n\,)$.
+
+Three further problems, each with exact data behind it, close the paper. A third
+ordering repairs every small example: any union of three Hamiltonian paths on at
+most ten vertices has a properly colored Hamiltonian path, and the smallest
+counterexample, unique up to symmetry, is a triple of orderings of eleven points
+whose union misses a properly colored Hamiltonian path by exactly one vertex.
+Whether $\pminK{3}(n) \to \infty$, and whether the collapse persists for every
+fixed number of paths, is open. The collapse also does not transfer to the
+matching side: a properly colored path in $H_\sigma$ converts into a path in a
+ladder graph with $\sigma$-permuted rungs, using one rung per vertex, and our
+family, despite $\rho = \Theta(\sqrt n\,)$, retains high rung content at every
+point we can compute exactly. We conjecture that the minimum over $\sigma$ of the
+best rung count, $f(n)$, grows linearly in $n$; how close it stays to $n$ is
+open. Finally, the exact value $\rho(\sigma_{a,b}) = 2a + 2b - 4$, computed at
+every tested point up to $n = 720$, is conjectured for the whole gadget family.
 \end{abstract}
 
 \medskip
