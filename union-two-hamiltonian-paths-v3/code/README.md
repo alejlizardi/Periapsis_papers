@@ -1,8 +1,7 @@
 # Reproducibility artifact
 
-Ancillary files for: *Properly colored paths in the union of two Hamiltonian paths:
-the O(√n) collapse, the transit floor, and the failure of block lower bounds*
-(Lizardi, July 2026).
+Ancillary files for: *How long a properly colored path must the union of two
+Hamiltonian paths contain?* (Lizardi, July 2026).
 
 These files accompany the paper as its ancillary artifact; in the source repository
 they live in `code/`. The paper cites individual logs by name.

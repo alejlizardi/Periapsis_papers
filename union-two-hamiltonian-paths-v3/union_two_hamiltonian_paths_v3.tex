@@ -7,7 +7,7 @@
 \usepackage{fancyhdr}
 \usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
 \hypersetup{
-  pdftitle={Properly colored paths in the union of two Hamiltonian paths: the O(sqrt n) collapse, the transit floor, and the failure of block lower bounds},
+  pdftitle={How long a properly colored path must the union of two Hamiltonian paths contain?},
   pdfauthor={Alejandro Lizardi},
   pdfsubject={Combinatorics; properly colored paths in edge-colored multigraphs},
   pdfkeywords={properly colored path; alternating path; edge-colored multigraph; union of Hamiltonian paths; permutation; inflation; transit number; scrambled ladder}
@@ -41,9 +41,12 @@
 \newcommand{\smax}{s_{\max}}
 \DeclareMathOperator{\pc}{pc}
 
-\title{Properly colored paths in the union of two Hamiltonian paths:\\
-the $O(\sqrt{n}\,)$ collapse, the transit floor,\\
-and the failure of block lower bounds}
+%% [E10 2026-07-30, merged 2026-08-04] Title decision: question form (option D) —
+%% the paper's declared centerpiece is the open lower-bound problem; the old third
+%% clause named the E5-cut section. pdftitle + code/README quote updated in the
+%% same pass. (Decided on the laptop 07-30, never pushed; merged post-E27-pull.)
+\title{How long a properly colored path must\\
+the union of two Hamiltonian paths contain?}
 \author{Alejandro Lizardi%
 \thanks{Independent researcher, \texttt{alejlizardi05@gmail.com}.
 The proofs and computations in this paper were AI-assisted by Claude, under the
@@ -1930,10 +1933,10 @@ reported cases).
 
 \section*{Acknowledgments}
 
-This paper merges and supersedes the author's two earlier notes on this problem,
-and extends them with the transit-floor theorem (Section~\ref{sec:floor}) and the
-open-problems data of Section~\ref{sec:disc}, obtained in a follow-up research
-campaign. The proofs and computations were
+%% [E16 cut 2026-07-30, merged 2026-08-04] "merges and supersedes the author's two
+%% earlier notes ... obtained in a follow-up research campaign" sentence removed
+%% (process narration, same genre as the E20 trust/preprint stance cuts).
+The proofs and computations were
 AI-assisted by Claude, under the Periapsis research structure.
 %% [E20 2026-07-29] "checkable without trusting either the author or the
 %% assistant" stance removed (not appropriate for publication); the factual
