@@ -80,6 +80,7 @@ if __name__ == "__main__":
             ("sigma_{4,6} n=24", sigma_ab(4, 6)),
             ("chain(7,1,7,1,7) n=23", sigma_C([7, 1, 7, 1, 7])),
             ("sigma_{3,8} n=24", sigma_ab(3, 8)),
+            ("sigma_{6,6} n=36", sigma_ab(6, 6)),
         ]
         for name, sig in probes:
             status, val, bound = maxmu_cpsat(sig, timeout=float(sys.argv[2]) if len(sys.argv) > 2 else 1200.0)

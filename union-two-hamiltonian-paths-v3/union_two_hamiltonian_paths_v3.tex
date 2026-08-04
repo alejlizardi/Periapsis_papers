@@ -1309,11 +1309,23 @@ Second, the matching-edge parameter of the scrambled ladder
 $f(n) = \min_\sigma \max_\pi \mu(\pi)$ grow? Exhaustive computation of
 $\max_\pi \mu(\pi)$ over all of $S_n$ for $n \le 9$ (ancillary artifact) gives
 the first exact values:
-\[
-f(n) = n \ \ (2 \le n \le 6), \qquad f(7) = 6, \quad f(8) = 7, \quad f(9) = 8 ,
-\]
-and, in fact, $\max_\pi \mu(\pi) \in \{n-1,\, n\}$ for \emph{every}
-$\sigma \in S_n$, $n \le 9$. The top value is exact and structural:
+\begin{gather*}
+f(n) = n \ \ (2 \le n \le 6), \qquad f(7) = 6, \quad f(8) = 7, \quad f(9) = 8,\\
+f(10) = 8, \quad f(11) = 9, \quad f(12) = 10 ,
+\end{gather*}
+%% [E27 2026-08-04] Display extended to n = 12 (WP-M); two-value sentence replaced
+%% by the exception report; 13..29 bracket clause approved 2026-08-03.
+and, in fact, $\max_\pi \mu(\pi) \in \{n-1,\, n\}$ for \emph{every} $\sigma \in S_n$,
+$n \le 9$ -- but not beyond: from $n = 10$ a third value appears. Exactly
+$8$, $24$, and $1088$ permutations of $S_{10}$, $S_{11}$, $S_{12}$ (respectively)
+have $\max_\pi \mu = n-2$, and none does worse through $n = 12$, so
+$f(n) = n-2$ there. The smallest examples are the four-block permutations of
+shape $(2,3,3,2)$, e.g.\ $\sigma = (1,0,\ 4,3,2,\ 7,6,5,\ 9,8)$, where two
+odd blocks each cost a rung; all exceptional permutations satisfy
+$\rho(\sigma) \le n-2$, as the conversion inequality forces. The smallest $n$
+admitting a three-rung loss lies between $13$ and $29$, the upper end from the
+exact integer-programming values for the chain and gadget families. The top
+value is exact and structural:
 
 \begin{observation}\label{obs:topcontent}
 $\max_\pi \mu(\pi) = n$ if and only if $\rho(\sigma) = n$. Indeed, a simple
@@ -1327,11 +1339,10 @@ $f(n) \le n-1$ for every $n \ge 7$.
 \end{observation}
 
 On the negative side, the collapse of $\rho$ does \emph{not} transfer: the
-gadget family has nearly full matching content at every point we can
-compute exactly. Exact values (integer programming,
-optimality certified) are
+gadget family retains high matching content at every point we can compute
+exactly. Exact values (integer programming, optimality certified) are
 \[
-\max_\pi \mu \;=\; n,\ n-1,\ n-2,\ n-3 \qquad \text{for } \sigma_{a,6},\ a = 2,3,4,5,
+\max_\pi \mu \;=\; n,\ n-1,\ n-2,\ n-3,\ n-4 \qquad \text{for } \sigma_{a,6},\ a = 2,\dots,6,
 \]
 i.e.\ the loss is $a-2$ -- one matching edge per gadget copy beyond the second
 -- while $\rho(\sigma_{a,b}) = \Theta(a+b)$ collapses; the snake bound
@@ -1339,16 +1350,23 @@ $\ge n - 3a$ of \texttt{verify\_f\_linear.py} is far from optimal.
 %% [E24 cut 2026-07-30] Trap-chain evidence sentence removed with app:trap; Q2
 %% evidence is now single-family (option (a), Alejandro 2026-07-30 -- consciously
 %% reverses E8 resolved-call 2's multi-family choice).
+%% [E27 2026-08-04] Open problem RECAST as the linearity conjecture (Alejandro,
+%% 2026-08-03); sigma_{6,6} = 32 point added (a = 6); "much closer to n" gloss cut.
 
-\begin{quote}
-\emph{Open problem (the growth of $f$). Is $f(n) = n - o(n)$? In particular,
-is $f(n) \ge n - O(\sqrt n)$?}
-\end{quote}
+\begin{conjecture}\label{conj:flinear}
+$f(n) = \Theta(n)$: there is a constant $c > 0$ with $f(n) \ge cn$ for all $n$.
+\end{conjecture}
 
-The strongest known lower bound is $f(n) \ge 0.1\, n^{4/5}$
-(Appendix~\ref{sec:conversion}); our data suggests the truth is much closer to
-$n$. A proof of $f(n) = n - o(n)$ -- or a family beating the one-edge-per-piece
-pattern above -- would be very interesting.
+The strongest lower bound known is $f(n) \ge 0.1\, n^{4/5}$
+(Appendix~\ref{sec:conversion}), so even linearity is open. Two more ambitious
+targets suggest themselves: $f(n) = n - o(n)$ (sublinear loss), and the sharper
+$f(n) \ge n - O(\sqrt n)$, which would make the loss of $f$ match the collapse
+scale of $\rho$ itself. The exact values above mark the fork: if the
+one-edge-per-copy pattern of $\sigma_{a,6}$ persists for every $a$, then
+$f(n) \le \tfrac{5}{6}\,n + 2$ infinitely often, refuting both targets while
+leaving Conjecture~\ref{conj:flinear} intact; if it saturates, the ambitious
+targets come back into play. Settling the pattern for large $a$ -- a single
+structured family -- may be more tractable than the conjecture itself.
 
 \paragraph{The exact gadget value.}
 Third, the machine computations of Appendix~\ref{sec:comp} support promoting
@@ -1685,13 +1703,19 @@ $16$ & $20{,}922{,}789{,}888{,}000$ & --- & $10$ \\
 \end{tabular}
 \end{center}
 
-Two features of the table are worth recording. First, $\pmin$ is not monotone:
+Three features of the table are worth recording. First, $\pmin$ is not monotone:
 the values at $n = 7, 11, 15$ sit below both neighbors. Second, the deficient
 sets remain a vanishing fraction of $S_n$ throughout the range where the full
 distribution is known ($|D(12)|/12! \approx 0.25\%$), while their internal
 structure is what the three-color census of Proposition~\ref{prop:k3} mines;
 the minimizers themselves are rare (the number of $\sigma$ attaining
 $\pmin(n)$ at $n = 13, 14, 15, 16$ is $290$, $2894$, $8$, $240$ respectively).
+%% [E27 2026-08-04] Bridge sentence (WP-M); E26's rewrite must preserve it.
+Third, the deficient set is exactly where the ladder parameter of
+Appendix~\ref{sec:conversion} dips: $\max_\pi \mu(\pi) \le n-1$ if and only if
+$\sigma \in D(n)$ (Observation~\ref{obs:topcontent}), and for $n \le 12$ the dip
+is one rung except on the small exceptional sets of Section~\ref{sec:disc}
+($8$, $24$, $1088$ permutations at $n = 10, 11, 12$), where it is exactly two.
 These are data, not theorems; nothing in the main text depends on this table
 beyond the values $\pmin(7) = 5$ and $\pmin(8) = 6$ and the counts $|D(n)|$
 quoted in Section~\ref{sec:disc}.
@@ -1893,7 +1917,14 @@ twelve witnesses (\texttt{cpsat\_rho3.py}); an exact bitmask dynamic program
 for $\max_\pi \mu(\pi)$ over $G(n,\sigma)$ (\texttt{fmu.cpp}; validated
 against a direct search on all of $S_n$ for $n \le 7$, and against the
 conversion inequality $\max_\pi \mu \ge \rho$ pointwise on every permutation
-processed); an integer-programming formulation for $\max_\pi \mu$ used for
+%% [E27 2026-08-04] f-item extended with the WP-M decision-over-D(n) method.
+processed); and, for the $f(10)$--$f(12)$ values, a pruned decision procedure
+for ``$\max_\pi \mu \ge n-1$?'' run over the deficient sets $D(10)$--$D(12)$
+only (Observation~\ref{obs:topcontent} covers the rest of $S_n$), validated by
+exact agreement with the dynamic program on all of $D(10)$ and $D(11)$, with
+every $\max_\pi \mu = n-2$ exception certified independently by the
+integer-programming formulation (optimality in all $1120$ cases); an
+integer-programming formulation for $\max_\pi \mu$ used for
 the structured instances (\texttt{fmu\_cpsat.py}, optimality certified in all
 reported cases).
 
