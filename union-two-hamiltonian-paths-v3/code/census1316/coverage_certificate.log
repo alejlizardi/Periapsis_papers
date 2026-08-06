@@ -1,0 +1,19 @@
+brute-force validation of the Burnside formula:
+  n= 2  brute=       1  burnside=       1  OK
+  n= 3  brute=       2  burnside=       2  OK
+  n= 4  brute=       7  burnside=       7  OK
+  n= 5  brute=      23  burnside=      23  OK
+  n= 6  brute=     115  burnside=     115  OK
+  n= 7  brute=     694  burnside=     694  OK
+  n= 8  brute=    5282  burnside=    5282  OK
+
+census `canon` vs exact orbit count:
+  n=10  reported=         456,454  exact=         456,454  MATCH
+  n=11  reported=       4,999,004  exact=       4,999,004  MATCH
+  n=12  reported=      59,916,028  exact=      59,916,028  MATCH
+  n=13  reported=     778,525,516  exact=     778,525,516  MATCH
+  n=14  reported=  10,897,964,660  exact=  10,897,964,660  MATCH
+  n=15  reported= 163,461,964,024  exact= 163,461,964,024  MATCH
+  n=16  reported=2,615,361,578,344  exact=2,615,361,578,344  MATCH
+
+COVERAGE CERTIFICATE: ALL MATCH

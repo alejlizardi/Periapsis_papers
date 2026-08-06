@@ -1,0 +1,1 @@
+RESULT n=14 D=281638656 def_reps=35247880 deep_w=6853204 deep_reps=865468 canon=10897964660 wall_s=1163.7 resume_events=2

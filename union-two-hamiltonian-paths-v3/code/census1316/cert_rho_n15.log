@@ -1,0 +1,4 @@
+  perm=1,0,4,3,2,5,8,7,6,9,12,11,10,14,13 claimed=9 pc.py=9(0.0s) cpsat=9[OPTIMAL](0.1s)  PASS
+  perm=1,0,10,11,12,9,6,7,8,5,2,3,4,14,13 claimed=9 pc.py=9(0.0s) cpsat=9[OPTIMAL](0.1s)  PASS
+  perm=1,0,11,14,13,12,6,9,8,7,10,2,5,4,3 claimed=9 pc.py=9(0.0s) cpsat=9[OPTIMAL](0.1s)  PASS
+CERT SUMMARY: ALL PASS (3 perms)

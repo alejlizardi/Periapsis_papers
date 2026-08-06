@@ -19,10 +19,10 @@ The item numbers match the numbered list of verified statements in that section.
 
 | paper item | claim | script | log |
 |---|---|---|---|
-| 1 | census anchors: ρ_min(7)=5, ρ_min(8)=6 by full enumeration of S_7, S_8 (Python solvers, independent of the C++ censuses of item 4); see the ρ_min census appendix | `pc.py`, `search_small.py` | `search_small.log` |
-| 2 | min over S_b of M(π) = 3 for 4 ≤ b ≤ 9 (full enumeration) | `search_small.py` | `search_small.log` |
-| 3 | exact ρ(σ_{a,b}) values up to n = 720 (with reachable-state counts) | `endtoend.py`, `bigtable.py` | `endtoend.log`, `bigtable.log` |
-| 4 | joint (b(σ), ρ(σ)) distribution over all of S_n, 7 ≤ n ≤ 12 (C++; 479,001,600 permutations at n = 12) — source of the ρ_min census appendix and the deficient-set counts \|D(n)\| | `cpp/rho_tool.cpp` | `exh7.txt` … `exh12.txt` |
+| 1 | min over S_b of M(π) = 3 for 4 ≤ b ≤ 9 (full enumeration) | `search_small.py` | `search_small.log` |
+| 2 | exact ρ(σ_{a,b}) values up to n = 720 (with reachable-state counts) | `endtoend.py`, `bigtable.py` | `endtoend.log`, `bigtable.log` |
+| 3 | exhaustive censuses: exact ρ(σ) over all of S_n, 7 ≤ n ≤ 12 (C++; 479,001,600 permutations at n = 12) — source of the ρ_min census appendix and the deficient-set counts \|D(n)\|; anchors ρ_min(7)=5, ρ_min(8)=6 independently reproduced by the Python solvers | `cpp/rho_tool.cpp`; anchors: `pc.py`, `search_small.py` | `exh7.txt` … `exh12.txt`; `search_small.log` |
+| 4 | ρ_min(13..16) + all minimizers (threshold censuses, dual-enumerator at n = 13, 14) and \|D(13..16)\| (orbit-weighted counting censuses); every minimizer certified two ways, every count certified two-sided | `census1316/` (see `census1316/RESULTS.md`) | `census1316/cert_rho_n13..16.log`, `census1316/cert_D_n13..16.log` |
 | 5 | odd gadget T′_b (Appendix "The odd gadget"): inventory/highway/crossing claims for odd b ∈ {7,…,21}, M(T′_b)=3, with positive and negative controls; transit spectrum for all π ∈ S_b, b ≤ 8 (μ(2)=2, μ(b)=3 for 3 ≤ b ≤ 8, value 4 unattained at odd b) | `verify_oddb.py`, `verify_spectrum.py` | `verify_oddb.log`, `verify_spectrum.log` |
 | open-problems §(matching side) | G(ab, σ_{a,b}) has a path with ≥ a(b−3) = n − 3a matching edges (explicit snake, edge-by-edge check at 6 points up to n = 600) | `verify_f_linear.py` | `verify_f_linear.log` |
 | open-problems §(more colors) | ρ_min^(3)(n) = n for 4 ≤ n ≤ 10; ρ_min^(3)(11) = 10, unique deficient triple up to symmetry (coset-triangle census over the deficient set D(n)); all 12 witnesses independently certified by CP-SAT | `k3.cpp` (census; compile `g++ -O2`); `cpsat_rho3.py` (needs `ortools`) | (rerun to reproduce; census outputs archived in the research repo) |
@@ -45,6 +45,16 @@ python fmu_cpsat.py       # optional (ortools): certify exact max-mu values
 The three-color census (`k3.cpp`) and the max-μ bitmask DP (`fmu.cpp`) compile with
 `g++ -O2`; their outputs back the k-color and matching-content items of the
 open-problems section.
+
+## The n = 13–16 censuses (`census1316/`)
+
+Self-contained directory backing paper item 4: engines (`census.cpp`,
+`census_gpu.py`, `count_gpu.py`), witness lists, and certificates for
+ρ_min(13..16), all minimizers, and |D(13..16)|. See `census1316/RESULTS.md` for
+the values, the file map, and how each certificate re-verifies. Re-running the
+censuses themselves needs a CUDA GPU and hours-to-days; re-verifying the
+certificates takes minutes on CPU (`ortools` required), and the exact-once
+coverage check (`burnside_canon.py`) runs in a second with no GPU at all.
 
 `MANIFEST.sha256` lists checksums of all code and logs.
 
